@@ -13,6 +13,8 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----keys.js
   |----init/
   |  |----mongodb.js
+  |----models/
+  |  |----User.js
   |----.env.example
   |----.gitignore
   |----app.js
