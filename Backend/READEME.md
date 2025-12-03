@@ -11,6 +11,8 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |
   |----config/
   |  |----keys.js
+  |----init/
+  |  |----mongodb.js
   |----.env.example
   |----.gitignore
   |----app.js
@@ -59,3 +61,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Node.js** - Node.js® is a free, open-source, cross-platform JavaScript runtime environment that lets developers create servers, web apps, command line tools and scripts.
 - **Express** - Express is a fast, unopinionated, minimalist web framework for Node.js, providing a robust set of features for web and mobile application.
 - **Environment Variables** - ENV are user-defined, key-value pairs that store dynamic values which affect the behavior of a computer's processes and applications.
+- **Mongoose** - Mongoose provides a straight-forward, schema-based solution to model your application data. It includes built-in type casting, validation, query building, business logic hooks and more, out of the box.

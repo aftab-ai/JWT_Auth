@@ -10,5 +10,5 @@ const port = config.port;
 
 // Listening Server.
 server.listen(port, () => {
-  console.log(`Server is running on Port: ${port}!`);
+  console.log(`Server is running on Port: ${port}.`);
 });
