@@ -1,0 +1,24 @@
+// Import local file-modules.
+import User from "../models/User.js";
+
+// User registration controller.
+const signUp = async (req, res, next) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Check duplicate email.
+    const isEmailExist = await User.findOne({ email });
+    if (isEmailExist) {
+      return res.status(409).json({ message: "Email already exist!" });
+    }
+
+    // Save user data to database.
+    await User.create({ username, email, password });
+
+    res.status(201).json({ message: "User successfully created." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { signUp };

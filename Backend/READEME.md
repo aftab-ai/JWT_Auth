@@ -11,10 +11,16 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |
   |----config/
   |  |----keys.js
+  |----controllers/
+  |  |----authControllers.js
+  |  |----index.js
   |----init/
   |  |----mongodb.js
   |----models/
   |  |----User.js
+  |----routes/
+  |  |----authRoutes.js
+  |  |----index.js
   |----.env.example
   |----.gitignore
   |----app.js
@@ -55,6 +61,24 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - Start the API server
 
   `node index.js`
+
+---
+
+## Usage
+
+- ### Auth Routes
+
+  - **SignUp Route** - New user registration.
+
+    - POST `/api/v1/auth/signUp`
+
+      ```bash
+      {
+        "username": "user1",
+        "email": "user1@gmail.com",
+        "password": "123456"
+      }
+      ```
 
 ---
 

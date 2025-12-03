@@ -28,7 +28,7 @@ This project build with **node.js** as a backend server and **react.js** as a fr
 
 ### 1. Clone the repo.
 
-`git clone https://github.com/aftab-ai/JWT_Exe`
+`git clone https://github.com/aftab-ai/JWT_Example`
 
 `cd JWT_Exe`
 
