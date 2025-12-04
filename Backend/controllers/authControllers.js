@@ -1,5 +1,6 @@
 // Import local file-modules.
 import User from "../models/User.js";
+import hashPassword from "../utils/hashPassword.js";
 
 // User registration controller.
 const signUp = async (req, res, next) => {
@@ -12,8 +13,12 @@ const signUp = async (req, res, next) => {
       return res.status(409).json({ message: "Email already exist!" });
     }
 
+    // Hash user password.
+    const hashedPassword = await hashPassword(password);
+
     // Save user data to database.
-    await User.create({ username, email, password });
+    const newUser = new User({ username, email, password: hashedPassword });
+    await newUser.save();
 
     res.status(201).json({ message: "User successfully created." });
   } catch (error) {

@@ -21,6 +21,8 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |----routes/
   |  |----authRoutes.js
   |  |----index.js
+  |----utils/
+  |  |----hashPassword.js
   |----.env.example
   |----.gitignore
   |----app.js
@@ -88,3 +90,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Express** - Express is a fast, unopinionated, minimalist web framework for Node.js, providing a robust set of features for web and mobile application.
 - **Environment Variables** - ENV are user-defined, key-value pairs that store dynamic values which affect the behavior of a computer's processes and applications.
 - **Mongoose** - Mongoose provides a straight-forward, schema-based solution to model your application data. It includes built-in type casting, validation, query building, business logic hooks and more, out of the box.
+- **Bcrypt.js** - Bcrypt is a hashing algorithm to create hashes for passwords to store them in case of a data breach. This advanced hashing algorithm uses salts, making it hard to crack by attacks such as brute-forcing.
