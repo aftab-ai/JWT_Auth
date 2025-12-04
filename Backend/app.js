@@ -1,6 +1,7 @@
 // Import Third-Party npm packages.
 import "dotenv/config";
 import express from "express";
+import morgan from "morgan";
 
 // Import local file-modules.
 import connectMongoDB from "./init/mongodb.js";
@@ -15,6 +16,7 @@ connectMongoDB();
 // Third-Party Middleware.
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(morgan("dev"));
 
 // Routes.
 // Auth Routes.
