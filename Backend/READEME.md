@@ -16,6 +16,9 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----index.js
   |----init/
   |  |----mongodb.js
+  |----middlewares/
+  |  |----errorHandler.js
+  |  |----index.js
   |----models/
   |  |----User.js
   |----routes/
@@ -81,7 +84,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       {
         "username": "user1",
         "email": "user1@gmail.com",
-        "password": "123456"
+        "password": "12345678"
       }
       ```
 

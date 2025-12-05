@@ -6,6 +6,7 @@ import morgan from "morgan";
 // Import local file-modules.
 import connectMongoDB from "./init/mongodb.js";
 import routes from "./routes/index.js";
+import middlewares from "./middlewares/index.js";
 
 // Initialize express app.
 const app = express();
@@ -21,5 +22,8 @@ app.use(morgan("dev"));
 // Routes.
 // Auth Routes.
 app.use("/api/v1/auth", routes.authRoutes);
+
+// Error handling middlewares.
+app.use(middlewares.errorHandler);
 
 export default app;

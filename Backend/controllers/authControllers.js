@@ -10,7 +10,8 @@ const signUp = async (req, res, next) => {
     // Check duplicate email.
     const isEmailExist = await User.findOne({ email });
     if (isEmailExist) {
-      return res.status(409).json({ message: "Email already exist!" });
+      res.code = 409;
+      throw new Error("Email already exist!");
     }
 
     // Hash user password.
@@ -20,7 +21,13 @@ const signUp = async (req, res, next) => {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    res.status(201).json({ message: "User successfully created." });
+    res
+      .status(201)
+      .json({
+        code: 201,
+        status: true,
+        message: "User registered successfully.",
+      });
   } catch (error) {
     next(error);
   }
