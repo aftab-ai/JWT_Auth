@@ -7,6 +7,7 @@ import morgan from "morgan";
 import connectMongoDB from "./init/mongodb.js";
 import routes from "./routes/index.js";
 import middlewares from "./middlewares/index.js";
+import controllers from "./controllers/index.js";
 
 // Initialize express app.
 const app = express();
@@ -22,6 +23,9 @@ app.use(morgan("dev"));
 // Routes.
 // Auth Routes.
 app.use("/api/v1/auth", routes.authRoutes);
+
+// 404 Not-Found route.
+app.use(controllers.notFound);
 
 // Error handling middlewares.
 app.use(middlewares.errorHandler);
