@@ -1,6 +1,7 @@
 // Import local file-modules.
 import User from "../models/User.js";
 import hashPassword from "../utils/hashPassword.js";
+import comparePassword from "../utils/comparePassword.js";
 
 // User registration controller.
 const signUp = async (req, res, next) => {
@@ -21,16 +22,41 @@ const signUp = async (req, res, next) => {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    res
-      .status(201)
-      .json({
-        code: 201,
-        status: true,
-        message: "User registered successfully.",
-      });
+    res.status(201).json({
+      code: 201,
+      status: true,
+      message: "User registered successfully.",
+    });
   } catch (error) {
     next(error);
   }
 };
 
-export default { signUp };
+// User authentication(login) controller.
+const signIn = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user in database.
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.code = 401;
+      throw new Error("Invalid credentials!");
+    }
+
+    // Compare the password.
+    const match = await comparePassword(password, user.password);
+    if (!match) {
+      res.code = 401;
+      throw new Error("Invalid credentials!");
+    }
+
+    res
+      .status(200)
+      .json({ code: 200, status: true, message: "User signIn successfully." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { signUp, signIn };

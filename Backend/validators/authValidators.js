@@ -9,7 +9,7 @@ const signUpValidators = [
   // Email.
   check("email")
     .isEmail()
-    .withMessage("Email is invalid!")
+    .withMessage("Invalid email!")
     .notEmpty()
     .withMessage("Email is required!"),
 
@@ -17,8 +17,27 @@ const signUpValidators = [
   check("password")
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters long!")
+    .isLength({ max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password is too long!")
     .notEmpty()
     .withMessage("Password is required!"),
 ];
 
-export default { signUpValidators };
+// Check signIn credentials validation.
+const signInValidators = [
+  // Email.
+  check("email")
+    .isEmail()
+    .withMessage("Invalid email!")
+    .notEmpty()
+    .withMessage("Email is required!"),
+
+  // Passward.
+  check("password")
+    .isLength({ max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Invalid password!")
+    .notEmpty()
+    .withMessage("Password is required!"),
+];
+
+export default { signUpValidators, signInValidators };

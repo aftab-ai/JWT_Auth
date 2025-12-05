@@ -26,6 +26,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----authRoutes.js
   |  |----index.js
   |----utils/
+  |  |----comparePassword.js
   |  |----hashPassword.js
   |----validators/
   |  |----authValidators.js
@@ -84,6 +85,17 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       ```bash
       {
         "username": "user1",
+        "email": "user1@gmail.com",
+        "password": "12345678"
+      }
+      ```
+
+  - **SignIn Route** - User authentication.
+
+    - POST `/api/v1/auth/signIn`
+
+      ```bash
+      {
         "email": "user1@gmail.com",
         "password": "12345678"
       }

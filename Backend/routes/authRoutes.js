@@ -18,4 +18,12 @@ router.post(
   controllers.authControllers.signUp // SignUp authController.
 );
 
+// POST --> User authentication(login) route.
+router.post(
+  "/signIn",
+  validators.signInValidators,
+  validate,
+  controllers.authControllers.signIn
+);
+
 export default router;
