@@ -23,6 +23,9 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----index.js
   |----utils/
   |  |----hashPassword.js
+  |----validators/
+  |  |----authValidators.js
+  |  |----validate.js
   |----.env.example
   |----.gitignore
   |----app.js
@@ -92,3 +95,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Mongoose** - Mongoose provides a straight-forward, schema-based solution to model your application data. It includes built-in type casting, validation, query building, business logic hooks and more, out of the box.
 - **Bcrypt.js** - Bcrypt is a hashing algorithm to create hashes for passwords to store them in case of a data breach. This advanced hashing algorithm uses salts, making it hard to crack by attacks such as brute-forcing.
 - **Morgan** - HTTP request logger middleware for node.js.
+- **Express-Validator** - Express-validator is a set of express.js middlewares that wraps the extensive collection of validators and sanitizers offered by validator.js.
