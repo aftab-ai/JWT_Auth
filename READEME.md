@@ -19,7 +19,7 @@ This project build with **node.js** as a backend server and **react.js** as a fr
 ## Tech Stack
 
 - **Frontend** -
-- **Backend** - Node.js, Express.js, Mongoose, Bcrypt.js, Morgan, Express-Validator
+- **Backend** - Node.js, Express.js, Mongoose, Bcrypt.js, Morgan, Express-Validator, Json Web Token
 - **Other Tools** - Git, npm, dotenv
 
 ---

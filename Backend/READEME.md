@@ -27,6 +27,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----index.js
   |----utils/
   |  |----comparePassword.js
+  |  |----createAccessToken.js
   |  |----hashPassword.js
   |----validators/
   |  |----authValidators.js
@@ -45,8 +46,8 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 ## Features
 
 - Multi-User (Authentication/Authorization)
-- Access-Token
-- Hashed Refresh-Token
+- Credentials Validation
+- JWT Access-Token
 
 ---
 
@@ -112,3 +113,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Bcrypt.js** - Bcrypt is a hashing algorithm to create hashes for passwords to store them in case of a data breach. This advanced hashing algorithm uses salts, making it hard to crack by attacks such as brute-forcing.
 - **Morgan** - HTTP request logger middleware for node.js.
 - **Express-Validator** - Express-validator is a set of express.js middlewares that wraps the extensive collection of validators and sanitizers offered by validator.js.
+- **Json Web Token** - JSON web token (JWT), pronounced "jot", is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. Again, JWT is a standard, meaning that all JWTs are tokens, but not all tokens are JWTs.
