@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import hashPassword from "../utils/hashPassword.js";
 import comparePassword from "../utils/comparePassword.js";
 import createAccessToken from "../utils/createAccessToken.js";
+import setAccessTokenCookie from "../utils/setAccessTokenCookie.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -55,11 +56,13 @@ const signIn = async (req, res, next) => {
     // Access Token.
     const accessToken = createAccessToken(user);
 
+    // Cookie.
+    setAccessTokenCookie(res, accessToken);
+
     res.status(200).json({
       code: 200,
       status: true,
       message: "User signIn successfully.",
-      data: accessToken,
     });
   } catch (error) {
     next(error);

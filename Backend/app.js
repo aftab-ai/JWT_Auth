@@ -2,6 +2,7 @@
 import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 // Import local file-modules.
 import connectMongoDB from "./init/mongodb.js";
@@ -19,6 +20,7 @@ connectMongoDB();
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(morgan("dev"));
+app.use(cookieParser());
 
 // Routes.
 // Auth Routes.

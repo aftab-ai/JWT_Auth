@@ -1,3 +1,4 @@
+// Import Third-Party npm packages.
 import mongoose from "mongoose";
 
 // User Schema.

@@ -29,6 +29,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----comparePassword.js
   |  |----createAccessToken.js
   |  |----hashPassword.js
+  |  |----setAccessTokenCookie.js
   |----validators/
   |  |----authValidators.js
   |  |----validate.js
@@ -47,7 +48,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 
 - Multi-User (Authentication/Authorization)
 - Credentials Validation
-- JWT Access-Token
+- JWT Access-Token sent via httpOnly cookie
 
 ---
 
@@ -114,3 +115,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Morgan** - HTTP request logger middleware for node.js.
 - **Express-Validator** - Express-validator is a set of express.js middlewares that wraps the extensive collection of validators and sanitizers offered by validator.js.
 - **Json Web Token** - JSON web token (JWT), pronounced "jot", is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. Again, JWT is a standard, meaning that all JWTs are tokens, but not all tokens are JWTs.
+- **Cookie-Parser** - Cookie Parser, parse Cookie header and populate req.cookies with an object keyed by the cookie names.

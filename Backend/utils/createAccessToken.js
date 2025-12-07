@@ -1,7 +1,7 @@
 // Import Third-Party npm packages.
 import jwt from "jsonwebtoken";
 
-// Import local file-modules.
+// Import Environment Variables.
 import config from "../config/keys.js";
 
 // Generate JWT Access Token.
@@ -10,7 +10,6 @@ const createAccessToken = (user) => {
     {
       // Paload.
       _id: user._id,
-      email: user.email,
       role: user.role,
     },
     config.jwtAccessSecret, // JWT Access Secret.
