@@ -6,6 +6,7 @@ import createAccessToken from "../utils/createAccessToken.js";
 import setAccessTokenCookie from "../utils/setAccessTokenCookie.js";
 import createRefreshToken from "../utils/createRefreshToken.js";
 import setRefreshTokenCookie from "../utils/setRefreshTokenCookie.js";
+import hashRefreshToken from "../utils/hashRefreshToken.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -59,6 +60,12 @@ const signIn = async (req, res, next) => {
     const accessToken = createAccessToken(user);
     // Refresh Token.
     const refreshToken = createRefreshToken();
+    // Hash Refresh Token.
+    const hashedRefreshToken = hashRefreshToken(refreshToken);
+
+    // Save Refresh-Token to DB.
+    user.hashRefreshToken = hashedRefreshToken;
+    await user.save();
 
     // Cookie.
     setAccessTokenCookie(res, accessToken);
