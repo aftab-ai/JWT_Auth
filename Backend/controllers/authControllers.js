@@ -4,6 +4,8 @@ import hashPassword from "../utils/hashPassword.js";
 import comparePassword from "../utils/comparePassword.js";
 import createAccessToken from "../utils/createAccessToken.js";
 import setAccessTokenCookie from "../utils/setAccessTokenCookie.js";
+import createRefreshToken from "../utils/createRefreshToken.js";
+import setRefreshTokenCookie from "../utils/setRefreshTokenCookie.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -55,9 +57,12 @@ const signIn = async (req, res, next) => {
 
     // Access Token.
     const accessToken = createAccessToken(user);
+    // Refresh Token.
+    const refreshToken = createRefreshToken();
 
     // Cookie.
     setAccessTokenCookie(res, accessToken);
+    setRefreshTokenCookie(res, refreshToken);
 
     res.status(200).json({
       code: 200,

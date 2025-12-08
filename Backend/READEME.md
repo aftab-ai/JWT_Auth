@@ -28,8 +28,10 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |----utils/
   |  |----comparePassword.js
   |  |----createAccessToken.js
+  |  |----createRefreshToken.js
   |  |----hashPassword.js
   |  |----setAccessTokenCookie.js
+  |  |----setRefreshTokenCookie.js
   |----validators/
   |  |----authValidators.js
   |  |----validate.js
@@ -49,6 +51,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - Multi-User (Authentication/Authorization)
 - Credentials Validation
 - JWT Access-Token sent via httpOnly cookie
+- JWT Refresh-Token sent via httpOnly cookie
 
 ---
 
@@ -116,3 +119,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Express-Validator** - Express-validator is a set of express.js middlewares that wraps the extensive collection of validators and sanitizers offered by validator.js.
 - **Json Web Token** - JSON web token (JWT), pronounced "jot", is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. Again, JWT is a standard, meaning that all JWTs are tokens, but not all tokens are JWTs.
 - **Cookie-Parser** - Cookie Parser, parse Cookie header and populate req.cookies with an object keyed by the cookie names.
+- **Crypto** - Crypto is a module provides cryptographic functionality that includes a set of wrappers for OpenSSL's hash, HMAC, cipher, decipher, sign, and verify functions.
