@@ -1,5 +1,5 @@
 // Import Environment Variables.
-import config from "../config/keys.js";
+import config from "../../config/keys.js";
 
 // Access-Token Cookie setup.
 const setAccessTokenCookie = (res, token) => {

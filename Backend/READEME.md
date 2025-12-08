@@ -26,13 +26,18 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----authRoutes.js
   |  |----index.js
   |----utils/
-  |  |----comparePassword.js
-  |  |----createAccessToken.js
-  |  |----createRefreshToken.js
-  |  |----hashPassword.js
-  |  |----hashRefreshToken.js
-  |  |----setAccessTokenCookie.js
-  |  |----setRefreshTokenCookie.js
+  |  |----cookies/
+  |  |  |----setAccessTokenCookie.js
+  |  |  |----setRefreshTokenCookie.js
+  |  |----device/
+  |  |  |----parseDeviceName.js
+  |  |----password/
+  |  |  |----comparePassword.js
+  |  |  |----hashPassword.js
+  |  |----tokens/
+  |  |  |----createAccessToken.js
+  |  |  |----createRefreshToken.js
+  |  |  |----hashRefreshToken.js
   |----validators/
   |  |----authValidators.js
   |  |----validate.js
@@ -53,7 +58,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - Credentials Validation
 - JWT Access-Token sent via httpOnly cookie
 - JWT Refresh-Token sent via httpOnly cookie
-- Hash Refresh-Token
+- Hash Refresh-Token saved with user session
 
 ---
 
@@ -122,3 +127,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Json Web Token** - JSON web token (JWT), pronounced "jot", is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. Again, JWT is a standard, meaning that all JWTs are tokens, but not all tokens are JWTs.
 - **Cookie-Parser** - Cookie Parser, parse Cookie header and populate req.cookies with an object keyed by the cookie names.
 - **Crypto** - Crypto is a module provides cryptographic functionality that includes a set of wrappers for OpenSSL's hash, HMAC, cipher, decipher, sign, and verify functions.
+- **UAParser.js** - UAParser.js is the most comprehensive, compact, and up-to-date JavaScript library to detect user's browser, OS, CPU, and device type/model. Also detect bots, apps, and more. Runs seamlessly in the browser (client-side) or Node.js (server-side).

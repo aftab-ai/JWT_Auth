@@ -2,7 +2,7 @@
 import jwt from "jsonwebtoken";
 
 // Import Environment Variables.
-import config from "../config/keys.js";
+import config from "../../config/keys.js";
 
 // Generate JWT Access Token.
 const createAccessToken = (user) => {

@@ -1,12 +1,13 @@
 // Import local file-modules.
 import User from "../models/User.js";
-import hashPassword from "../utils/hashPassword.js";
-import comparePassword from "../utils/comparePassword.js";
-import createAccessToken from "../utils/createAccessToken.js";
-import setAccessTokenCookie from "../utils/setAccessTokenCookie.js";
-import createRefreshToken from "../utils/createRefreshToken.js";
-import setRefreshTokenCookie from "../utils/setRefreshTokenCookie.js";
-import hashRefreshToken from "../utils/hashRefreshToken.js";
+import hashPassword from "../utils/password/hashPassword.js";
+import comparePassword from "../utils/password/comparePassword.js";
+import createAccessToken from "../utils/tokens/createAccessToken.js";
+import setAccessTokenCookie from "../utils/cookies/setAccessTokenCookie.js";
+import createRefreshToken from "../utils/tokens/createRefreshToken.js";
+import setRefreshTokenCookie from "../utils/cookies/setRefreshTokenCookie.js";
+import hashRefreshToken from "../utils/tokens/hashRefreshToken.js";
+import parseDeviceName from "../utils/device/parseDeviceName.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -63,8 +64,20 @@ const signIn = async (req, res, next) => {
     // Hash Refresh Token.
     const hashedRefreshToken = hashRefreshToken(refreshToken);
 
-    // Save Refresh-Token to DB.
-    user.hashRefreshToken = hashedRefreshToken;
+    // Parse user device info.
+    const deviceName = parseDeviceName(req.headers["user-agent"]);
+
+    // User Sessions save to DB.
+    user.sessions.push({
+      hashRefreshToken: hashedRefreshToken,
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      device: {
+        ip: req.ip,
+        userAgent: req.headers["user-agent"],
+        deviceName: deviceName,
+      },
+    });
+
     await user.save();
 
     // Cookie.

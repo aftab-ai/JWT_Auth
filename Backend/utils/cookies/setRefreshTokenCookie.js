@@ -1,5 +1,5 @@
 // Import Environment Variables.
-import config from "../config/keys.js";
+import config from "../../config/keys.js";
 
 // Refresh-Token Cookie setup.
 const setRefreshTokenCookie = (res, token) => {

@@ -2,7 +2,7 @@
 import crypto from "crypto";
 
 // Import Environment Variables.
-import config from "../config/keys.js";
+import config from "../../config/keys.js";
 
 // Refresh-Token Hash
 const hashRefreshToken = (token) => {
