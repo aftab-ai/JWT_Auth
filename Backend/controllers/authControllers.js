@@ -8,6 +8,8 @@ import createRefreshToken from "../utils/tokens/createRefreshToken.js";
 import setRefreshTokenCookie from "../utils/cookies/setRefreshTokenCookie.js";
 import hashRefreshToken from "../utils/tokens/hashRefreshToken.js";
 import parseDeviceName from "../utils/device/parseDeviceName.js";
+import createCSRFtoken from "../utils/tokens/createCSRFtoken.js";
+import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -63,6 +65,10 @@ const signIn = async (req, res, next) => {
     const refreshToken = createRefreshToken();
     // Hash Refresh Token.
     const hashedRefreshToken = hashRefreshToken(refreshToken);
+    // CSRF(Cross-Site Request Forgery) Token.
+    const csrfToken = createCSRFtoken();
+    // Hash CSRF Token.
+    const hashedCSRFtoken = hashCSRFtoken(csrfToken);
 
     // Parse user device info.
     const deviceName = parseDeviceName(req.headers["user-agent"]);
@@ -72,6 +78,8 @@ const signIn = async (req, res, next) => {
 
     // User Sessions save to DB.
     user.sessions.push({
+      hashCSRFtoken: hashedCSRFtoken,
+      csrfExpires: new Date(Date.now() + 1000 * 60 * 15),
       hashRefreshToken: hashedRefreshToken,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       device: {
@@ -91,6 +99,7 @@ const signIn = async (req, res, next) => {
       code: 200,
       status: true,
       message: "User signIn successfully.",
+      data: { csrfToken: csrfToken },
     });
   } catch (error) {
     next(error);

@@ -37,7 +37,9 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |  |----hashPassword.js
   |  |----tokens/
   |  |  |----createAccessToken.js
+  |  |  |----createCSRFtoken.js
   |  |  |----createRefreshToken.js
+  |  |  |----hashCSRFtoken.js
   |  |  |----hashRefreshToken.js
   |----validators/
   |  |----authValidators.js
@@ -58,8 +60,9 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - Multi-User (Authentication/Authorization)
 - Credentials Validation
 - JWT Access-Token sent via httpOnly cookie
-- JWT Refresh-Token sent via httpOnly cookie
+- Refresh-Token sent via httpOnly cookie
 - Hash Refresh-Token saved with user session
+- Hash CSRF-Token
 
 ---
 

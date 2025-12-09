@@ -7,7 +7,8 @@ const {
   JWT_EXPIRE,
   JWT_ISSUER,
   JWT_AUDIENCE,
-  JWT_REFRESH_SECRET,
+  REFRESH_TOKEN_SECRET,
+  CSRF_TOKEN_SECRET,
 } = process.env;
 
 export default {
@@ -18,5 +19,6 @@ export default {
   jwtExpire: JWT_EXPIRE,
   jwtIssuer: JWT_ISSUER,
   jwtAudience: JWT_AUDIENCE,
-  jwtRefreshSecret: JWT_REFRESH_SECRET,
+  refreshTokenSecret: REFRESH_TOKEN_SECRET,
+  csrfTokenSecret: CSRF_TOKEN_SECRET,
 };

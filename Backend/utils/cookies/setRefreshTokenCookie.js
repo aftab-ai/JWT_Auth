@@ -11,7 +11,7 @@ const setRefreshTokenCookie = (res, token) => {
     httpOnly: true, // Protect againt XSS.
     secure: isProd, // Only HTTPS in production.
     // Blocks CSRF(cross-site request fetch) unless using cross-domain auth.
-    saveSite: isProd ? "strict" : "lax",
+    sameSite: isProd ? "strict" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 7,
     path: "/",
   });

@@ -4,7 +4,9 @@ import mongoose from "mongoose";
 // Session Schema.
 const sessionSchema = new mongoose.Schema(
   {
-    hashRefreshToken: { type: String, required: true, index: true }, // Refresh Token.
+    hashCSRFtoken: { type: String, required: true }, // Hash CSRF Token.
+    csrfExpires: { type: Date, required: true }, // CSRF Expiry.
+    hashRefreshToken: { type: String, required: true, index: true }, // Hash Refresh Token.
     expires: { type: Date, required: true }, // Expiry Date.
     // User Device Details.
     device: {

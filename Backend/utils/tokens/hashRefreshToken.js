@@ -7,7 +7,7 @@ import config from "../../config/keys.js";
 // Refresh-Token Hash
 const hashRefreshToken = (token) => {
   return crypto
-    .createHmac("sha256", config.jwtRefreshSecret) // Hash with jwtRefreshSecret.
+    .createHmac("sha256", config.refreshTokenSecret) // Hash with refreshSecret.
     .update(token) // Feed data into the hash.
     .digest("hex"); // 64 chracters of hex string(refresh-token).
 };
