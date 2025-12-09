@@ -67,6 +67,9 @@ const signIn = async (req, res, next) => {
     // Parse user device info.
     const deviceName = parseDeviceName(req.headers["user-agent"]);
 
+    // Sessions limits to 10.
+    if (user.sessions.length >= 10) user.sessions.shift();
+
     // User Sessions save to DB.
     user.sessions.push({
       hashRefreshToken: hashedRefreshToken,

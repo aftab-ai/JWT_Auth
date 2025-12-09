@@ -5,6 +5,7 @@ import express from "express";
 import controllers from "../controllers/index.js";
 import validators from "../validators/authValidators.js";
 import validate from "../validators/validate.js";
+import middlewares from "../middlewares/index.js";
 
 // Express sub routes.
 const router = express.Router();
@@ -21,6 +22,7 @@ router.post(
 // POST --> User authentication(login) route.
 router.post(
   "/signIn",
+  middlewares.loginLimiter, // Minimize logIn attempts.
   validators.signInValidators,
   validate,
   controllers.authControllers.signIn

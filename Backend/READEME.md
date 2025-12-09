@@ -20,6 +20,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |----middlewares/
   |  |----errorHandler.js
   |  |----index.js
+  |  |----loginLimiter.js
   |----models/
   |  |----User.js
   |----routes/
@@ -128,3 +129,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Cookie-Parser** - Cookie Parser, parse Cookie header and populate req.cookies with an object keyed by the cookie names.
 - **Crypto** - Crypto is a module provides cryptographic functionality that includes a set of wrappers for OpenSSL's hash, HMAC, cipher, decipher, sign, and verify functions.
 - **UAParser.js** - UAParser.js is the most comprehensive, compact, and up-to-date JavaScript library to detect user's browser, OS, CPU, and device type/model. Also detect bots, apps, and more. Runs seamlessly in the browser (client-side) or Node.js (server-side).
+- **Express-Rate-Limit** - express-rate-limit is a basic rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset. Plays nice with express-slow-down and ratelimit-header-parser.
