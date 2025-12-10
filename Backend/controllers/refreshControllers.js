@@ -16,7 +16,7 @@ const refresh = async (req, res, next) => {
 
     // Check Token.
     if (!token) {
-      res.code = 401;
+      res.statusCode = 401;
       throw new Error("Refresh-Token is missing!");
     }
 
@@ -26,14 +26,14 @@ const refresh = async (req, res, next) => {
     // Fetch user by session token hash.
     const user = await User.findOne({ "sessions.hashRefreshToken": tokenHash });
     if (!user) {
-      res.code = 403;
+      res.statusCode = 403;
       throw new Error("Refresh-Token is invalid!");
     }
 
     // Fetch the exact session.
     const session = user.sessions.find((s) => s.hashRefreshToken === tokenHash);
     if (!session) {
-      res.code = 403;
+      res.statusCode = 403;
       throw new Error("Session is invalid!");
     }
 
@@ -44,8 +44,8 @@ const refresh = async (req, res, next) => {
         { _id: user._id },
         { $pull: { sessions: { hashRefreshToken: tokenHash } } }
       );
-      res.code = 403;
-      throw new Error("Refresh-token is expired!");
+      res.statusCode = 403;
+      throw new Error("Refresh-token is expired!, Please Login");
     }
 
     // Create new Refresh-Token.
@@ -85,7 +85,7 @@ const refresh = async (req, res, next) => {
         { _id: user._id },
         { $pull: { sessions: { hashRefreshToken: tokenHash } } }
       );
-      res.code = 409;
+      res.statusCode = 409;
       throw new Error("Refresh Coflict! - Session removed, Login again.");
     }
 

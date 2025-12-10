@@ -19,7 +19,7 @@ const signUp = async (req, res, next) => {
     // Check duplicate email.
     const isEmailExist = await User.findOne({ email });
     if (isEmailExist) {
-      res.code = 409;
+      res.statusCode = 409;
       throw new Error("Email already exist!");
     }
 
@@ -48,14 +48,14 @@ const signIn = async (req, res, next) => {
     // Find user in database.
     const user = await User.findOne({ email });
     if (!user) {
-      res.code = 401;
+      res.statusCode = 401;
       throw new Error("Invalid credentials!");
     }
 
     // Compare the password.
     const match = await comparePassword(password, user.password);
     if (!match) {
-      res.code = 401;
+      res.statusCode = 401;
       throw new Error("Invalid credentials!");
     }
 

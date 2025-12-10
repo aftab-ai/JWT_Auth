@@ -7,7 +7,7 @@ const loginLimiter = rateLimit({
   max: 5,
 
   handler: (req, res, next) => {
-    res.code = 429;
+    res.statusCode = 429;
     const error = new Error("Too many login attempts. Try again later.");
     next(error);
   },
