@@ -1,4 +1,5 @@
 // Import local routes file-modules.
 import authRoutes from "./authRoutes.js";
+import refreshRoutes from "./refreshRoutes.js";
 
-export default { authRoutes };
+export default { authRoutes, refreshRoutes };

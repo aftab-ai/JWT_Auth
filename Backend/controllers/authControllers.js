@@ -79,7 +79,7 @@ const signIn = async (req, res, next) => {
     // User Sessions save to DB.
     user.sessions.push({
       hashCSRFtoken: hashedCSRFtoken,
-      csrfExpires: new Date(Date.now() + 1000 * 60 * 15),
+      csrfExpires: new Date(Date.now() + 1000 * 60 * 30),
       hashRefreshToken: hashedRefreshToken,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       device: {

@@ -15,6 +15,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----authControllers.js
   |  |----index.js
   |  |----notFound.js
+  |  |----refreshControllers.js
   |----init/
   |  |----mongodb.js
   |----middlewares/
@@ -26,6 +27,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |----routes/
   |  |----authRoutes.js
   |  |----index.js
+  |  |----refreshRoutes.js
   |----utils/
   |  |----cookies/
   |  |  |----setAccessTokenCookie.js
@@ -116,6 +118,12 @@ It is backend api server for user 'authentication/authorization' with **Json Web
         "password": "12345678"
       }
       ```
+
+- ### Refresh Routes
+
+  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
+
+    - POST `/api/v1/refresh-token`
 
 ---
 
