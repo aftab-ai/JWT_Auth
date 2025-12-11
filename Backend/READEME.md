@@ -22,6 +22,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----errorHandler.js
   |  |----index.js
   |  |----loginLimiter.js
+  |  |----refreshLimiter.js
   |----models/
   |  |----User.js
   |----routes/

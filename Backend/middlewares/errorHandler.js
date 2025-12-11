@@ -6,16 +6,14 @@ const errorHandler = (error, req, res, next) => {
   const code = res.statusCode || 500; // If code not exist then use 500.
 
   // Node environment.
-  const isProd = config.nodeENV === "development";
+  const isDev = config.nodeENV === "development";
 
-  res
-    .status(code)
-    .json({
-      code,
-      status: false,
-      message: error.message,
-      ...(isProd && { stack: error.stack }),
-    });
+  res.status(code).json({
+    code,
+    status: false,
+    message: error.message,
+    ...(isDev && { stack: error.stack }),
+  });
 };
 
 export default errorHandler;
