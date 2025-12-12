@@ -14,7 +14,7 @@ const refresh = async (req, res, next) => {
     // Fetch from validateRefreshToken middleware.
     const user = req.user;
     const session = req.session;
-    const hashedRefreshToken = req.hashRefreshToken;
+    const hashedRefreshToken = req.hashedRefreshToken;
 
     // Create new Refresh-Token.
     const newRefreshToken = createRefreshToken();

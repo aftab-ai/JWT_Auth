@@ -42,14 +42,14 @@ const validateRefreshToken = async (req, res, next) => {
         { _id: user._id },
         { $pull: { sessions: { hashRefreshToken: hashedRefreshToken } } }
       );
-      res.statusCode = 401;
+      res.statusCode = 403;
       throw new Error("Refresh-token is expired!, Please Login");
     }
 
     // Attach to request for next middleware/controller.
     req.user = user;
     req.session = session;
-    req.hashRefreshToken = hashedRefreshToken;
+    req.hashedRefreshToken = hashedRefreshToken;
 
     next();
   } catch (error) {

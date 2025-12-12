@@ -23,6 +23,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----index.js
   |  |----loginLimiter.js
   |  |----refreshLimiter.js
+  |  |----validateCSRFtoken.js
   |  |----validateRefreshToken.js
   |----models/
   |  |----User.js
