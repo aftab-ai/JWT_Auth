@@ -11,42 +11,10 @@ import setRefreshTokenCookie from "../utils/cookies/setRefreshTokenCookie.js";
 // Token refresh controller.
 const refresh = async (req, res, next) => {
   try {
-    // Fetch Refresh-Token.
-    const token = req.cookies.refreshToken;
-
-    // Check Token.
-    if (!token) {
-      res.statusCode = 401;
-      throw new Error("Refresh-Token is missing!");
-    }
-
-    // Hash the Refresh-Token.
-    const tokenHash = hashRefreshToken(token);
-
-    // Fetch user by session token hash.
-    const user = await User.findOne({ "sessions.hashRefreshToken": tokenHash });
-    if (!user) {
-      res.statusCode = 403;
-      throw new Error("Refresh-Token is invalid!");
-    }
-
-    // Fetch the exact session.
-    const session = user.sessions.find((s) => s.hashRefreshToken === tokenHash);
-    if (!session) {
-      res.statusCode = 403;
-      throw new Error("Session is invalid!");
-    }
-
-    // Check session expiry.
-    if (session.expires < new Date()) {
-      // Remove expired session atomically.
-      await User.updateOne(
-        { _id: user._id },
-        { $pull: { sessions: { hashRefreshToken: tokenHash } } }
-      );
-      res.statusCode = 403;
-      throw new Error("Refresh-token is expired!, Please Login");
-    }
+    // Fetch from validateRefreshToken middleware.
+    const user = req.user;
+    const session = req.session;
+    const hashedRefreshToken = req.hashRefreshToken;
 
     // Create new Refresh-Token.
     const newRefreshToken = createRefreshToken();
@@ -54,10 +22,8 @@ const refresh = async (req, res, next) => {
 
     // Fetch session id.
     const sessionId = session._id;
-
     // Create new Access-Token.
     const newAccessToken = createAccessToken(user, sessionId);
-    console.log(newAccessToken);
 
     // New Session/Refresh-Token expires time.
     const newExpiresTime = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
@@ -71,7 +37,7 @@ const refresh = async (req, res, next) => {
     const result = await User.updateOne(
       {
         _id: user._id,
-        "sessions.hashRefreshToken": tokenHash,
+        "sessions.hashRefreshToken": hashedRefreshToken,
       },
       {
         $set: {
@@ -87,7 +53,7 @@ const refresh = async (req, res, next) => {
     if (result.modifiedCount === 0) {
       await User.updateOne(
         { _id: user._id },
-        { $pull: { sessions: { hashRefreshToken: tokenHash } } }
+        { $pull: { sessions: { hashRefreshToken: hashedRefreshToken } } }
       );
       res.statusCode = 409;
       throw new Error("Refresh Coflict! - Session removed, Login again.");

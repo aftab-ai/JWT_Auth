@@ -13,7 +13,8 @@ const router = express.Router();
 router.post(
   "/",
   middlewares.refreshLimiter, // Minimize token-refresh attempt.
-  controllers.refreshControllers.refresh
+  middlewares.validateRefreshToken, // Refresh-Token middleware.
+  controllers.refreshControllers.refresh // Refresh Controller.
 );
 
 export default router;
