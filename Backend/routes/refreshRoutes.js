@@ -3,13 +3,17 @@ import express from "express";
 
 // Import local-file modules.
 import controllers from "../controllers/index.js";
-import refreshLimiter from "../middlewares/refreshLimiter.js";
+import middlewares from "../middlewares/index.js";
 
 // Express sub routes.
 const router = express.Router();
 
 // Protected routes.
 // POST --> Token Refresh Route.
-router.post("/", refreshLimiter, controllers.refreshControllers.refresh);
+router.post(
+  "/",
+  middlewares.refreshLimiter, // Minimize token-refresh attempt.
+  controllers.refreshControllers.refresh
+);
 
 export default router;

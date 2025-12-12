@@ -59,8 +59,6 @@ const signIn = async (req, res, next) => {
       throw new Error("Invalid credentials!");
     }
 
-    // Access Token.
-    const accessToken = createAccessToken(user);
     // Refresh Token.
     const refreshToken = createRefreshToken();
     // Hash Refresh Token.
@@ -76,8 +74,8 @@ const signIn = async (req, res, next) => {
     // Sessions limits to 10.
     if (user.sessions.length >= 10) user.sessions.shift();
 
-    // User Sessions save to DB.
-    user.sessions.push({
+    // Create new session.
+    const newSession = {
       hashCSRFtoken: hashedCSRFtoken,
       csrfExpires: new Date(Date.now() + 1000 * 60 * 30),
       hashRefreshToken: hashedRefreshToken,
@@ -87,8 +85,17 @@ const signIn = async (req, res, next) => {
         userAgent: req.headers["user-agent"],
         deviceName: deviceName,
       },
-    });
+    };
 
+    user.sessions.push(newSession);
+
+    // Get sessionId
+    const sessionId = user.sessions[user.sessions.length - 1]._id.toString();
+
+    // Access Token.
+    const accessToken = createAccessToken(user, sessionId);
+
+    // User Sessions save to DB.
     await user.save();
 
     // Cookie.

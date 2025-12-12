@@ -5,12 +5,13 @@ import jwt from "jsonwebtoken";
 import config from "../../config/keys.js";
 
 // Generate JWT Access Token.
-const createAccessToken = (user) => {
+const createAccessToken = (user, sessionId) => {
   const token = jwt.sign(
     {
       // Paload.
-      _id: user._id,
+      id: user._id,
       role: user.role,
+      sessionId,
     },
     config.jwtAccessSecret, // JWT Access Secret.
     {

@@ -52,8 +52,12 @@ const refresh = async (req, res, next) => {
     const newRefreshToken = createRefreshToken();
     const newHashRefreshToken = hashRefreshToken(newRefreshToken);
 
+    // Fetch session id.
+    const sessionId = session._id;
+
     // Create new Access-Token.
-    const newAccessToken = createAccessToken(user);
+    const newAccessToken = createAccessToken(user, sessionId);
+    console.log(newAccessToken);
 
     // New Session/Refresh-Token expires time.
     const newExpiresTime = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
