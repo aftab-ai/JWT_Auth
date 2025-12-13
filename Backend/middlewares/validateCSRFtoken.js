@@ -7,7 +7,7 @@ const validateCSRFtoken = (req, res, next) => {
     const session = req.session;
     // Check session.
     if (!session) {
-      req.statusCode = 401;
+      res.statusCode = 401;
       throw new Error("Session is not available!");
     }
 

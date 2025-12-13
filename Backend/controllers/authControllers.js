@@ -11,6 +11,12 @@ import parseDeviceName from "../utils/device/parseDeviceName.js";
 import createCSRFtoken from "../utils/tokens/createCSRFtoken.js";
 import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
 
+// Import Environment Variables.
+import config from "../config/keys.js";
+
+// Node environment.
+const isProd = config.nodeENV === "production";
+
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
   try {
@@ -113,4 +119,52 @@ const signIn = async (req, res, next) => {
   }
 };
 
-export default { signUp, signIn };
+// User logout(session-over) controller.
+const logout = async (req, res, next) => {
+  try {
+    // Fetch user id from middleware.
+    const userId = req.user._id;
+    // Fetch Hash-Refresh-Token from middleware.
+    const hashedRefreshToken = req.hashedRefreshToken;
+    // Check hahsedRefreshToken.
+    if (!hashedRefreshToken) {
+      res.statusCode = 401;
+      throw new Error("Refresh-Token is missing!");
+    }
+
+    // Remove user-session holding that Refresh-Token-Hash.
+    await User.updateOne(
+      { _id: userId },
+      { $pull: { sessions: { hashRefreshToken: hashedRefreshToken } } }
+    );
+
+    // Cookie centralize options.
+    const cookieOptions = {
+      httpOnly: true,
+      path: "/",
+    };
+
+    // Clear accessToken-cookie.
+    res.clearCookie("accessToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+    // Clear refreshToken-cookie.
+    res.clearCookie("refreshToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "User logged out successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { signUp, signIn, logout };

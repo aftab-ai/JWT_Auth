@@ -28,4 +28,13 @@ router.post(
   controllers.authControllers.signIn
 );
 
+// Protected routes.
+// POST --> User logout(Session Over) route.
+router.post(
+  "/logout",
+  middlewares.validateRefreshToken, // Refresh-Token validate middleware.
+  middlewares.validateCSRFtoken, // CSRF-Token validate middleware.
+  controllers.authControllers.logout
+);
+
 export default router;

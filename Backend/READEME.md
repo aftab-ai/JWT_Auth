@@ -122,6 +122,10 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       }
       ```
 
+  - **Logout Route** - User session over.
+
+    - POST `/api/v1/auth/logout`
+
 - ### Refresh Routes
 
   - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
