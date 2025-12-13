@@ -37,4 +37,12 @@ router.post(
   controllers.authControllers.logout
 );
 
+// POST --> User logout(All-Session Over) route.
+router.post(
+  "/logout-all",
+  middlewares.validateRefreshToken,
+  middlewares.validateCSRFtoken,
+  controllers.authControllers.logoutAll
+);
+
 export default router;

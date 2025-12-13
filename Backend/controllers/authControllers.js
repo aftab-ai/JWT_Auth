@@ -124,6 +124,11 @@ const logout = async (req, res, next) => {
   try {
     // Fetch user id from middleware.
     const userId = req.user._id;
+    // Check userId.
+    if (!userId) {
+      res.statusCode = 401;
+      throw new Error("Refresh-Token is missing or invalid!");
+    }
     // Fetch Hash-Refresh-Token from middleware.
     const hashedRefreshToken = req.hashedRefreshToken;
     // Check hahsedRefreshToken.
@@ -167,4 +172,47 @@ const logout = async (req, res, next) => {
   }
 };
 
-export default { signUp, signIn, logout };
+// User logout-all(all-session-over) controller.
+const logoutAll = async (req, res, next) => {
+  try {
+    // Fetch user id from middleware.
+    const userId = req.user._id;
+    // Check userId.
+    if (!userId) {
+      res.statusCode = 401;
+      throw new Error("Refresh-Token is missing or invalid!");
+    }
+
+    // Remove all user-sessoins.
+    await User.updateOne({ _id: userId }, { $set: { sessions: [] } });
+
+    // Cookie centralize options.
+    const cookieOptions = {
+      httpOnly: true,
+      path: "/",
+    };
+
+    // Clear accessToken-cookie.
+    res.clearCookie("accessToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+    // Clear refreshToken-cookie.
+    res.clearCookie("refreshToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "User logged out successfully from all the sessions.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { signUp, signIn, logout, logoutAll };
