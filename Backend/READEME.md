@@ -19,6 +19,8 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |----init/
   |  |----mongodb.js
   |----middlewares/
+  |  |----authMiddleware.js
+  |  |----authorizeRole.js
   |  |----errorHandler.js
   |  |----index.js
   |  |----loginLimiter.js

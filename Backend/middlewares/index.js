@@ -5,6 +5,7 @@ import refreshLimiter from "./refreshLimiter.js";
 import validateRefreshToken from "./validateRefreshToken.js";
 import validateCSRFtoken from "./validateCSRFtoken.js";
 import authMiddleware from "./authMiddleware.js";
+import authorizeRole from "./authorizeRole.js";
 
 export default {
   errorHandler,
@@ -13,4 +14,5 @@ export default {
   validateRefreshToken,
   validateCSRFtoken,
   authMiddleware,
+  authorizeRole,
 };

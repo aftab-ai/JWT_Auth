@@ -35,12 +35,12 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Check user-data.
-    if (!decoded?.id || !decoded?.sessionId) {
+    if (!decoded?.id || !decoded?.sessionId || !decoded?.role) {
       res.statusCode = 401;
       throw new Error("Access-Token is malformed!");
     }
     // Fetch user-data.
-    const { id: userId, sessionId } = decoded;
+    const { id: userId, role, sessionId } = decoded;
 
     // Fetch user.
     const user = await User.findById(userId).select("sessions");
@@ -60,6 +60,7 @@ const authMiddleware = async (req, res, next) => {
 
     // Attach user + session.
     req.user = user;
+    req.role = role;
     req.session = session;
     req.sessionId = sessionId;
 
