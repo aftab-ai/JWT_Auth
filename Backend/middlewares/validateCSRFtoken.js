@@ -1,3 +1,6 @@
+// Import Third-Party npm packages.
+import crypto from "crypto";
+
 // Import local file-modules.
 import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
 
@@ -28,8 +31,15 @@ const validateCSRFtoken = (req, res, next) => {
     // Hash CSRF-Token.
     const hashedCSRFtoken = hashCSRFtoken(csrfToken);
 
-    // Validate CSRF-Token.
-    if (hashedCSRFtoken !== session.hashCSRFtoken) {
+    // Validate CSRF-Token with always the same compare time(no-leak timinig info).
+    const isValid =
+      hashedCSRFtoken === session.hashCSRFtoken &&
+      crypto.timingSafeEqual(
+        Buffer.from(hashedCSRFtoken, "hex"),
+        Buffer.from(session.hashCSRFtoken, "hex")
+      );
+
+    if (!isValid) {
       res.statusCode = 403;
       throw new Error("CSRF-Token is invalid!");
     }
