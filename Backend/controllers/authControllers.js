@@ -10,6 +10,8 @@ import hashRefreshToken from "../utils/tokens/hashRefreshToken.js";
 import parseDeviceName from "../utils/device/parseDeviceName.js";
 import createCSRFtoken from "../utils/tokens/createCSRFtoken.js";
 import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
+import generateCode from "../utils/randomCode/generateCode.js";
+import sendEmail from "../utils/sendEmail/sendEmail.js";
 
 // Import Environment Variables.
 import config from "../config/keys.js";
@@ -119,6 +121,49 @@ const signIn = async (req, res, next) => {
   }
 };
 
+// Email-Verification(Send verification-code to user email) controller.
+const sendVerificationCode = async (req, res, next) => {
+  try {
+    // Fetch user-email.
+    const { email } = req.body;
+    // Fetch user-id via middleware;
+    const userId = req.userId;
+
+    // Find user.
+    const user = await User.findOne({ email, _id: userId });
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("User not found!");
+    }
+
+    // Generate 6 digit verification code, save in DB.
+    const code = generateCode(6);
+    user.verificationCode = code;
+    await user.save();
+
+    // Send email-verification code via Email.
+    try {
+      await sendEmail({
+        emailTo: user.email,
+        subject: "Email verification code.",
+        data: code,
+        content: "Verify your account.",
+      });
+    } catch (error) {
+      res.statusCode = 500;
+      throw new Error("Unable to send email!");
+    }
+
+    res.status(200).json({
+      code: 200,
+      status: true,
+      message: "User verification code sent successfully!",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // User logout(session-over) controller.
 const logout = async (req, res, next) => {
   try {
@@ -215,4 +260,4 @@ const logoutAll = async (req, res, next) => {
   }
 };
 
-export default { signUp, signIn, logout, logoutAll };
+export default { signUp, signIn, sendVerificationCode, logout, logoutAll };

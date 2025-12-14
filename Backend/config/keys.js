@@ -9,6 +9,8 @@ const {
   JWT_AUDIENCE,
   REFRESH_TOKEN_SECRET,
   CSRF_TOKEN_SECRET,
+  SENDER_EMAIL,
+  SENDER_EMAIL_PASSWORD,
 } = process.env;
 
 export default {
@@ -21,4 +23,6 @@ export default {
   jwtAudience: JWT_AUDIENCE,
   refreshTokenSecret: REFRESH_TOKEN_SECRET,
   csrfTokenSecret: CSRF_TOKEN_SECRET,
+  senderEmail: SENDER_EMAIL,
+  senderEmailPass: SENDER_EMAIL_PASSWORD,
 };

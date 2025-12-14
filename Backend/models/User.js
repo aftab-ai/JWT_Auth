@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true, minlength: 8 },
     role: { type: String, default: "user" },
     sessions: { type: [sessionSchema], default: [] },
+    verificationCode: String,
   },
   { timestamps: true }
 );

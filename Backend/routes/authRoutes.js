@@ -45,4 +45,12 @@ router.post(
   controllers.authControllers.logoutAll
 );
 
+// POST --> Email-Verification route.
+router.post(
+  "/send-verification-email",
+  middlewares.authMiddleware, // Access-Token validate middleware.
+  middlewares.authorizeRole("user"), // Check user-role.
+  controllers.authControllers.sendVerificationCode
+);
+
 export default router;

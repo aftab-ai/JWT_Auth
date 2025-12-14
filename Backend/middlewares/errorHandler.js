@@ -3,13 +3,13 @@ import config from "../config/keys.js";
 
 // Custom Error-handler middleware.
 const errorHandler = (error, req, res, next) => {
-  const code = res.statusCode || 500; // If code not exist then use 500.
+  const statusCode = res.statusCode || 500; // If code not exist then use 500.
 
   // Node environment.
   const isDev = config.nodeENV === "development";
 
   res.status(code).json({
-    code,
+    statusCode,
     status: false,
     message: error.message,
     ...(isDev && { stack: error.stack }),

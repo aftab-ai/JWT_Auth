@@ -42,6 +42,10 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----password/
   |  |  |----comparePassword.js
   |  |  |----hashPassword.js
+  |  |----randomCode/
+  |  |  |----generateCode.js
+  |  |----sendEmail/
+  |  |  |----sendEmail.js
   |  |----tokens/
   |  |  |----createAccessToken.js
   |  |  |----createCSRFtoken.js
@@ -124,6 +128,10 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       }
       ```
 
+  - **Send Email Verification Code** - Send OTP via email.
+
+    - POST `/api/v1/auth/send-verification-email`
+
   - **Logout Route** - User session over.
 
     - POST `/api/v1/auth/logout`
@@ -154,3 +162,4 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - **Crypto** - Crypto is a module provides cryptographic functionality that includes a set of wrappers for OpenSSL's hash, HMAC, cipher, decipher, sign, and verify functions.
 - **UAParser.js** - UAParser.js is the most comprehensive, compact, and up-to-date JavaScript library to detect user's browser, OS, CPU, and device type/model. Also detect bots, apps, and more. Runs seamlessly in the browser (client-side) or Node.js (server-side).
 - **Express-Rate-Limit** - express-rate-limit is a basic rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset. Plays nice with express-slow-down and ratelimit-header-parser.
+- **Nodemailer** - Nodemailer makes sending email from a Node.js application straightforward and secure, without pulling in a single runtime dependency.
