@@ -132,6 +132,10 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 
     - POST `/api/v1/auth/send-verification-email`
 
+  - **User Verification Route** - Verify user with verification-code.
+
+    - POST `/api/v1/auth/verify-user`
+
   - **Logout Route** - User session over.
 
     - POST `/api/v1/auth/logout`

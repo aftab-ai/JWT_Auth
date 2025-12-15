@@ -8,7 +8,7 @@ const errorHandler = (error, req, res, next) => {
   // Node environment.
   const isDev = config.nodeENV === "development";
 
-  res.status(code).json({
+  res.status(statusCode).json({
     statusCode,
     status: false,
     message: error.message,

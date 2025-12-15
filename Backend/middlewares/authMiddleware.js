@@ -62,6 +62,7 @@ const authMiddleware = async (req, res, next) => {
     req.userId = userId;
     req.role = role;
     req.sessionId = sessionId;
+    req.session = session;
 
     next();
   } catch (error) {

@@ -42,6 +42,7 @@ const signInValidators = [
 
 // Check email verification validation.
 const emailValidators = [
+  // Email.
   check("email")
     .isEmail()
     .withMessage("Email is invalid!")
@@ -49,4 +50,22 @@ const emailValidators = [
     .withMessage("Email is required!"),
 ];
 
-export default { signUpValidators, signInValidators, emailValidators };
+// Check user verification validation.
+const verifyUserValidators = [
+  // Email.
+  check("email")
+    .isEmail()
+    .withMessage("Email is invalid!")
+    .notEmpty()
+    .withMessage("Email is required!"),
+
+  // Code.
+  check("code").notEmpty().withMessage("Code is required!"),
+];
+
+export default {
+  signUpValidators,
+  signInValidators,
+  emailValidators,
+  verifyUserValidators,
+};

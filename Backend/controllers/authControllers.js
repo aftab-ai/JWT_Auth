@@ -136,6 +136,12 @@ const sendVerificationCode = async (req, res, next) => {
       throw new Error("User not found!");
     }
 
+    // Check user-verification.
+    if (user.role === "admin") {
+      res.statusCode = 400;
+      throw new Error("User already verified!");
+    }
+
     // Generate 6 digit verification code, save in DB.
     const code = generateCode(6);
     user.verificationCode = code;
@@ -155,9 +161,72 @@ const sendVerificationCode = async (req, res, next) => {
     }
 
     res.status(200).json({
-      code: 200,
+      statusCode: 200,
       status: true,
       message: "User verification code sent successfully!",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// User-Verification controller.
+const verifyUser = async (req, res, next) => {
+  try {
+    // Fetch user email and code.
+    const { email, code } = req.body;
+    // Fetch user-id via middleware.
+    const userId = req.userId;
+
+    // Find user.
+    const user = await User.findOne({ email, _id: userId });
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("User not found!");
+    }
+
+    // Check user-verification.
+    if (user.role === "admin") {
+      res.statusCode = 400;
+      throw new Error("User already verified!");
+    }
+
+    // Verify code.
+    if (user.verificationCode !== code) {
+      res.statusCode = 400;
+      throw new Error("Code is invalid!");
+    }
+
+    user.role = "admin"; // Set user role.
+    user.verificationCode = null; // Empty verification code from database.
+    await user.save();
+
+    // Remove all user-sessoins.
+    await User.updateOne({ _id: userId }, { $set: { sessions: [] } });
+
+    // Cookie centralize options.
+    const cookieOptions = {
+      httpOnly: true,
+      path: "/",
+    };
+
+    // Clear accessToken-cookie.
+    res.clearCookie("accessToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+    // Clear refreshToken-cookie.
+    res.clearCookie("refreshToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "User verified successfully. Please, login again.",
     });
   } catch (error) {
     next(error);
@@ -260,4 +329,11 @@ const logoutAll = async (req, res, next) => {
   }
 };
 
-export default { signUp, signIn, sendVerificationCode, logout, logoutAll };
+export default {
+  signUp,
+  signIn,
+  sendVerificationCode,
+  verifyUser,
+  logout,
+  logoutAll,
+};

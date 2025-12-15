@@ -35,8 +35,18 @@ router.post(
   validators.emailValidators,
   validate,
   middlewares.authMiddleware, // Access-Token validate middleware.
-  middlewares.authorizeRole("user"), // Check user-role.
+  middlewares.validateCSRFtoken, // CSRF-Token validate middleware.
   controllers.authControllers.sendVerificationCode
+);
+
+// POST --> User-Verification route.
+router.post(
+  "/verify-user",
+  validators.verifyUserValidators,
+  validate,
+  middlewares.authMiddleware,
+  middlewares.validateCSRFtoken,
+  controllers.authControllers.verifyUser
 );
 
 // POST --> User logout(Session Over) route.
