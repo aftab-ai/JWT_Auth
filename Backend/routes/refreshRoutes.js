@@ -12,7 +12,7 @@ const router = express.Router();
 // POST --> Token Refresh Route.
 router.post(
   "/",
-  middlewares.refreshLimiter, // Minimize token-refresh attempt.
+  middlewares.rateLimiter.refreshTokenLimiter, // Minimize token-refresh attempt.
   middlewares.validateRefreshToken, // Refresh-Token middleware.
   controllers.refreshControllers.refresh // Refresh Controller.
 );

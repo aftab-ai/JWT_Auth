@@ -14,6 +14,7 @@ const router = express.Router();
 // POST --> User registration route.
 router.post(
   "/signUp",
+  middlewares.rateLimiter.registrationLimiter, // Minimize registration attempts.
   validators.signUpValidators, // Validate signUp credentials.
   validate, // Send validation errors messages.
   controllers.authControllers.signUp // SignUp authController.
@@ -22,7 +23,7 @@ router.post(
 // POST --> User authentication(login) route.
 router.post(
   "/signIn",
-  middlewares.loginLimiter, // Minimize logIn attempts.
+  middlewares.rateLimiter.loginLimiter, // Minimize logIn attempts.
   validators.signInValidators,
   validate,
   controllers.authControllers.signIn
