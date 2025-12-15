@@ -66,4 +66,15 @@ router.post(
   controllers.authControllers.logoutAll
 );
 
+// DELETE --> User account-deletion route.
+router.delete(
+  "/delete-user",
+  middlewares.rateLimiter.deleteUserLimiter,
+  validators.deleteUserValidators,
+  validate,
+  middlewares.authMiddleware,
+  middlewares.validateCSRFtoken,
+  controllers.authControllers.deleteUser
+);
+
 export default router;

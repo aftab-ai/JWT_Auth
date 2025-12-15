@@ -64,7 +64,7 @@ const refresh = async (req, res, next) => {
     setRefreshTokenCookie(res, newRefreshToken);
 
     res.status(200).json({
-      code: 200,
+      statusCode: 200,
       status: true,
       message: "Token refresh successfully.",
       data: { csrfToken: newCSRFtoken },

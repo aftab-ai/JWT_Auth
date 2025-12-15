@@ -40,7 +40,7 @@ const signInValidators = [
     .withMessage("Password is required!"),
 ];
 
-// Check email verification validation.
+// Check email-verification credentials validation.
 const emailValidators = [
   // Email.
   check("email")
@@ -50,7 +50,7 @@ const emailValidators = [
     .withMessage("Email is required!"),
 ];
 
-// Check user verification validation.
+// Check user-verification credentials validation.
 const verifyUserValidators = [
   // Email.
   check("email")
@@ -63,9 +63,20 @@ const verifyUserValidators = [
   check("code").notEmpty().withMessage("Code is required!"),
 ];
 
+// Check user-deletion credentials validation.
+const deleteUserValidators = [
+  // Passward.
+  check("password")
+    .isLength({ max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Invalid password!")
+    .notEmpty()
+    .withMessage("Password is required!"),
+];
+
 export default {
   signUpValidators,
   signInValidators,
   emailValidators,
   verifyUserValidators,
+  deleteUserValidators,
 };

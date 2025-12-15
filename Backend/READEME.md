@@ -144,6 +144,10 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 
     - POST `/api/v1/auth/logout-all`
 
+  - **User-Deletion Route** - User account deletion route.
+
+    - DELETE `/api/v1/auth/delete-user`
+
 - ### Refresh Routes
 
   - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).

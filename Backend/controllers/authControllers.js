@@ -39,7 +39,7 @@ const signUp = async (req, res, next) => {
     await newUser.save();
 
     res.status(201).json({
-      code: 201,
+      statusCode: 201,
       status: true,
       message: "User registered successfully.",
     });
@@ -111,7 +111,7 @@ const signIn = async (req, res, next) => {
     setRefreshTokenCookie(res, refreshToken);
 
     res.status(200).json({
-      code: 200,
+      statusCode: 200,
       status: true,
       message: "User signIn successfully.",
       data: { csrfToken: csrfToken },
@@ -133,7 +133,7 @@ const sendVerificationCode = async (req, res, next) => {
     const user = await User.findOne({ email, _id: userId });
     if (!user) {
       res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new Error("Invalid credentials!");
     }
 
     // Check user-verification.
@@ -182,7 +182,7 @@ const verifyUser = async (req, res, next) => {
     const user = await User.findOne({ email, _id: userId });
     if (!user) {
       res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new Error("Invalid credentials!");
     }
 
     // Check user-verification.
@@ -276,8 +276,8 @@ const logout = async (req, res, next) => {
       sameSite: isProd ? "strict" : "lax",
     });
 
-    res.status(200).json({
-      code: 200,
+    res.status(204).json({
+      statusCode: 204,
       status: true,
       message: "User logged out successfully.",
     });
@@ -319,10 +319,71 @@ const logoutAll = async (req, res, next) => {
       sameSite: isProd ? "strict" : "lax",
     });
 
-    res.status(200).json({
-      code: 200,
+    res.status(204).json({
+      statusCode: 204,
       status: true,
       message: "User logged out successfully from all the sessions.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// User Account-Deletion controller.
+const deleteUser = async (req, res, next) => {
+  try {
+    // Fetch userId.
+    const userId = req.userId;
+    // Fetch password.
+    const { password } = req.body;
+
+    // Check password.
+    if (!password) {
+      res.statusCode = 400;
+      throw new Error("Password is missing!");
+    }
+
+    // Fetch user.
+    const user = await User.findById(userId).select("+password");
+    // Check user.
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("Invalid credentials!");
+    }
+
+    // Compare the password.
+    const match = await comparePassword(password, user.password);
+    if (!match) {
+      res.statusCode = 401;
+      throw new Error("Invalid credentials!");
+    }
+
+    // Delete user(sessions embedded → auto removed).
+    await User.deleteOne({ _id: userId });
+
+    // Cookie centralize options.
+    const cookieOptions = {
+      httpOnly: true,
+      path: "/",
+    };
+
+    // Clear accessToken-cookie.
+    res.clearCookie("accessToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+    // Clear refreshToken-cookie.
+    res.clearCookie("refreshToken", "", {
+      ...cookieOptions,
+      secure: isProd,
+      sameSite: isProd ? "strict" : "lax",
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "User-Account deleted successfully.",
     });
   } catch (error) {
     next(error);
@@ -336,4 +397,5 @@ export default {
   verifyUser,
   logout,
   logoutAll,
+  deleteUser,
 };
