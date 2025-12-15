@@ -29,6 +29,16 @@ router.post(
 );
 
 // Protected routes.
+// POST --> Email-Verification route.
+router.post(
+  "/send-verification-email",
+  validators.emailValidators,
+  validate,
+  middlewares.authMiddleware, // Access-Token validate middleware.
+  middlewares.authorizeRole("user"), // Check user-role.
+  controllers.authControllers.sendVerificationCode
+);
+
 // POST --> User logout(Session Over) route.
 router.post(
   "/logout",
@@ -43,14 +53,6 @@ router.post(
   middlewares.validateRefreshToken,
   middlewares.validateCSRFtoken,
   controllers.authControllers.logoutAll
-);
-
-// POST --> Email-Verification route.
-router.post(
-  "/send-verification-email",
-  middlewares.authMiddleware, // Access-Token validate middleware.
-  middlewares.authorizeRole("user"), // Check user-role.
-  controllers.authControllers.sendVerificationCode
 );
 
 export default router;
