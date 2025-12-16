@@ -10,14 +10,14 @@ const setRefreshTokenCookie = (res, token) => {
   const cookieOptions = {
     httpOnly: true, // Protect againt XSS.
     path: "/",
+    secure: isProd, // Only HTTPS in production.
+    // Blocks CSRF(cross-site request fetch) unless using cross-domain auth.
+    sameSite: isProd ? "strict" : "lax",
   };
 
   // Refresh-Token Cookie.
   res.cookie("refreshToken", token, {
     ...cookieOptions,
-    secure: isProd, // Only HTTPS in production.
-    // Blocks CSRF(cross-site request fetch) unless using cross-domain auth.
-    sameSite: isProd ? "strict" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 7,
   });
 };

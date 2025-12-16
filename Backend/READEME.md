@@ -35,6 +35,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----refreshRoutes.js
   |----utils/
   |  |----cookies/
+  |  |  |----clearTokenCookie.js
   |  |  |----setAccessTokenCookie.js
   |  |  |----setRefreshTokenCookie.js
   |  |----device/

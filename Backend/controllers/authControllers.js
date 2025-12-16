@@ -12,12 +12,7 @@ import createCSRFtoken from "../utils/tokens/createCSRFtoken.js";
 import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
 import generateCode from "../utils/randomCode/generateCode.js";
 import sendEmail from "../utils/sendEmail/sendEmail.js";
-
-// Import Environment Variables.
-import config from "../config/keys.js";
-
-// Node environment.
-const isProd = config.nodeENV === "production";
+import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -157,7 +152,7 @@ const sendVerificationCode = async (req, res, next) => {
       });
     } catch (error) {
       res.statusCode = 500;
-      throw new Error("Unable to send email!");
+      next(error);
     }
 
     res.status(200).json({
@@ -204,24 +199,8 @@ const verifyUser = async (req, res, next) => {
     // Remove all user-sessoins.
     await User.updateOne({ _id: userId }, { $set: { sessions: [] } });
 
-    // Cookie centralize options.
-    const cookieOptions = {
-      httpOnly: true,
-      path: "/",
-    };
-
-    // Clear accessToken-cookie.
-    res.clearCookie("accessToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
-    // Clear refreshToken-cookie.
-    res.clearCookie("refreshToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
+    clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
+    clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
 
     res.status(200).json({
       statusCode: 200,
@@ -257,27 +236,11 @@ const logout = async (req, res, next) => {
       { $pull: { sessions: { hashRefreshToken: hashedRefreshToken } } }
     );
 
-    // Cookie centralize options.
-    const cookieOptions = {
-      httpOnly: true,
-      path: "/",
-    };
+    clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
+    clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
 
-    // Clear accessToken-cookie.
-    res.clearCookie("accessToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
-    // Clear refreshToken-cookie.
-    res.clearCookie("refreshToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
-
-    res.status(204).json({
-      statusCode: 204,
+    res.status(200).json({
+      statusCode: 200,
       status: true,
       message: "User logged out successfully.",
     });
@@ -300,27 +263,11 @@ const logoutAll = async (req, res, next) => {
     // Remove all user-sessoins.
     await User.updateOne({ _id: userId }, { $set: { sessions: [] } });
 
-    // Cookie centralize options.
-    const cookieOptions = {
-      httpOnly: true,
-      path: "/",
-    };
+    clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
+    clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
 
-    // Clear accessToken-cookie.
-    res.clearCookie("accessToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
-    // Clear refreshToken-cookie.
-    res.clearCookie("refreshToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
-
-    res.status(204).json({
-      statusCode: 204,
+    res.status(200).json({
+      statusCode: 200,
       status: true,
       message: "User logged out successfully from all the sessions.",
     });
@@ -361,24 +308,8 @@ const deleteUser = async (req, res, next) => {
     // Delete user(sessions embedded → auto removed).
     await User.deleteOne({ _id: userId });
 
-    // Cookie centralize options.
-    const cookieOptions = {
-      httpOnly: true,
-      path: "/",
-    };
-
-    // Clear accessToken-cookie.
-    res.clearCookie("accessToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
-    // Clear refreshToken-cookie.
-    res.clearCookie("refreshToken", "", {
-      ...cookieOptions,
-      secure: isProd,
-      sameSite: isProd ? "strict" : "lax",
-    });
+    clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
+    clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
 
     res.status(200).json({
       statusCode: 200,
