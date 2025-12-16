@@ -1,18 +1,20 @@
 // Import local file-modules.
 import User from "../models/User.js";
 import hashPassword from "../utils/password/hashPassword.js";
-import comparePassword from "../utils/password/comparePassword.js";
+import compareHashPassword from "../utils/password/compareHashPassword.js";
 import createAccessToken from "../utils/tokens/createAccessToken.js";
 import setAccessTokenCookie from "../utils/cookies/setAccessTokenCookie.js";
 import createRefreshToken from "../utils/tokens/createRefreshToken.js";
 import setRefreshTokenCookie from "../utils/cookies/setRefreshTokenCookie.js";
 import hashRefreshToken from "../utils/tokens/hashRefreshToken.js";
-import parseDeviceName from "../utils/device/parseDeviceName.js";
+import parseDeviceName from "../utils/userDevice/parseDeviceName.js";
 import createCSRFtoken from "../utils/tokens/createCSRFtoken.js";
 import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
 import generateCode from "../utils/randomCode/generateCode.js";
 import sendEmail from "../utils/sendEmail/sendEmail.js";
 import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
+import hashRandomCode from "../utils/randomCode/hashRandomCode.js";
+import compareHashCode from "../utils/randomCode/compareHashCode.js";
 
 // User registration(signUp) controller.
 const signUp = async (req, res, next) => {
@@ -56,8 +58,8 @@ const signIn = async (req, res, next) => {
     }
 
     // Compare the password.
-    const match = await comparePassword(password, user.password);
-    if (!match) {
+    const verifyPassword = await compareHashPassword(password, user.password);
+    if (!verifyPassword) {
       res.statusCode = 401;
       throw new Error("Invalid credentials!");
     }
@@ -139,7 +141,9 @@ const sendVerificationCode = async (req, res, next) => {
 
     // Generate 6 digit verification code, save in DB.
     const code = generateCode(6);
-    user.verificationCode = code;
+    // Hash Code.
+    const hashedCode = await hashRandomCode(code);
+    user.verificationCode = hashedCode;
     await user.save();
 
     // Send email-verification code via Email.
@@ -187,7 +191,8 @@ const verifyUser = async (req, res, next) => {
     }
 
     // Verify code.
-    if (user.verificationCode !== code) {
+    const verifyCode = await compareHashCode(code, user.verificationCode);
+    if (!verifyCode) {
       res.statusCode = 400;
       throw new Error("Code is invalid!");
     }
@@ -299,8 +304,8 @@ const deleteUser = async (req, res, next) => {
     }
 
     // Compare the password.
-    const match = await comparePassword(password, user.password);
-    if (!match) {
+    const verifyPassword = await compareHashPassword(password, user.password);
+    if (!verifyPassword) {
       res.statusCode = 401;
       throw new Error("Invalid credentials!");
     }

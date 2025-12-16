@@ -38,13 +38,13 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |  |----clearTokenCookie.js
   |  |  |----setAccessTokenCookie.js
   |  |  |----setRefreshTokenCookie.js
-  |  |----device/
-  |  |  |----parseDeviceName.js
   |  |----password/
-  |  |  |----comparePassword.js
+  |  |  |----compareHashPassword.js
   |  |  |----hashPassword.js
   |  |----randomCode/
+  |  |  |----compareHashCode.js
   |  |  |----generateCode.js
+  |  |  |----hashRandomCode.js
   |  |----sendEmail/
   |  |  |----sendEmail.js
   |  |----tokens/
@@ -53,6 +53,8 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |  |----createRefreshToken.js
   |  |  |----hashCSRFtoken.js
   |  |  |----hashRefreshToken.js
+  |  |----userDevice/
+  |  |  |----parseDeviceName.js
   |----validators/
   |  |----authValidators.js
   |  |----validate.js

@@ -2,8 +2,8 @@
 import bcrypt from "bcryptjs";
 
 // Compare user password.
-const comparePassword = (password, hashedPassword) => {
+const compareHashPassword = (password, hashedPassword) => {
   return bcrypt.compare(password, hashedPassword);
 };
 
-export default comparePassword;
+export default compareHashPassword;
