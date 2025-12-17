@@ -27,6 +27,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----refreshLimiter.js
   |  |----validateCSRFtoken.js
   |  |----validateRefreshToken.js
+  |  |----verifiedEmail.js
   |----models/
   |  |----User.js
   |----routes/
@@ -137,7 +138,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 
   - **User Verification Route** - Verify user with verification-code.
 
-    - POST `/api/v1/auth/verify-user`
+    - POST `/api/v1/auth/verify-email`
 
   - **Logout Route** - User session over.
 

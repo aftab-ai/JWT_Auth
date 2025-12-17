@@ -5,6 +5,7 @@ import validateRefreshToken from "./validateRefreshToken.js";
 import validateCSRFtoken from "./validateCSRFtoken.js";
 import authMiddleware from "./authMiddleware.js";
 import authorizeRole from "./authorizeRole.js";
+import verifiedEmail from "./verifiedEmail.js";
 
 export default {
   errorHandler,
@@ -13,4 +14,5 @@ export default {
   validateCSRFtoken,
   authMiddleware,
   authorizeRole,
+  verifiedEmail,
 };

@@ -133,17 +133,20 @@ const sendVerificationCode = async (req, res, next) => {
       throw new Error("Invalid credentials!");
     }
 
-    // Check user-verification.
-    if (user.role === "admin") {
+    // Check email-verification.
+    if (user.isEmailVerified) {
       res.statusCode = 400;
-      throw new Error("User already verified!");
+      throw new Error("Email already verified!");
     }
 
     // Generate 6 digit verification code, save in DB.
     const code = generateCode(6);
     // Hash Code.
     const hashedCode = await hashRandomCode(code);
-    user.verificationCode = hashedCode;
+    user.emailVerification = {
+      hashCode: hashedCode,
+      expiresAt: Date.now() + 1000 * 60 * 2,
+    };
     await user.save();
 
     // Send email-verification code via Email.
@@ -169,8 +172,8 @@ const sendVerificationCode = async (req, res, next) => {
   }
 };
 
-// User-Verification controller.
-const verifyUser = async (req, res, next) => {
+// Email-Verification controller.
+const verifyEmail = async (req, res, next) => {
   try {
     // Fetch user email and code.
     const { email, code } = req.body;
@@ -184,21 +187,33 @@ const verifyUser = async (req, res, next) => {
       throw new Error("Invalid credentials!");
     }
 
-    // Check user-verification.
-    if (user.role === "admin") {
+    // Check email-verification.
+    if (user.isEmailVerified) {
       res.statusCode = 400;
-      throw new Error("User already verified!");
+      throw new Error("Email already verified!");
+    }
+
+    // Check Code expiry.
+    if (
+      !user.emailVerification ||
+      user.emailVerification.expiresAt < new Date()
+    ) {
+      res.statusCode = 400;
+      throw new Error("Code is expired!");
     }
 
     // Verify code.
-    const verifyCode = await compareHashCode(code, user.verificationCode);
+    const verifyCode = await compareHashCode(
+      code,
+      user.emailVerification.hashCode
+    );
     if (!verifyCode) {
       res.statusCode = 400;
       throw new Error("Code is invalid!");
     }
 
-    user.role = "admin"; // Set user role.
-    user.verificationCode = null; // Empty verification code from database.
+    user.isEmailVerified = true; // Email-Verified true.
+    user.emailVerification = undefined;
     await user.save();
 
     // Remove all user-sessoins.
@@ -330,7 +345,7 @@ export default {
   signUp,
   signIn,
   sendVerificationCode,
-  verifyUser,
+  verifyEmail,
   logout,
   logoutAll,
   deleteUser,

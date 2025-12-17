@@ -42,12 +42,12 @@ router.post(
 
 // POST --> User-Verification route.
 router.post(
-  "/verify-user",
+  "/verify-email",
   validators.verifyUserValidators,
   validate,
   middlewares.authMiddleware,
   middlewares.validateCSRFtoken,
-  controllers.authControllers.verifyUser
+  controllers.authControllers.verifyEmail
 );
 
 // POST --> User logout(Session Over) route.

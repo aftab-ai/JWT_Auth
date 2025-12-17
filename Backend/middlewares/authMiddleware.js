@@ -60,6 +60,7 @@ const authMiddleware = async (req, res, next) => {
 
     // Attach user + session.
     req.userId = userId;
+    req.user = user;
     req.role = role;
     req.sessionId = sessionId;
     req.session = session;
