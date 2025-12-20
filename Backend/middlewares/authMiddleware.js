@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import config from "../config/keys.js";
 
 // Import local file-modules.
-import User from "../models/User.js";
+import models from "../models/index.js";
 
 // User authentication middleware.
 const authMiddleware = async (req, res, next) => {
@@ -43,19 +43,38 @@ const authMiddleware = async (req, res, next) => {
     const { id: userId, role, sessionId } = decoded;
 
     // Fetch user.
-    const user = await User.findById(userId).select("sessions");
+    const user = await models.User.findById(userId);
     // Check user.
     if (!user) {
       res.statusCode = 401;
       throw new Error("User not found!");
     }
 
-    // Fetch session.
-    const session = user.sessions.id(sessionId);
+    // Password Changed Invalidation.
+    if (
+      user.passwordChangedAt &&
+      decoded.iat * 1000 < user.passwordChangedAt.getTime()
+    ) {
+      res.status(401);
+      throw new Error("Password changed. Please sign in again!");
+    }
+
+    // Fetch user session.
+    const session = await models.Session.findById(sessionId).select(
+      "+hashCSRFToken"
+    );
     // Check session.
     if (!session) {
       res.statusCode = 401;
       throw new Error("Session not found!");
+    }
+    if (session.revokedAt) {
+      res.statusCode = 401;
+      throw new Error("Session has been revoked!");
+    }
+    if (session.expiresAt < Date.now()) {
+      res.statusCode = 401;
+      throw new Error("Session has expired!");
     }
 
     // Attach user + session.

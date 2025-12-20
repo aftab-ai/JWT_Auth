@@ -26,9 +26,6 @@ app.use(cookieParser());
 // Auth Routes.
 app.use("/api/v1/auth", routes.authRoutes);
 
-// Refresh Routes.
-app.use("/api/v1/refresh-token", routes.refreshRoutes);
-
 // 404 Not-Found route.
 app.use(controllers.notFound);
 

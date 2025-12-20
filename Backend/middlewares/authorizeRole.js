@@ -1,23 +1,16 @@
-const authorizeRole = (role) => {
+const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
     try {
       // Check userRole.
       if (!req.role) {
         res.statusCode = 401;
-        throw new Error("Unauthorized!");
+        throw new Error("Unauthorized! No role assigned.");
       }
 
-      // Fetch userRole from authMiddleware.
-      const userRole = req.role;
-      if (!userRole) {
+      // Check if user role is allowed
+      if (!allowedRoles.includes(req.role)) {
         res.statusCode = 403;
-        throw new Error("User role not assigned!");
-      }
-
-      // Check user role.
-      if (userRole !== role) {
-        res.statusCode = 403;
-        throw new Error("Forbidden: Permissions denied!");
+        throw new Error("Forbidden: Insufficient permissions.");
       }
 
       next();

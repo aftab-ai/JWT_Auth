@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 // Compare user password.
 const compareHashCode = (code, hashedCode) => {
+  if (!code || !hashedCode) return false;
   return bcrypt.compare(code, hashedCode);
 };
 

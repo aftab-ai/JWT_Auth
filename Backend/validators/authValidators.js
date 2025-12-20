@@ -4,73 +4,113 @@ import { check } from "express-validator";
 // Check signUp credentials validation.
 const signUpValidators = [
   // Username.
-  check("username").notEmpty().withMessage("Username is required!"),
+  check("username")
+    .trim()
+    .notEmpty()
+    .withMessage("Username is required!")
+    .bail()
+    .isLength({ min: 3, max: 30 })
+    .withMessage("Username must be between 3 and 30 characters!")
+    .matches(/^[a-zA-Z0-9_]+$/)
+    .withMessage(
+      "Username can contain only letters, numbers, and underscores!"
+    ),
 
   // Email.
   check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .bail()
     .isEmail()
     .withMessage("Email is invalid!")
-    .notEmpty()
-    .withMessage("Email is required!"),
+    .normalizeEmail(),
 
   // Password.
   check("password")
-    .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long!")
-    .isLength({ max: 128 }) // Reject huge password: Prevent DOS.
-    .withMessage("Password is too long!")
+    .trim()
     .notEmpty()
-    .withMessage("Password is required!"),
+    .withMessage("Password is required!")
+    .bail()
+    .matches(/[A-Z]/)
+    .withMessage("Password must have at least 1 uppercase letter!")
+    .matches(/[a-z]/)
+    .withMessage("Password must have at least 1 lowercase letter!")
+    .matches(/[0-9]/)
+    .withMessage("Password must have at least 1 number!")
+    .matches(/[^\w\s]/)
+    .withMessage("Password must have at least 1 special character! No spaces.")
+    .isLength({ min: 8, max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password must be between 8 to 128 characters long!"),
 ];
 
 // Check signIn credentials validation.
 const signInValidators = [
   // Email.
   check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .bail()
     .isEmail()
     .withMessage("Email is invalid!")
-    .notEmpty()
-    .withMessage("Email is required!"),
+    .normalizeEmail(),
 
-  // Passward.
+  // Password.
   check("password")
-    .isLength({ max: 128 }) // Reject huge password: Prevent DOS.
-    .withMessage("Invalid password!")
+    .trim()
     .notEmpty()
-    .withMessage("Password is required!"),
+    .withMessage("Password is required!")
+    .bail()
+    .isLength({ min: 8, max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password is invalid!"),
 ];
 
-// Check email-verification credentials validation.
+// Check send email-verification credentials validation.
 const emailValidators = [
   // Email.
   check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .bail()
     .isEmail()
     .withMessage("Email is invalid!")
-    .notEmpty()
-    .withMessage("Email is required!"),
+    .normalizeEmail(),
 ];
 
-// Check user-verification credentials validation.
+// Check user email-verification credentials validation.
 const verifyUserValidators = [
   // Email.
   check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .bail()
     .isEmail()
     .withMessage("Email is invalid!")
-    .notEmpty()
-    .withMessage("Email is required!"),
+    .normalizeEmail(),
 
   // Code.
-  check("code").notEmpty().withMessage("Code is required!"),
+  check("code")
+    .trim()
+    .notEmpty()
+    .withMessage("Code is required!")
+    .bail()
+    .matches(/^\d{6}$/)
+    .withMessage("Code must be a 6-digit code!"),
 ];
 
 // Check user-deletion credentials validation.
 const deleteUserValidators = [
-  // Passward.
+  // Password.
   check("password")
-    .isLength({ max: 128 }) // Reject huge password: Prevent DOS.
-    .withMessage("Invalid password!")
+    .trim()
     .notEmpty()
-    .withMessage("Password is required!"),
+    .withMessage("Password is required!")
+    .bail()
+    .isLength({ min: 8, max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password is invalid!"),
 ];
 
 export default {

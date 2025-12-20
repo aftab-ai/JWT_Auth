@@ -3,8 +3,8 @@ import crypto from "crypto";
 
 // Cross-Site Request Forgery token.
 // Generate 32bytes data convert into 64 characters of hex string(csrf-token).
-const createCSRFtoken = () => {
+const createCSRFToken = () => {
   return crypto.randomBytes(32).toString("hex");
 };
 
-export default createCSRFtoken;
+export default createCSRFToken;

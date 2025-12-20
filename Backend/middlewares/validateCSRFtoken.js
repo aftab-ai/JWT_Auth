@@ -2,9 +2,9 @@
 import crypto from "crypto";
 
 // Import local file-modules.
-import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
+import hashCSRFToken from "../utils/tokens/hashCSRFToken.js";
 
-const validateCSRFtoken = (req, res, next) => {
+const validateCSRFToken = (req, res, next) => {
   try {
     // Fetch from middleware.
     const session = req.session;
@@ -12,6 +12,11 @@ const validateCSRFtoken = (req, res, next) => {
     if (!session) {
       res.statusCode = 401;
       throw new Error("Session is not available!");
+    }
+
+    if (session.revokedAt) {
+      res.statusCode = 401;
+      throw new Error("Session has been revoked!");
     }
 
     // Fetch CSRF-Token.
@@ -22,22 +27,14 @@ const validateCSRFtoken = (req, res, next) => {
       throw new Error("CSRF-Token is missing!");
     }
 
-    // Check CSRF-Token expiry.
-    if (session.csrfExpires < new Date()) {
-      res.statusCode = 403;
-      throw new Error("CSRF-Token is expired!");
-    }
-
     // Hash CSRF-Token.
-    const hashedCSRFtoken = hashCSRFtoken(csrfToken);
+    const hashedCSRFtoken = hashCSRFToken(csrfToken);
 
     // Validate CSRF-Token with always the same compare time(no-leak timinig info).
-    const isValid =
-      hashedCSRFtoken === session.hashCSRFtoken &&
-      crypto.timingSafeEqual(
-        Buffer.from(hashedCSRFtoken, "hex"),
-        Buffer.from(session.hashCSRFtoken, "hex")
-      );
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(hashedCSRFtoken, "hex"),
+      Buffer.from(session.hashCSRFToken, "hex")
+    );
 
     if (!isValid) {
       res.statusCode = 403;
@@ -50,4 +47,4 @@ const validateCSRFtoken = (req, res, next) => {
   }
 };
 
-export default validateCSRFtoken;
+export default validateCSRFToken;

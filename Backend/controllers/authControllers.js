@@ -1,5 +1,8 @@
+// Import Third-Party npm packages.
+import mongoose from "mongoose";
+
 // Import local file-modules.
-import User from "../models/User.js";
+import models from "../models/index.js";
 import hashPassword from "../utils/password/hashPassword.js";
 import compareHashPassword from "../utils/password/compareHashPassword.js";
 import createAccessToken from "../utils/tokens/createAccessToken.js";
@@ -8,8 +11,8 @@ import createRefreshToken from "../utils/tokens/createRefreshToken.js";
 import setRefreshTokenCookie from "../utils/cookies/setRefreshTokenCookie.js";
 import hashRefreshToken from "../utils/tokens/hashRefreshToken.js";
 import parseDeviceName from "../utils/userDevice/parseDeviceName.js";
-import createCSRFtoken from "../utils/tokens/createCSRFtoken.js";
-import hashCSRFtoken from "../utils/tokens/hashCSRFtoken.js";
+import createCSRFToken from "../utils/tokens/createCSRFToken.js";
+import hashCSRFToken from "../utils/tokens/hashCSRFToken.js";
 import generateCode from "../utils/randomCode/generateCode.js";
 import sendEmail from "../utils/sendEmail/sendEmail.js";
 import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
@@ -22,7 +25,7 @@ const signUp = async (req, res, next) => {
     const { username, email, password } = req.body;
 
     // Check duplicate email.
-    const isEmailExist = await User.findOne({ email });
+    const isEmailExist = await models.User.findOne({ email });
     if (isEmailExist) {
       res.statusCode = 409;
       throw new Error("Email already exist!");
@@ -32,7 +35,11 @@ const signUp = async (req, res, next) => {
     const hashedPassword = await hashPassword(password);
 
     // Save user data to database.
-    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new models.User({
+      username,
+      email,
+      password: hashedPassword,
+    });
     await newUser.save();
 
     res.status(201).json({
@@ -51,7 +58,7 @@ const signIn = async (req, res, next) => {
     const { email, password } = req.body;
 
     // Find user in database.
-    const user = await User.findOne({ email });
+    const user = await models.User.findOne({ email }).select("+password");
     if (!user) {
       res.statusCode = 401;
       throw new Error("Invalid credentials!");
@@ -64,44 +71,47 @@ const signIn = async (req, res, next) => {
       throw new Error("Invalid credentials!");
     }
 
-    // Refresh Token.
+    // Refresh-Token.
     const refreshToken = createRefreshToken();
-    // Hash Refresh Token.
+    // Hash Refresh-Token.
     const hashedRefreshToken = hashRefreshToken(refreshToken);
-    // CSRF(Cross-Site Request Forgery) Token.
-    const csrfToken = createCSRFtoken();
+    // CSRF-Token(Cross-Site Request Forgery).
+    const csrfToken = createCSRFToken();
     // Hash CSRF Token.
-    const hashedCSRFtoken = hashCSRFtoken(csrfToken);
+    const hashedCSRFToken = hashCSRFToken(csrfToken);
 
     // Parse user device info.
     const deviceName = parseDeviceName(req.headers["user-agent"]);
 
+    // Fetch user sessions(Ascending Order).
+    let sessions = await models.Session.find({ user: user._id }).sort({
+      createdAt: 1,
+    });
     // Sessions limits to 10.
-    if (user.sessions.length >= 10) user.sessions.shift();
+    if (sessions.length >= 10) {
+      await models.Session.deleteOne({ _id: sessions[0]._id });
+      sessions.shift();
+    }
 
     // Create new session.
-    const newSession = {
-      hashCSRFtoken: hashedCSRFtoken,
-      csrfExpires: new Date(Date.now() + 1000 * 60 * 30),
+    const newSession = new models.Session({
+      user: user._id,
       hashRefreshToken: hashedRefreshToken,
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      hashCSRFToken: hashedCSRFToken,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       device: {
         ip: req.ip,
         userAgent: req.headers["user-agent"],
         deviceName: deviceName,
       },
-    };
-
-    user.sessions.push(newSession);
+    });
+    await newSession.save();
 
     // Get sessionId
-    const sessionId = user.sessions[user.sessions.length - 1]._id.toString();
+    const sessionId = newSession._id.toString();
 
     // Access Token.
     const accessToken = createAccessToken(user, sessionId);
-
-    // User Sessions save to DB.
-    await user.save();
 
     // Cookie.
     setAccessTokenCookie(res, accessToken);
@@ -110,7 +120,7 @@ const signIn = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User signIn successfully.",
+      message: "User LoggedIn successfully.",
       data: { csrfToken: csrfToken },
     });
   } catch (error) {
@@ -118,8 +128,69 @@ const signIn = async (req, res, next) => {
   }
 };
 
-// Email-Verification(Send verification-code to user email) controller.
-const sendVerificationCode = async (req, res, next) => {
+// Token refresh controller.
+const tokenRefresh = async (req, res, next) => {
+  try {
+    // Fetch from validateRefreshToken middleware.
+    const user = req.user;
+    const session = req.session;
+    const hashedRefreshToken = req.hashedRefreshToken;
+
+    // Create new Refresh-Token.
+    const newRefreshToken = createRefreshToken();
+    const newHashRefreshToken = hashRefreshToken(newRefreshToken);
+
+    // New Session/Refresh-Token expires time.
+    const newExpiresTime = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+
+    // Create new CSRF-Token.
+    const newCSRFToken = createCSRFToken();
+    const newHashCSRFToken = hashCSRFToken(newCSRFToken);
+
+    // Atomic Token-Rotation.
+    const result = await models.Session.updateOne(
+      {
+        _id: session._id,
+        hashRefreshToken: hashedRefreshToken,
+      },
+      {
+        $set: {
+          hashRefreshToken: newHashRefreshToken,
+          expiresAt: newExpiresTime,
+          hashCSRFToken: newHashCSRFToken,
+        },
+      }
+    );
+
+    // If no document updated -> Race Condition or Stolen Token.
+    if (result.modifiedCount === 0) {
+      await models.Session.deleteOne({ _id: session._id });
+      res.statusCode = 409;
+      throw new Error("Refresh Conflict! - Session removed, Login again.");
+    }
+
+    // Fetch session id.
+    const sessionId = session._id;
+    // Create new Access-Token.
+    const newAccessToken = createAccessToken(user, sessionId);
+
+    // Set updated token-cookies.
+    setAccessTokenCookie(res, newAccessToken);
+    setRefreshTokenCookie(res, newRefreshToken);
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "Token refreshed successfully.",
+      data: { csrfToken: newCSRFToken },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Email-Verification(Send verification-code to user via email) controller.
+const emailVerificationCode = async (req, res, next) => {
   try {
     // Fetch user-email.
     const { email } = req.body;
@@ -127,7 +198,7 @@ const sendVerificationCode = async (req, res, next) => {
     const userId = req.userId;
 
     // Find user.
-    const user = await User.findOne({ email, _id: userId });
+    const user = await models.User.findOne({ email, _id: userId });
     if (!user) {
       res.statusCode = 401;
       throw new Error("Invalid credentials!");
@@ -165,14 +236,14 @@ const sendVerificationCode = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User verification code sent successfully!",
+      message: "User verification code sent successfully.",
     });
   } catch (error) {
     next(error);
   }
 };
 
-// Email-Verification controller.
+// Email-Verification(Verify user email via code) controller.
 const verifyEmail = async (req, res, next) => {
   try {
     // Fetch user email and code.
@@ -181,7 +252,9 @@ const verifyEmail = async (req, res, next) => {
     const userId = req.userId;
 
     // Find user.
-    const user = await User.findOne({ email, _id: userId });
+    const user = await models.User.findOne({ email, _id: userId }).select(
+      "+emailVerification.hashCode"
+    );
     if (!user) {
       res.statusCode = 401;
       throw new Error("Invalid credentials!");
@@ -196,10 +269,11 @@ const verifyEmail = async (req, res, next) => {
     // Check Code expiry.
     if (
       !user.emailVerification ||
+      !user.emailVerification.hashCode ||
       user.emailVerification.expiresAt < new Date()
     ) {
       res.statusCode = 400;
-      throw new Error("Code is expired!");
+      throw new Error("Verification code is invalid or expired!");
     }
 
     // Verify code.
@@ -217,7 +291,7 @@ const verifyEmail = async (req, res, next) => {
     await user.save();
 
     // Remove all user-sessoins.
-    await User.updateOne({ _id: userId }, { $set: { sessions: [] } });
+    await models.Session.deleteMany({ user: userId });
 
     clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
     clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
@@ -226,6 +300,7 @@ const verifyEmail = async (req, res, next) => {
       statusCode: 200,
       status: true,
       message: "User verified successfully. Please, login again.",
+      data: { csrfToken: null },
     });
   } catch (error) {
     next(error);
@@ -251,10 +326,10 @@ const logout = async (req, res, next) => {
     }
 
     // Remove user-session holding that Refresh-Token-Hash.
-    await User.updateOne(
-      { _id: userId },
-      { $pull: { sessions: { hashRefreshToken: hashedRefreshToken } } }
-    );
+    await models.Session.deleteOne({
+      user: userId,
+      hashRefreshToken: req.hashedRefreshToken,
+    });
 
     clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
     clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
@@ -263,6 +338,7 @@ const logout = async (req, res, next) => {
       statusCode: 200,
       status: true,
       message: "User logged out successfully.",
+      data: { csrfToken: null },
     });
   } catch (error) {
     next(error);
@@ -281,7 +357,7 @@ const logoutAll = async (req, res, next) => {
     }
 
     // Remove all user-sessoins.
-    await User.updateOne({ _id: userId }, { $set: { sessions: [] } });
+    await models.Session.deleteMany({ user: userId });
 
     clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
     clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
@@ -290,6 +366,7 @@ const logoutAll = async (req, res, next) => {
       statusCode: 200,
       status: true,
       message: "User logged out successfully from all the sessions.",
+      data: { csrfToken: null },
     });
   } catch (error) {
     next(error);
@@ -298,7 +375,13 @@ const logoutAll = async (req, res, next) => {
 
 // User Account-Deletion controller.
 const deleteUser = async (req, res, next) => {
+  // MonogoDB session.
+  const session = await mongoose.startSession();
+
   try {
+    // Transaction Start.
+    session.startTransaction();
+
     // Fetch userId.
     const userId = req.userId;
     // Fetch password.
@@ -311,7 +394,9 @@ const deleteUser = async (req, res, next) => {
     }
 
     // Fetch user.
-    const user = await User.findById(userId).select("+password");
+    const user = await models.User.findById(userId)
+      .select("+password")
+      .session(session);
     // Check user.
     if (!user) {
       res.statusCode = 401;
@@ -325,9 +410,15 @@ const deleteUser = async (req, res, next) => {
       throw new Error("Invalid credentials!");
     }
 
-    // Delete user(sessions embedded → auto removed).
-    await User.deleteOne({ _id: userId });
+    // Delete user.
+    await models.Session.deleteMany({ user: userId }).session(session);
+    await models.PasswordReset.deleteMany({ user: userId }).session(session);
+    await models.User.deleteOne({ _id: userId }).session(session);
 
+    // Finalize the Transaction.
+    await session.commitTransaction();
+
+    // Clear cookies.
     clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
     clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
 
@@ -335,16 +426,24 @@ const deleteUser = async (req, res, next) => {
       statusCode: 200,
       status: true,
       message: "User-Account deleted successfully.",
+      data: { csrfToken: null },
     });
   } catch (error) {
+    // Only abort if transaction is still active.
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
     next(error);
+  } finally {
+    session.endSession(); // Session End.
   }
 };
 
 export default {
   signUp,
   signIn,
-  sendVerificationCode,
+  tokenRefresh,
+  emailVerificationCode,
   verifyEmail,
   logout,
   logoutAll,

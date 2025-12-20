@@ -1,42 +1,60 @@
 // Import Third-Party npm packages.
 import mongoose from "mongoose";
 
-// Session Schema.
-const sessionSchema = new mongoose.Schema(
+// Email Verification Schema.
+const emailVerificationSchema = new mongoose.Schema(
   {
-    hashCSRFtoken: { type: String, required: true }, // Hash CSRF Token.
-    csrfExpires: { type: Date, required: true }, // CSRF Expiry.
-    hashRefreshToken: { type: String, required: true, index: true }, // Hash Refresh Token.
-    expires: { type: Date, required: true }, // Expiry Date.
-    // User Device Details.
-    device: {
-      ip: String,
-      userAgent: String,
-      deviceName: { type: String, default: "Unknown Device" },
+    // Hash Code.
+    hashCode: {
+      type: String,
+      select: false,
     },
+
+    // Code Expiry.
+    expiresAt: Date,
   },
-  { timestamps: true }
+  { _id: false }
 );
 
 // User Schema.
 const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true },
-    email: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true, minlength: 8 },
+    // Username.
+    username: { type: String, required: true, trim: true },
+
+    // Email.
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      index: true,
+    },
+
+    // Password.
+    password: { type: String, required: true, minlength: 8, select: false },
+
+    // User role.
     role: {
       type: String,
       enum: ["user", "admin", "superAdmin"],
       default: "user",
     },
+
+    // Password-Change Date.
+    passwordChangedAt: Date,
+
+    // User Email Validation.
     isEmailVerified: { type: Boolean, default: false },
-    emailVerification: { hashCode: String, expiresAt: Date },
-    sessions: { type: [sessionSchema], default: [] },
+
+    // User Email Verification.
+    emailVerification: emailVerificationSchema,
   },
   { timestamps: true }
 );
 
-// User model.
-const User = mongoose.model("user", userSchema);
+// User Model.
+const User = mongoose.model("User", userSchema);
 
 export default User;

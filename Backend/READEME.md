@@ -15,7 +15,6 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----authControllers.js
   |  |----index.js
   |  |----notFound.js
-  |  |----refreshControllers.js
   |----init/
   |  |----mongodb.js
   |----middlewares/
@@ -23,17 +22,18 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |----authorizeRole.js
   |  |----errorHandler.js
   |  |----index.js
-  |  |----loginLimiter.js
-  |  |----refreshLimiter.js
+  |  |----rateLimiter.js
   |  |----validateCSRFtoken.js
   |  |----validateRefreshToken.js
   |  |----verifiedEmail.js
   |----models/
+  |  |----index.js
+  |  |----PasswordReset.js
+  |  |----Session.js
   |  |----User.js
   |----routes/
   |  |----authRoutes.js
   |  |----index.js
-  |  |----refreshRoutes.js
   |----utils/
   |  |----cookies/
   |  |  |----clearTokenCookie.js
@@ -50,9 +50,9 @@ It is backend api server for user 'authentication/authorization' with **Json Web
   |  |  |----sendEmail.js
   |  |----tokens/
   |  |  |----createAccessToken.js
-  |  |  |----createCSRFtoken.js
+  |  |  |----createCSRFToken.js
   |  |  |----createRefreshToken.js
-  |  |  |----hashCSRFtoken.js
+  |  |  |----hashCSRFToken.js
   |  |  |----hashRefreshToken.js
   |  |----userDevice/
   |  |  |----parseDeviceName.js
@@ -77,7 +77,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 - JWT Access-Token sent via httpOnly cookie
 - Refresh-Token sent via httpOnly cookie
 - Hash Refresh-Token saved with user session
-- Hash CSRF-Token
+- CSRF-Token send via json respond
 
 ---
 
@@ -117,7 +117,18 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       {
         "username": "user1",
         "email": "user1@gmail.com",
-        "password": "12345678"
+        "password": "Aabc@123"
+      }
+      ```
+
+  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
+
+    - POST `/api/v1/auth/token-refresh`
+
+      ```bash
+      {
+        "refreshToken" cookie,
+        "x-csrf-token" header,
       }
       ```
 
@@ -128,35 +139,68 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       ```bash
       {
         "email": "user1@gmail.com",
-        "password": "12345678"
+        "password": "Aabc@123"
       }
       ```
 
   - **Send Email Verification Code** - Send OTP via email.
 
-    - POST `/api/v1/auth/send-verification-email`
+    - POST `/api/v1/auth/send-email-verification-code`
+
+      ```bash
+      {
+        "email": "user1@gmail.com",
+        "accessToken" cookie,
+        "x-csrf-token" header,
+      }
+      ```
 
   - **User Verification Route** - Verify user with verification-code.
 
     - POST `/api/v1/auth/verify-email`
 
+      ```bash
+      {
+        "email": "user1@gmail.com",
+        "code": "123456",
+        "accessToken" cookie,
+        "x-csrf-token" header,
+      }
+      ```
+
   - **Logout Route** - User session over.
 
     - POST `/api/v1/auth/logout`
+
+      ```bash
+      {
+        "refreshToken" cookie,
+        "x-csrf-token" header,
+      }
+      ```
 
   - **Logout-All Route** - User logout from all session devices.
 
     - POST `/api/v1/auth/logout-all`
 
+      ```bash
+      {
+        "refreshToken" cookie,
+        "x-csrf-token" header,
+      }
+      ```
+
   - **User-Deletion Route** - User account deletion route.
 
     - DELETE `/api/v1/auth/delete-user`
 
-- ### Refresh Routes
-
-  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
-
-    - POST `/api/v1/refresh-token`
+    ```bash
+      {
+        "password": "Aabc@123",
+        "accessToken" cookie,
+        "x-csrf-token" header,
+      }
+    ```
 
 ---
 
