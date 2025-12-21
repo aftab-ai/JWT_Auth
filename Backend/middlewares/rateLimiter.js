@@ -1,10 +1,13 @@
 // Import Third-Party npm packages.
-import { rateLimit } from "express-rate-limit";
+import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 
 const rateLimiter = (windowMs, max) => {
   return rateLimit({
     windowMs: windowMs,
     max: max,
+    standardHeaders: true, // Adds modern RFC headers.
+    legacyHeaders: false, // Disables old headers
+    keyGenerator: (req) => ipKeyGenerator(req), // IP-based limiting IPv4 + IPv6 safe key generator.
 
     handler: (req, res, next) => {
       res.statusCode = 429;

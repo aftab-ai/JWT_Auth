@@ -180,6 +180,19 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       }
       ```
 
+  - **Verify User Password-Reset Route** - Verify user OTP and reset password with new.
+
+    - POST `/api/v1/auth/verify-password-reset`
+
+      ```bash
+      {
+        "code": "123456",
+        "newPassword": "AAbc@135",
+        "accessToken" cookie,
+        "x-csrf-token" header,
+      }
+      ```
+
   - **Logout Route** - User session over.
 
     - POST `/api/v1/auth/logout`

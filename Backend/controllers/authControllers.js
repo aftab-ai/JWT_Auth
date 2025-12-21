@@ -389,6 +389,78 @@ const requestPasswordReset = async (req, res, next) => {
   });
 };
 
+// ====> Password-Reset(Reset password after code-verification) controller.
+const verifyPasswordReset = async (req, res, next) => {
+  try {
+    // Check User-Authentication.
+    if (!req.userId) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
+    // Fetch userId.
+    const userId = req.userId;
+    // Fetch code, newPassword.
+    const { code, newPassword } = req.body;
+
+    // Fetch passwordReset and update.
+    const passwordReset = await models.PasswordReset.findOne({
+      user: userId,
+      usedAt: { $exists: false },
+      expiresAt: { $gt: Date.now() },
+    }).select("+hashCode");
+    // Check passwordReset.
+    if (!passwordReset) {
+      res.statusCode = 400;
+      throw new Error("Reset-Code expires or invalid!");
+    }
+
+    // Attempts increase.
+    passwordReset.attempts += 1;
+    await passwordReset.save();
+
+    // Check Attempts.
+    if (passwordReset.attempts > 3) {
+      res.statusCode = 429;
+      throw new Error("Too many attempts!");
+    }
+
+    // Verify code.
+    const verifyCode = await compareHashCode(code, passwordReset.hashCode);
+    if (!verifyCode) {
+      res.statusCode = 400;
+      throw new Error("Code is invalid!");
+    }
+
+    // Hash new password.
+    const newhashedPassword = await hashPassword(newPassword);
+
+    // Fetch user and update.
+    const user = await models.User.findById(userId).select("+password");
+    user.password = newhashedPassword;
+    user.passwordChangedAt = new Date();
+    await user.save();
+
+    passwordReset.usedAt = new Date();
+    await passwordReset.save();
+
+    // Remove all user-sessoins.
+    await models.PasswordReset.deleteMany({ user: userId });
+    await models.Session.deleteMany({ user: userId });
+
+    clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
+    clearTokenCookie(res, "refreshToken"); // Clear refreshToken cookie.
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "User password-reset successfully. Please, Login again.",
+      data: { csrfToken: null },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ====> User Logout(session-over) controller.
 const logout = async (req, res, next) => {
   try {
@@ -487,8 +559,8 @@ const deleteUser = async (req, res, next) => {
     }
 
     // Delete user.
-    await models.Session.deleteMany({ user: userId }).session(session);
     await models.PasswordReset.deleteMany({ user: userId }).session(session);
+    await models.Session.deleteMany({ user: userId }).session(session);
     await models.User.deleteOne({ _id: userId }).session(session);
 
     // Finalize the Transaction.
@@ -522,6 +594,7 @@ export default {
   emailVerificationCode,
   verifyEmail,
   requestPasswordReset,
+  verifyPasswordReset,
   logout,
   logoutAll,
   deleteUser,

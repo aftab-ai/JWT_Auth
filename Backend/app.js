@@ -13,6 +13,9 @@ import controllers from "./controllers/index.js";
 // Initialize express app.
 const app = express();
 
+// Use the client IP forwarded by that proxy.
+app.set("trust proxy", 1);
+
 // Initialize MongoDB database connection.
 connectMongoDB();
 

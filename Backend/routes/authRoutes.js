@@ -71,6 +71,18 @@ router.post(
   controllers.authControllers.requestPasswordReset
 );
 
+// ====> POST, User Password-Reset route.
+router.post(
+  "/verify-password-reset",
+  middlewares.rateLimiter(1000 * 60 * 60, 3), // Minimize password-reset attempts(3/1h).
+  validators.verifyPasswordResetValidators,
+  validate,
+  middlewares.authMiddleware,
+  middlewares.validateCSRFToken,
+  middlewares.verifiedEmail,
+  controllers.authControllers.verifyPasswordReset
+);
+
 // ====> POST, User Logout(Session Over) route.
 router.post(
   "/logout",

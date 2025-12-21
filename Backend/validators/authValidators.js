@@ -113,6 +113,35 @@ const requestPasswordResetValidators = [
     .withMessage("Password is invalid!"),
 ];
 
+// ====> Check user verify-password-reset credentials validation.
+const verifyPasswordResetValidators = [
+  // Code.
+  check("code")
+    .trim()
+    .notEmpty()
+    .withMessage("Code is required!")
+    .bail()
+    .matches(/^\d{6}$/)
+    .withMessage("Code must be a 6-digit code!"),
+
+  // New-Password.
+  check("newPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required!")
+    .bail()
+    .matches(/[A-Z]/)
+    .withMessage("Password must have at least 1 uppercase letter!")
+    .matches(/[a-z]/)
+    .withMessage("Password must have at least 1 lowercase letter!")
+    .matches(/[0-9]/)
+    .withMessage("Password must have at least 1 number!")
+    .matches(/[^\w\s]/)
+    .withMessage("Password must have at least 1 special character! No spaces.")
+    .isLength({ min: 8, max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password must be between 8 to 128 characters long!"),
+];
+
 // ====> Check user-deletion credentials validation.
 const deleteUserValidators = [
   // Password.
@@ -131,5 +160,6 @@ export default {
   emailValidators,
   verifyEmailValidators,
   requestPasswordResetValidators,
+  verifyPasswordResetValidators,
   deleteUserValidators,
 };
