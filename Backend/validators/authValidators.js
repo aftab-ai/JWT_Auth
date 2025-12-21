@@ -1,7 +1,7 @@
 // Import Third-Party npm packages.
 import { check } from "express-validator";
 
-// Check signUp credentials validation.
+// ====> Check signUp credentials validation.
 const signUpValidators = [
   // Username.
   check("username")
@@ -44,7 +44,7 @@ const signUpValidators = [
     .withMessage("Password must be between 8 to 128 characters long!"),
 ];
 
-// Check signIn credentials validation.
+// ====> Check signIn credentials validation.
 const signInValidators = [
   // Email.
   check("email")
@@ -66,7 +66,7 @@ const signInValidators = [
     .withMessage("Password is invalid!"),
 ];
 
-// Check send email-verification credentials validation.
+// ====> Check send email-verification credentials validation.
 const emailValidators = [
   // Email.
   check("email")
@@ -79,8 +79,8 @@ const emailValidators = [
     .normalizeEmail(),
 ];
 
-// Check user email-verification credentials validation.
-const verifyUserValidators = [
+// ====> Check user email-verification credentials validation.
+const verifyEmailValidators = [
   // Email.
   check("email")
     .trim()
@@ -101,7 +101,19 @@ const verifyUserValidators = [
     .withMessage("Code must be a 6-digit code!"),
 ];
 
-// Check user-deletion credentials validation.
+// ====> Check user request-password-reset credentials validation.
+const requestPasswordResetValidators = [
+  // Old-Password.
+  check("oldPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required!")
+    .bail()
+    .isLength({ min: 8, max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password is invalid!"),
+];
+
+// ====> Check user-deletion credentials validation.
 const deleteUserValidators = [
   // Password.
   check("password")
@@ -117,6 +129,7 @@ export default {
   signUpValidators,
   signInValidators,
   emailValidators,
-  verifyUserValidators,
+  verifyEmailValidators,
+  requestPasswordResetValidators,
   deleteUserValidators,
 };

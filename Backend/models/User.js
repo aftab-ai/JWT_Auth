@@ -1,7 +1,7 @@
 // Import Third-Party npm packages.
 import mongoose from "mongoose";
 
-// Email Verification Schema.
+// ====> Email Verification Schema.
 const emailVerificationSchema = new mongoose.Schema(
   {
     // Hash Code.
@@ -16,7 +16,7 @@ const emailVerificationSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// User Schema.
+// ====> User Schema.
 const userSchema = new mongoose.Schema(
   {
     // Username.

@@ -11,7 +11,7 @@ import middlewares from "../middlewares/index.js";
 const router = express.Router();
 
 // Public routes.
-// POST --> User registration route.
+// ====> POST, User Registration route.
 router.post(
   "/signUp",
   middlewares.rateLimiter(1000 * 60 * 60, 5), // Minimize registration attempts(5/1h).
@@ -20,7 +20,7 @@ router.post(
   controllers.authControllers.signUp // SignUp authController.
 );
 
-// POST --> User authentication(login) route.
+// ====> POST, User Authentication(login) route.
 router.post(
   "/signIn",
   middlewares.rateLimiter(1000 * 60 * 15, 5), // Minimize logIn attempts(5/15m).
@@ -30,16 +30,16 @@ router.post(
 );
 
 // Protected routes.
-// POST --> Token Refresh Route.
+// ====> POST, Token Refresh Route.
 router.post(
   "/token-refresh",
-  middlewares.rateLimiter(1000 * 60 * 60, 20), // Minimize token-refresh attempt.
+  middlewares.rateLimiter(1000 * 60 * 60, 20), // Minimize token-refresh attempt(20/1h).
   middlewares.validateRefreshToken, // Refresh-Token middleware.
   middlewares.validateCSRFToken, // CSRF-Token Validation.
   controllers.authControllers.tokenRefresh // Token Refresh Controller.
 );
 
-// POST --> Send Email-Verification Code route.
+// ====> POST, Send Email-Verification-Code route.
 router.post(
   "/send-email-verification-code",
   validators.emailValidators,
@@ -49,17 +49,29 @@ router.post(
   controllers.authControllers.emailVerificationCode
 );
 
-// POST --> User Email-Verification route.
+// ====> POST, User Email-Verification route.
 router.post(
   "/verify-email",
-  validators.verifyUserValidators,
+  validators.verifyEmailValidators,
   validate,
   middlewares.authMiddleware,
   middlewares.validateCSRFToken,
   controllers.authControllers.verifyEmail
 );
 
-// POST --> User logout(Session Over) route.
+// ====> POST, Send Password-Reset Code route.
+router.post(
+  "/request-password-reset",
+  middlewares.rateLimiter(1000 * 60 * 60, 3), // Minimize password-reset attempts(3/1h).
+  validators.requestPasswordResetValidators,
+  validate,
+  middlewares.authMiddleware,
+  middlewares.validateCSRFToken,
+  middlewares.verifiedEmail, // Check email-verification.
+  controllers.authControllers.requestPasswordReset
+);
+
+// ====> POST, User Logout(Session Over) route.
 router.post(
   "/logout",
   middlewares.validateRefreshToken, // Refresh-Token validate middleware.
@@ -67,7 +79,7 @@ router.post(
   controllers.authControllers.logout
 );
 
-// POST --> User logout(All-Sessions Over) route.
+// ====> POST, User Logout(All-Sessions Over) route.
 router.post(
   "/logout-all",
   middlewares.validateRefreshToken,
@@ -75,10 +87,10 @@ router.post(
   controllers.authControllers.logoutAll
 );
 
-// DELETE --> User account-deletion route.
+// ====> DELETE, User Account-Deletion route.
 router.delete(
   "/delete-user",
-  middlewares.rateLimiter(1000 * 60 * 15, 3), // Minimize delete attempts(3/15m).
+  middlewares.rateLimiter(1000 * 60 * 60, 5), // Minimize delete attempts(5/1h).
   validators.deleteUserValidators,
   validate,
   middlewares.authMiddleware,

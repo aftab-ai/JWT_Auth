@@ -19,7 +19,7 @@ import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
 import hashRandomCode from "../utils/randomCode/hashRandomCode.js";
 import compareHashCode from "../utils/randomCode/compareHashCode.js";
 
-// User registration(signUp) controller.
+// ====> User Registration(signUp) controller.
 const signUp = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -52,7 +52,7 @@ const signUp = async (req, res, next) => {
   }
 };
 
-// User authentication(login) controller.
+// ====> User Authentication(login) controller.
 const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -128,9 +128,14 @@ const signIn = async (req, res, next) => {
   }
 };
 
-// Token refresh controller.
+// ====> Token Refresh controller.
 const tokenRefresh = async (req, res, next) => {
   try {
+    // Check User-Authentication.
+    if (!req.user && !req.session && !req.hashedRefreshToken) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
     // Fetch from validateRefreshToken middleware.
     const user = req.user;
     const session = req.session;
@@ -189,13 +194,18 @@ const tokenRefresh = async (req, res, next) => {
   }
 };
 
-// Email-Verification(Send verification-code to user via email) controller.
+// ====> Send-Email-Verification-Code controller.
 const emailVerificationCode = async (req, res, next) => {
   try {
-    // Fetch user-email.
-    const { email } = req.body;
+    // Check User-Authentication.
+    if (!req.userId) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
     // Fetch user-id via middleware;
     const userId = req.userId;
+    // Fetch user-email.
+    const { email } = req.body;
 
     // Find user.
     const user = await models.User.findOne({ email, _id: userId });
@@ -224,9 +234,9 @@ const emailVerificationCode = async (req, res, next) => {
     try {
       await sendEmail({
         emailTo: user.email,
-        subject: "Email verification code.",
+        subject: "Email-Verification code.",
         data: code,
-        content: "Verify your account.",
+        content: "verify your account.",
       });
     } catch (error) {
       res.statusCode = 500;
@@ -243,13 +253,18 @@ const emailVerificationCode = async (req, res, next) => {
   }
 };
 
-// Email-Verification(Verify user email via code) controller.
+// ====> Email-Verification(Verify user email via code) controller.
 const verifyEmail = async (req, res, next) => {
   try {
-    // Fetch user email and code.
-    const { email, code } = req.body;
+    // Check User-Authentication.
+    if (!req.userId) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
     // Fetch user-id via middleware.
     const userId = req.userId;
+    // Fetch user email and code.
+    const { email, code } = req.body;
 
     // Find user.
     const user = await models.User.findOne({ email, _id: userId }).select(
@@ -299,7 +314,7 @@ const verifyEmail = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User verified successfully. Please, login again.",
+      message: "User verified successfully. Please, Login again.",
       data: { csrfToken: null },
     });
   } catch (error) {
@@ -307,28 +322,90 @@ const verifyEmail = async (req, res, next) => {
   }
 };
 
-// User logout(session-over) controller.
+// ====> Send Password-Reset-Code controller.
+const requestPasswordReset = async (req, res, next) => {
+  try {
+    // Check User-Authentication.
+    if (!req.userId) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
+    // Fetch userId.
+    const userId = req.userId;
+    // Fetch Passwords.
+    const { oldPassword } = req.body;
+
+    // Fetch user.
+    const user = await models.User.findById(userId).select("+password");
+    // Velidate user.
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("User not found!");
+    }
+
+    // Verify password.
+    const verifyOldPassword = await compareHashPassword(
+      oldPassword,
+      user.password
+    );
+    if (!verifyOldPassword) {
+      res.statusCode = 401;
+      throw new Error("Invalid credentials!");
+    }
+
+    // Generate 6 digit verification code, save in DB.
+    const code = generateCode(6);
+    // Hash Code.
+    const hashedCode = await hashRandomCode(code);
+
+    const passwordReset = new models.PasswordReset({
+      user: userId,
+      hashCode: hashedCode,
+      expiresAt: Date.now() + 1000 * 60 * 2,
+      attempts: 0,
+    });
+    await passwordReset.save();
+
+    // Send email-verification code via Email.
+    try {
+      await sendEmail({
+        emailTo: user.email,
+        subject: "Password-Reset code.",
+        data: code,
+        content: "reset your password.",
+      });
+    } catch (error) {
+      res.statusCode = 500;
+      next(error);
+    }
+  } catch (error) {
+    next(error);
+  }
+
+  res.status(200).json({
+    statusCode: 200,
+    status: true,
+    message: "Password-Reset-Code sent successfully.",
+  });
+};
+
+// ====> User Logout(session-over) controller.
 const logout = async (req, res, next) => {
   try {
+    // Check User-Authentication.
+    if (!userId && req.hashedRefreshToken) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
     // Fetch user id from middleware.
     const userId = req.user._id;
-    // Check userId.
-    if (!userId) {
-      res.statusCode = 401;
-      throw new Error("Refresh-Token is missing or invalid!");
-    }
     // Fetch Hash-Refresh-Token from middleware.
     const hashedRefreshToken = req.hashedRefreshToken;
-    // Check hahsedRefreshToken.
-    if (!hashedRefreshToken) {
-      res.statusCode = 401;
-      throw new Error("Refresh-Token is missing!");
-    }
 
     // Remove user-session holding that Refresh-Token-Hash.
     await models.Session.deleteOne({
       user: userId,
-      hashRefreshToken: req.hashedRefreshToken,
+      hashRefreshToken: hashedRefreshToken,
     });
 
     clearTokenCookie(res, "accessToken"); // Clear accessToken cookie.
@@ -345,16 +422,16 @@ const logout = async (req, res, next) => {
   }
 };
 
-// User logout-all(all-session-over) controller.
+// ====> User Logout-All(all-session-over) controller.
 const logoutAll = async (req, res, next) => {
   try {
-    // Fetch user id from middleware.
-    const userId = req.user._id;
-    // Check userId.
+    // Check User Authentication.
     if (!userId) {
       res.statusCode = 401;
-      throw new Error("Refresh-Token is missing or invalid!");
+      throw new Error("User is not authenticated!");
     }
+    // Fetch user id from middleware.
+    const userId = req.user._id;
 
     // Remove all user-sessoins.
     await models.Session.deleteMany({ user: userId });
@@ -373,7 +450,7 @@ const logoutAll = async (req, res, next) => {
   }
 };
 
-// User Account-Deletion controller.
+// ====> User Account-Deletion controller.
 const deleteUser = async (req, res, next) => {
   // MonogoDB session.
   const session = await mongoose.startSession();
@@ -382,16 +459,15 @@ const deleteUser = async (req, res, next) => {
     // Transaction Start.
     session.startTransaction();
 
+    // Check User Authentication.
+    if (!userId) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
     // Fetch userId.
     const userId = req.userId;
     // Fetch password.
     const { password } = req.body;
-
-    // Check password.
-    if (!password) {
-      res.statusCode = 400;
-      throw new Error("Password is missing!");
-    }
 
     // Fetch user.
     const user = await models.User.findById(userId)
@@ -400,7 +476,7 @@ const deleteUser = async (req, res, next) => {
     // Check user.
     if (!user) {
       res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new Error("User not found!");
     }
 
     // Compare the password.
@@ -445,6 +521,7 @@ export default {
   tokenRefresh,
   emailVerificationCode,
   verifyEmail,
+  requestPasswordReset,
   logout,
   logoutAll,
   deleteUser,

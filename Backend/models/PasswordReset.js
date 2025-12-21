@@ -31,6 +31,7 @@ const passwordResetSchema = new mongoose.Schema(
       default: 0,
     },
 
+    // Used Once.
     usedAt: {
       type: Date,
       index: true,

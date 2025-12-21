@@ -1,9 +1,9 @@
 const verifiedEmail = (req, res, next) => {
   // Get user verification.
-  const verifiedUserEmail = req.user.isEmailVerified;
+  const verifyUserEmail = req.user.isEmailVerified;
 
   // Check user verification.
-  if (!verifiedUserEmail) {
+  if (!verifyUserEmail) {
     res.statusCode = 403;
     throw new Error("Please verify your email first!");
   }

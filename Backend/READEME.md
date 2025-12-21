@@ -121,17 +121,6 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       }
       ```
 
-  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
-
-    - POST `/api/v1/auth/token-refresh`
-
-      ```bash
-      {
-        "refreshToken" cookie,
-        "x-csrf-token" header,
-      }
-      ```
-
   - **SignIn Route** - User authentication.
 
     - POST `/api/v1/auth/signIn`
@@ -140,6 +129,17 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       {
         "email": "user1@gmail.com",
         "password": "Aabc@123"
+      }
+      ```
+
+  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
+
+    - POST `/api/v1/auth/token-refresh`
+
+      ```bash
+      {
+        "refreshToken" cookie,
+        "x-csrf-token" header,
       }
       ```
 
@@ -163,6 +163,18 @@ It is backend api server for user 'authentication/authorization' with **Json Web
       {
         "email": "user1@gmail.com",
         "code": "123456",
+        "accessToken" cookie,
+        "x-csrf-token" header,
+      }
+      ```
+
+  - **Request Password-Reset Route** - Send OTP via email to reset the password.
+
+    - POST `/api/v1/auth/request-password-reset"`
+
+      ```bash
+      {
+        "oldPassword": "Aabc@123",
         "accessToken" cookie,
         "x-csrf-token" header,
       }
