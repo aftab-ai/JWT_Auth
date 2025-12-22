@@ -122,13 +122,25 @@ It is an example of backend api server for user 'authentication/authorization' w
       }
       ```
 
-  - **Forgot Password Route** - Send OTP via email to reset the password.
+  - **Request Forgot Password Route** - Send OTP via email to reset the password.
 
-    - POST `/api/v1/auth/request-forgot-password.
+    - POST `/api/v1/auth/request-forgot-password`
 
       ```bash
       {
         "email": "user1@gmail.com"
+      }
+      ```
+
+  - **Verify Forgot Password Route** - Verify OTP and reset the password.
+
+    - POST `/api/v1/auth/verify-forgot-password`
+
+      ```bash
+      {
+        "email": "user1@gmail.com",
+        "code": "890342",
+        "newPassword": "AaBC@1234"
       }
       ```
 

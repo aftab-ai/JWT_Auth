@@ -52,7 +52,7 @@ const signUp = async (req, res, next) => {
   }
 };
 
-// ====> Forgot-Password controller.
+// ====> Send Forgot-Password-Code controller.
 const forgotPassword = async (req, res, next) => {
   try {
     // Fetch email.
@@ -91,6 +91,74 @@ const forgotPassword = async (req, res, next) => {
       statusCode: 200,
       status: true,
       message: "Forgot-Password-Code sent successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ====> Forgot-Password(reset password after code-verification) controller.
+const verifyForgotPassword = async (req, res, next) => {
+  try {
+    // Fetch data.
+    const { email, code, newPassword } = req.body;
+
+    // Fetch user.
+    const user = await models.User.findOne({ email }).select("+password");
+    // Check user.
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("User not found!");
+    }
+
+    // Fetch forgotPassword and update.
+    const forgotPassword = await models.ForgotPassword.findOne({
+      user: user._id,
+      usedAt: { $exists: false },
+      expiresAt: { $gt: Date.now() },
+    }).select("+hashCode");
+    // Check passwordReset.
+    if (!forgotPassword) {
+      res.statusCode = 400;
+      throw new Error("Reset-Code expires or invalid!");
+    }
+
+    // Attempts increase.
+    forgotPassword.attempts += 1;
+    await forgotPassword.save();
+
+    // Check Attempts.
+    if (forgotPassword.attempts > 3) {
+      res.statusCode = 429;
+      throw new Error("Too many attempts!");
+    }
+
+    // Verify code.
+    const verifyCode = await compareHashCode(code, forgotPassword.hashCode);
+    if (!verifyCode) {
+      res.statusCode = 400;
+      throw new Error("Code is invalid!");
+    }
+
+    // Hash new password.
+    const newhashedPassword = await hashPassword(newPassword);
+
+    // Fetch user and update.
+    user.password = newhashedPassword;
+    user.passwordChangedAt = new Date();
+    await user.save();
+
+    forgotPassword.usedAt = new Date();
+    await forgotPassword.save();
+
+    // Remove all user-sessoins.
+    await models.ForgotPassword.deleteMany({ user: user._id });
+    await models.Session.deleteMany({ user: user._id });
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "User password-reset successfully. Please, Login again.",
     });
   } catch (error) {
     next(error);
@@ -625,6 +693,7 @@ const deleteUser = async (req, res, next) => {
 export default {
   signUp,
   forgotPassword,
+  verifyForgotPassword,
   signIn,
   tokenRefresh,
   emailVerificationCode,

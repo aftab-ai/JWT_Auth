@@ -20,13 +20,22 @@ router.post(
   controllers.authControllers.signUp // SignUp authController.
 );
 
-// ====> POST, Forgot-Password route.
+// ====> POST, Send Forgot-Password-Code route.
 router.post(
   "/request-forgot-password",
-  middlewares.rateLimiter(1000 * 60 * 60, 5),
+  middlewares.rateLimiter(1000 * 60 * 60, 3),
   validators.requestForgotPasswordValidators,
   validate,
   controllers.authControllers.forgotPassword
+);
+
+// ====> POST, Forgot-Password route.
+router.post(
+  "/verify-forgot-password",
+  middlewares.rateLimiter(1000 * 60 * 60, 3),
+  validators.verifyForgotPasswordValidators,
+  validate,
+  controllers.authControllers.verifyForgotPassword
 );
 
 // ====> POST, User-Authentication(login) route.

@@ -44,7 +44,7 @@ const signUpValidators = [
     .withMessage("Password must be between 8 to 128 characters long!"),
 ];
 
-// ====> Check request-forgot-password validation.
+// ====> Check request-forgot-password credentials validation.
 const requestForgotPasswordValidators = [
   // Email.
   check("email")
@@ -55,6 +55,45 @@ const requestForgotPasswordValidators = [
     .isEmail()
     .withMessage("Email is invalid!")
     .normalizeEmail(),
+];
+
+// ====> Check verify-forgot-password credentials validation.
+const verifyForgotPasswordValidators = [
+  // Email.
+  check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .bail()
+    .isEmail()
+    .withMessage("Email is invalid!")
+    .normalizeEmail(),
+
+  // Code.
+  check("code")
+    .trim()
+    .notEmpty()
+    .withMessage("Code is required!")
+    .bail()
+    .matches(/^\d{6}$/)
+    .withMessage("Code must be a 6-digit code!"),
+
+  // New-Password.
+  check("newPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required!")
+    .bail()
+    .matches(/[A-Z]/)
+    .withMessage("Password must have at least 1 uppercase letter!")
+    .matches(/[a-z]/)
+    .withMessage("Password must have at least 1 lowercase letter!")
+    .matches(/[0-9]/)
+    .withMessage("Password must have at least 1 number!")
+    .matches(/[^\w\s]/)
+    .withMessage("Password must have at least 1 special character! No spaces.")
+    .isLength({ min: 8, max: 128 }) // Reject huge password: Prevent DOS.
+    .withMessage("Password must be between 8 to 128 characters long!"),
 ];
 
 // ====> Check signIn credentials validation.
@@ -170,6 +209,7 @@ const deleteUserValidators = [
 export default {
   signUpValidators,
   requestForgotPasswordValidators,
+  verifyForgotPasswordValidators,
   signInValidators,
   emailValidators,
   verifyEmailValidators,
