@@ -11,7 +11,7 @@ import middlewares from "../middlewares/index.js";
 const router = express.Router();
 
 // Public routes.
-// ====> POST, User Registration route.
+// ====> POST, User-Registration route.
 router.post(
   "/signUp",
   middlewares.rateLimiter(1000 * 60 * 60, 5), // Minimize registration attempts(5/1h).
@@ -20,7 +20,16 @@ router.post(
   controllers.authControllers.signUp // SignUp authController.
 );
 
-// ====> POST, User Authentication(login) route.
+// ====> POST, Forgot-Password route.
+router.post(
+  "/request-forgot-password",
+  middlewares.rateLimiter(1000 * 60 * 60, 5),
+  validators.requestForgotPasswordValidators,
+  validate,
+  controllers.authControllers.forgotPassword
+);
+
+// ====> POST, User-Authentication(login) route.
 router.post(
   "/signIn",
   middlewares.rateLimiter(1000 * 60 * 15, 5), // Minimize logIn attempts(5/15m).
@@ -30,7 +39,7 @@ router.post(
 );
 
 // Protected routes.
-// ====> POST, Token Refresh Route.
+// ====> POST, Token-Refresh Route.
 router.post(
   "/token-refresh",
   middlewares.rateLimiter(1000 * 60 * 60, 20), // Minimize token-refresh attempt(20/1h).
@@ -49,7 +58,7 @@ router.post(
   controllers.authControllers.emailVerificationCode
 );
 
-// ====> POST, User Email-Verification route.
+// ====> POST, Email-Verification route.
 router.post(
   "/verify-email",
   validators.verifyEmailValidators,
@@ -59,7 +68,7 @@ router.post(
   controllers.authControllers.verifyEmail
 );
 
-// ====> POST, Send Password-Reset Code route.
+// ====> POST, Send Password-Reset-Code route.
 router.post(
   "/request-password-reset",
   middlewares.rateLimiter(1000 * 60 * 60, 3), // Minimize password-reset attempts(3/1h).
@@ -71,7 +80,7 @@ router.post(
   controllers.authControllers.requestPasswordReset
 );
 
-// ====> POST, User Password-Reset route.
+// ====> POST, Password-Reset route.
 router.post(
   "/verify-password-reset",
   middlewares.rateLimiter(1000 * 60 * 60, 3), // Minimize password-reset attempts(3/1h).
@@ -83,7 +92,7 @@ router.post(
   controllers.authControllers.verifyPasswordReset
 );
 
-// ====> POST, User Logout(Session Over) route.
+// ====> POST, User-Logout(Session Over) route.
 router.post(
   "/logout",
   middlewares.validateRefreshToken, // Refresh-Token validate middleware.
@@ -91,7 +100,7 @@ router.post(
   controllers.authControllers.logout
 );
 
-// ====> POST, User Logout(All-Sessions Over) route.
+// ====> POST, User-Logout(All-Sessions Over) route.
 router.post(
   "/logout-all",
   middlewares.validateRefreshToken,
@@ -99,7 +108,7 @@ router.post(
   controllers.authControllers.logoutAll
 );
 
-// ====> DELETE, User Account-Deletion route.
+// ====> DELETE, User-Account-Deletion route.
 router.delete(
   "/delete-user",
   middlewares.rateLimiter(1000 * 60 * 60, 5), // Minimize delete attempts(5/1h).

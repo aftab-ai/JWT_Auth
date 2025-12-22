@@ -27,6 +27,7 @@ It is an example of backend api server for user 'authentication/authorization' w
   |  |----validateRefreshToken.js
   |  |----verifiedEmail.js
   |----models/
+  |  |----ForgotPassword.js
   |  |----index.js
   |  |----PasswordReset.js
   |  |----Session.js
@@ -118,6 +119,16 @@ It is an example of backend api server for user 'authentication/authorization' w
         "username": "user1",
         "email": "user1@gmail.com",
         "password": "Aabc@123"
+      }
+      ```
+
+  - **Forgot Password Route** - Send OTP via email to reset the password.
+
+    - POST `/api/v1/auth/request-forgot-password.
+
+      ```bash
+      {
+        "email": "user1@gmail.com"
       }
       ```
 

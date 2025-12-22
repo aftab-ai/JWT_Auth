@@ -44,6 +44,19 @@ const signUpValidators = [
     .withMessage("Password must be between 8 to 128 characters long!"),
 ];
 
+// ====> Check request-forgot-password validation.
+const requestForgotPasswordValidators = [
+  // Email.
+  check("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required!")
+    .bail()
+    .isEmail()
+    .withMessage("Email is invalid!")
+    .normalizeEmail(),
+];
+
 // ====> Check signIn credentials validation.
 const signInValidators = [
   // Email.
@@ -156,6 +169,7 @@ const deleteUserValidators = [
 
 export default {
   signUpValidators,
+  requestForgotPasswordValidators,
   signInValidators,
   emailValidators,
   verifyEmailValidators,

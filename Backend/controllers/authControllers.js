@@ -19,7 +19,7 @@ import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
 import hashRandomCode from "../utils/randomCode/hashRandomCode.js";
 import compareHashCode from "../utils/randomCode/compareHashCode.js";
 
-// ====> User Registration(signUp) controller.
+// ====> User-Registration(signUp) controller.
 const signUp = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -52,7 +52,52 @@ const signUp = async (req, res, next) => {
   }
 };
 
-// ====> User Authentication(login) controller.
+// ====> Forgot-Password controller.
+const forgotPassword = async (req, res, next) => {
+  try {
+    // Fetch email.
+    const { email } = req.body;
+
+    // Fetch user.
+    const user = await models.User.findOne({ email });
+    // Check user.
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("User not found!");
+    }
+
+    // Generate code.
+    const code = generateCode(6);
+    // Hash code.
+    const hashedCode = await hashRandomCode(code);
+
+    const forgotPassword = new models.ForgotPassword({
+      user: user._id,
+      hashCode: hashedCode,
+      expiresAt: Date.now() + 1000 * 60 * 2,
+      attempts: 0,
+    });
+    await forgotPassword.save();
+
+    // Send forgot-password-code via Email.
+    await sendEmail({
+      emailTo: user.email,
+      subject: "Forgot-Password code.",
+      data: code,
+      content: "reset your password.",
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "Forgot-Password-Code sent successfully.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ====> User-Authentication(login) controller.
 const signIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -128,7 +173,7 @@ const signIn = async (req, res, next) => {
   }
 };
 
-// ====> Token Refresh controller.
+// ====> Token-Refresh controller.
 const tokenRefresh = async (req, res, next) => {
   try {
     // Check User-Authentication.
@@ -194,7 +239,7 @@ const tokenRefresh = async (req, res, next) => {
   }
 };
 
-// ====> Send-Email-Verification-Code controller.
+// ====> Send Email-Verification-Code controller.
 const emailVerificationCode = async (req, res, next) => {
   try {
     // Check User-Authentication.
@@ -211,7 +256,7 @@ const emailVerificationCode = async (req, res, next) => {
     const user = await models.User.findOne({ email, _id: userId });
     if (!user) {
       res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new Error("User not found!");
     }
 
     // Check email-verification.
@@ -231,17 +276,12 @@ const emailVerificationCode = async (req, res, next) => {
     await user.save();
 
     // Send email-verification code via Email.
-    try {
-      await sendEmail({
-        emailTo: user.email,
-        subject: "Email-Verification code.",
-        data: code,
-        content: "verify your account.",
-      });
-    } catch (error) {
-      res.statusCode = 500;
-      next(error);
-    }
+    await sendEmail({
+      emailTo: user.email,
+      subject: "Email-Verification code.",
+      data: code,
+      content: "verify your account.",
+    });
 
     res.status(200).json({
       statusCode: 200,
@@ -272,7 +312,7 @@ const verifyEmail = async (req, res, next) => {
     );
     if (!user) {
       res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new Error("User not found!");
     }
 
     // Check email-verification.
@@ -367,26 +407,21 @@ const requestPasswordReset = async (req, res, next) => {
     await passwordReset.save();
 
     // Send email-verification code via Email.
-    try {
-      await sendEmail({
-        emailTo: user.email,
-        subject: "Password-Reset code.",
-        data: code,
-        content: "reset your password.",
-      });
-    } catch (error) {
-      res.statusCode = 500;
-      next(error);
-    }
+    await sendEmail({
+      emailTo: user.email,
+      subject: "Password-Reset code.",
+      data: code,
+      content: "reset your password.",
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "Password-Reset-Code sent successfully.",
+    });
   } catch (error) {
     next(error);
   }
-
-  res.status(200).json({
-    statusCode: 200,
-    status: true,
-    message: "Password-Reset-Code sent successfully.",
-  });
 };
 
 // ====> Password-Reset(Reset password after code-verification) controller.
@@ -461,7 +496,7 @@ const verifyPasswordReset = async (req, res, next) => {
   }
 };
 
-// ====> User Logout(session-over) controller.
+// ====> User-Logout(session-over) controller.
 const logout = async (req, res, next) => {
   try {
     // Check User-Authentication.
@@ -494,7 +529,7 @@ const logout = async (req, res, next) => {
   }
 };
 
-// ====> User Logout-All(all-session-over) controller.
+// ====> User-Logout-All(all-session-over) controller.
 const logoutAll = async (req, res, next) => {
   try {
     // Check User Authentication.
@@ -522,7 +557,7 @@ const logoutAll = async (req, res, next) => {
   }
 };
 
-// ====> User Account-Deletion controller.
+// ====> User-Account-Deletion controller.
 const deleteUser = async (req, res, next) => {
   // MonogoDB session.
   const session = await mongoose.startSession();
@@ -589,6 +624,7 @@ const deleteUser = async (req, res, next) => {
 
 export default {
   signUp,
+  forgotPassword,
   signIn,
   tokenRefresh,
   emailVerificationCode,
