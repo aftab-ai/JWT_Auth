@@ -1,6 +1,6 @@
 # Backend
 
-It is backend api server for user 'authentication/authorization' with **Json Web Token**.
+It is an example of backend api server for user 'authentication/authorization' with **Json Web Token**.
 
 ---
 
@@ -85,7 +85,7 @@ It is backend api server for user 'authentication/authorization' with **Json Web
 
 - Clone the repository
 
-  `git clone https://github.com/aftab-ai/JWT_Exe`
+  `git clone https://github.com/aftab-ai/JWT_Auth`
 
 - Navigate into the folder
 
