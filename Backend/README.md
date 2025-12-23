@@ -267,3 +267,4 @@ It is an example of backend api server for user 'authentication/authorization' w
 - **UAParser.js** - UAParser.js is the most comprehensive, compact, and up-to-date JavaScript library to detect user's browser, OS, CPU, and device type/model. Also detect bots, apps, and more. Runs seamlessly in the browser (client-side) or Node.js (server-side).
 - **Express-Rate-Limit** - express-rate-limit is a basic rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset. Plays nice with express-slow-down and ratelimit-header-parser.
 - **Nodemailer** - Nodemailer makes sending email from a Node.js application straightforward and secure, without pulling in a single runtime dependency.
+- **Helmet** - Help secure Express apps by setting HTTP response headers.

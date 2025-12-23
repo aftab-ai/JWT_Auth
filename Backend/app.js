@@ -3,6 +3,7 @@ import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 
 // Import local file-modules.
 import connectMongoDB from "./init/mongodb.js";
@@ -15,6 +16,9 @@ const app = express();
 
 // Use the client IP forwarded by that proxy.
 app.set("trust proxy", 1);
+
+// Automatically setting HTTP security headers.
+app.use(helmet());
 
 // Initialize MongoDB database connection.
 connectMongoDB();

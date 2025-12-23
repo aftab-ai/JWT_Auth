@@ -568,7 +568,7 @@ const verifyPasswordReset = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     // Check User-Authentication.
-    if (!userId && req.hashedRefreshToken) {
+    if (!req.user._id && req.hashedRefreshToken) {
       res.statusCode = 401;
       throw new Error("User is not authenticated!");
     }
@@ -601,7 +601,7 @@ const logout = async (req, res, next) => {
 const logoutAll = async (req, res, next) => {
   try {
     // Check User Authentication.
-    if (!userId) {
+    if (!req.user._id) {
       res.statusCode = 401;
       throw new Error("User is not authenticated!");
     }
@@ -635,7 +635,7 @@ const deleteUser = async (req, res, next) => {
     session.startTransaction();
 
     // Check User Authentication.
-    if (!userId) {
+    if (!req.userId) {
       res.statusCode = 401;
       throw new Error("User is not authenticated!");
     }
