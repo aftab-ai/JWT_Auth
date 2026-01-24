@@ -19,6 +19,7 @@ import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
 import hashRandomCode from "../utils/randomCode/hashRandomCode.js";
 import compareHashCode from "../utils/randomCode/compareHashCode.js";
 
+// Public controllers.
 // ====> User-Registration(signUp) controller.
 const signUp = async (req, res, next) => {
   try {
@@ -241,6 +242,36 @@ const signIn = async (req, res, next) => {
   }
 };
 
+// Protected controllers.
+// ====> Current-User controller.
+const currentUser = async (req, res, next) => {
+  try {
+    // Check User-Authentication.
+    if (!req.userId) {
+      res.statusCode = 401;
+      throw new Error("User is not authenticated!");
+    }
+    // Fetch user-id via middleware;
+    const userId = req.userId;
+
+    // Find user.
+    const user = await models.User.findById(userId);
+    if (!user) {
+      res.statusCode = 401;
+      throw new Error("User not found!");
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      message: "Get current user successfully.",
+      data: { userId: user._id, username: user.username, role: user.role },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ====> Token-Refresh controller.
 const tokenRefresh = async (req, res, next) => {
   try {
@@ -277,7 +308,7 @@ const tokenRefresh = async (req, res, next) => {
           expiresAt: newExpiresTime,
           hashCSRFToken: newHashCSRFToken,
         },
-      }
+      },
     );
 
     // If no document updated -> Race Condition or Stolen Token.
@@ -376,7 +407,7 @@ const verifyEmail = async (req, res, next) => {
 
     // Find user.
     const user = await models.User.findOne({ email, _id: userId }).select(
-      "+emailVerification.hashCode"
+      "+emailVerification.hashCode",
     );
     if (!user) {
       res.statusCode = 401;
@@ -402,7 +433,7 @@ const verifyEmail = async (req, res, next) => {
     // Verify code.
     const verifyCode = await compareHashCode(
       code,
-      user.emailVerification.hashCode
+      user.emailVerification.hashCode,
     );
     if (!verifyCode) {
       res.statusCode = 400;
@@ -454,7 +485,7 @@ const requestPasswordReset = async (req, res, next) => {
     // Verify password.
     const verifyOldPassword = await compareHashPassword(
       oldPassword,
-      user.password
+      user.password,
     );
     if (!verifyOldPassword) {
       res.statusCode = 401;
@@ -695,6 +726,7 @@ export default {
   forgotPassword,
   verifyForgotPassword,
   signIn,
+  currentUser,
   tokenRefresh,
   emailVerificationCode,
   verifyEmail,

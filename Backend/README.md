@@ -109,9 +109,7 @@ It is an example of backend api server for user 'authentication/authorization' w
 ## Usage
 
 - ### Auth Routes
-
   - **SignUp Route** - New user registration.
-
     - POST `/api/v1/auth/signUp`
 
       ```bash
@@ -123,7 +121,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Request Forgot Password Route** - Send OTP via email to reset the password.
-
     - POST `/api/v1/auth/request-forgot-password`
 
       ```bash
@@ -133,7 +130,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Verify Forgot Password Route** - Verify OTP and reset the password.
-
     - POST `/api/v1/auth/verify-forgot-password`
 
       ```bash
@@ -145,7 +141,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **SignIn Route** - User authentication.
-
     - POST `/api/v1/auth/signIn`
 
       ```bash
@@ -155,8 +150,10 @@ It is an example of backend api server for user 'authentication/authorization' w
       }
       ```
 
-  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
+  - **Current User** - Get current user info(userId, username, user-role).
+    - GET `/api/v1/auth/current-user`
 
+  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
     - POST `/api/v1/auth/token-refresh`
 
       ```bash
@@ -167,7 +164,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Send Email Verification Code** - Send OTP via email.
-
     - POST `/api/v1/auth/send-email-verification-code`
 
       ```bash
@@ -179,7 +175,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **User Verification Route** - Verify user with verification-code.
-
     - POST `/api/v1/auth/verify-email`
 
       ```bash
@@ -192,7 +187,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Request Password-Reset Route** - Send OTP via email to reset the password.
-
     - POST `/api/v1/auth/request-password-reset"`
 
       ```bash
@@ -204,7 +198,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Verify User Password-Reset Route** - Verify user OTP and reset password with new.
-
     - POST `/api/v1/auth/verify-password-reset`
 
       ```bash
@@ -217,7 +210,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Logout Route** - User session over.
-
     - POST `/api/v1/auth/logout`
 
       ```bash
@@ -228,7 +220,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **Logout-All Route** - User logout from all session devices.
-
     - POST `/api/v1/auth/logout-all`
 
       ```bash
@@ -239,7 +230,6 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```
 
   - **User-Deletion Route** - User account deletion route.
-
     - DELETE `/api/v1/auth/delete-user`
 
     ```bash
