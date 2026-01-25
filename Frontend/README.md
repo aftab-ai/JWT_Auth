@@ -13,6 +13,7 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |----cmp.svg
   |----src/
   |  |----App.jsx
+  |  |----index.css
   |  |----main.jsx
   |----.gitignore
   |----eslint.config.js
@@ -48,4 +49,5 @@ It is an example cliant side programming structure for user 'authentication/auth
 ## Technologies Used
 
 - **Vite** - Vite is a blazing fast frontend build tool powering the next generation of web applications.
-- **React.js** - The library for web and native user interfaces.
+- **React** - The library for web and native user interfaces.
+- **Tailwind CSS** - Rapidly build modern websites without ever leaving your HTML.
