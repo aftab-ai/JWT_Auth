@@ -1,0 +1,64 @@
+# Node dependencies
+node_modules/
+
+# Build output
+build/
+dist/
+dist-ssr
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local environment files
+.env
+.env.*.local
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+*.cache
+.cache/
+coverage/
+
+# Vite specific
+vite.config.ts.timestamp-*
+vite.config.js.timestamp-*
+
+# Optional: if using TypeScript
+*.tsbuildinfo
+
+# Optional: if using testing tools (like Vitest or Jest)
+coverage/
+*.spec.ts
+*.spec.js
+*.test.ts
+*.test.js
+
+# Optional: if using Storybook
+storybook-static/
+.out/
+
+# Optional: if using TailwindCSS JIT cache
+.tailwindcss/
