@@ -1,12 +1,46 @@
+// Third-Party modules.
+import { useState } from "react";
+
+// Initial form data.
+const initalFormData = {
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
 function Signup() {
+  const [formData, setFormData] = useState(initalFormData);
+
+  // Handle form change state.
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    // Handle form state(data).
+    setFormData((preValue) => ({
+      ...preValue,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submit.
+  const handleSubmit = (event) => {
+    event.preventDefault(); // Prevent form submit default behaviour.
+
+    setFormData(initalFormData); // Set form state to initial after submit.
+  };
+
   return (
-    // Signup Form
+    // Signup Form.
     <div className="h-screen flex items-center justify-center">
       <div className="flex flex-col items-center h-4/5 w-xl p-8 bg-[#D3D2C7] rounded-lg">
         {/* Heading */}
         <h2 className="text-[#10403B] font-bold text-2xl">Sign Up</h2>
 
-        <form className="text-[#10403B] font-semibold flex flex-col gap-4 w-full">
+        <form
+          onSubmit={handleSubmit}
+          className="text-[#10403B] font-semibold flex flex-col gap-4 w-full"
+        >
           {/* Username */}
           <div className="flex flex-col">
             <label htmlFor="username" className="text-lg">
@@ -18,6 +52,8 @@ function Signup() {
               id="username"
               name="username"
               placeholder="Enter name..."
+              onChange={handleChange}
+              value={formData.username}
             />
           </div>
 
@@ -32,6 +68,8 @@ function Signup() {
               id="email"
               name="email"
               placeholder="Enter email..."
+              onChange={handleChange}
+              value={formData.email}
             />
           </div>
 
@@ -46,6 +84,8 @@ function Signup() {
               id="password"
               name="password"
               placeholder="Enter password..."
+              onChange={handleChange}
+              value={formData.password}
             />
           </div>
 
@@ -60,6 +100,8 @@ function Signup() {
               id="confirmPassword"
               name="confirmPassword"
               placeholder="Enter password again..."
+              onChange={handleChange}
+              value={formData.confirmPassword}
             />
           </div>
 
