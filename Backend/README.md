@@ -232,13 +232,13 @@ It is an example of backend api server for user 'authentication/authorization' w
   - **User-Deletion Route** - User account deletion route.
     - DELETE `/api/v1/auth/delete-user`
 
-    ```bash
-      {
-        "password": "Aabc@123",
-        "accessToken" cookie,
-        "x-csrf-token" header,
-      }
-    ```
+      ```bash
+        {
+          "password": "Aabc@123",
+          "accessToken" cookie,
+          "x-csrf-token" header,
+        }
+      ```
 
 ---
 
