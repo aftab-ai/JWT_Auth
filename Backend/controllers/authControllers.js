@@ -20,8 +20,8 @@ import hashRandomCode from "../utils/randomCode/hashRandomCode.js";
 import compareHashCode from "../utils/randomCode/compareHashCode.js";
 
 // Public controllers.
-// ====> User-Registration(signUp) controller.
-const signUp = async (req, res, next) => {
+// ====> User-Registration(signup) controller.
+const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
 
@@ -167,7 +167,7 @@ const verifyForgotPassword = async (req, res, next) => {
 };
 
 // ====> User-Authentication(login) controller.
-const signIn = async (req, res, next) => {
+const signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -234,7 +234,7 @@ const signIn = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User LoggedIn successfully.",
+      message: "User Logged In successfully.",
       data: { csrfToken: csrfToken },
     });
   } catch (error) {
@@ -722,10 +722,10 @@ const deleteUser = async (req, res, next) => {
 };
 
 export default {
-  signUp,
+  signup,
   forgotPassword,
   verifyForgotPassword,
-  signIn,
+  signin,
   currentUser,
   tokenRefresh,
   emailVerificationCode,

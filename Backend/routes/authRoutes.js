@@ -13,11 +13,11 @@ const router = express.Router();
 // Public routes.
 // ====> POST, User-Registration route.
 router.post(
-  "/signUp",
+  "/signup",
   middlewares.rateLimiter(1000 * 60 * 60, 5), // Minimize registration attempts(5/1h).
-  validators.signUpValidators, // Validate signUp credentials.
+  validators.signupValidators, // Validate signup credentials.
   validate, // Send validation errors messages.
-  controllers.authControllers.signUp, // SignUp authController.
+  controllers.authControllers.signup, // Signup authController.
 );
 
 // ====> POST, Send Forgot-Password-Code route.
@@ -40,11 +40,11 @@ router.post(
 
 // ====> POST, User-Authentication(login) route.
 router.post(
-  "/signIn",
+  "/signin",
   middlewares.rateLimiter(1000 * 60 * 15, 5), // Minimize logIn attempts(5/15m).
-  validators.signInValidators,
+  validators.signinValidators,
   validate,
-  controllers.authControllers.signIn,
+  controllers.authControllers.signin,
 );
 
 // Protected routes.

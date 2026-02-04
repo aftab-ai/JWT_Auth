@@ -10,9 +10,31 @@ It is an example cliant side programming structure for user 'authentication/auth
   Frontend/
   |
   |----public/
-  |  |----cmp.svg
+  |  |----jwt.svg
+  |  |----shattered-dark.png
   |----src/
-  |  |----App.jsx
+  |  |----app/
+  |  |  |----router.jsx
+  |  |----assets/
+  |  |  |----fonts/
+  |  |  |  |----Inter-Bold.woff2
+  |  |  |  |----Inter-Medium.woff2
+  |  |  |  |----Inter-Regular.woff2
+  |  |  |  |----Inter-SemiBold.woff2
+  |  |----components/
+  |  |  |----layouts/
+  |  |  |  |----PrivateLayout.jsx
+  |  |  |  |----PublicLayout.jsx
+  |  |  |----Loader.jsx
+  |  |  |----PrivateNavbar.jsx
+  |  |  |----PublicNavbar.jsx
+  |  |----pages/
+  |  |  |----ForgotPassword.jsx
+  |  |  |----Home.jsx
+  |  |  |----Landing.jsx
+  |  |  |----Login.jsx
+  |  |  |----NotFound.jsx
+  |  |  |----Signup.jsx
   |  |----index.css
   |  |----main.jsx
   |----.gitignore
@@ -51,3 +73,4 @@ It is an example cliant side programming structure for user 'authentication/auth
 - **Vite** - Vite is a blazing fast frontend build tool powering the next generation of web applications.
 - **React** - The library for web and native user interfaces.
 - **Tailwind CSS** - Rapidly build modern websites without ever leaving your HTML.
+- **React Router DOM** - A user‑obsessed, standards‑focused, multi‑strategy router you can deploy anywhere.

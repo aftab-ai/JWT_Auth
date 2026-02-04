@@ -18,7 +18,7 @@ This project build with **node.js** as a backend server and **react.js** as a fr
 
 ## Tech Stack
 
-- **Frontend** - Vite, React, Tailwind CSS
+- **Frontend** - Vite, React, Tailwind CSS, React Router DOM
 - **Backend** - Node.js, Express.js, Mongoose, Bcrypt.js, Morgan, Express-Validator, Json Web Token, Cookie-Parser, Crypto, UAParser.js, Express-Rate-Limit, Nodemailer, Helmet
 - **Other Tools** - Git, npm, dotenv
 

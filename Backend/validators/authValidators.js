@@ -1,8 +1,8 @@
 // Import Third-Party npm packages.
 import { check } from "express-validator";
 
-// ====> Check signUp credentials validation.
-const signUpValidators = [
+// ====> Check signup credentials validation.
+const signupValidators = [
   // Username.
   check("username")
     .trim()
@@ -13,7 +13,7 @@ const signUpValidators = [
     .withMessage("Username must be between 3 and 30 characters!")
     .matches(/^[a-zA-Z0-9_]+$/)
     .withMessage(
-      "Username can contain only letters, numbers, and underscores!"
+      "Username can contain only letters, numbers, and underscores!",
     ),
 
   // Email.
@@ -96,8 +96,8 @@ const verifyForgotPasswordValidators = [
     .withMessage("Password must be between 8 to 128 characters long!"),
 ];
 
-// ====> Check signIn credentials validation.
-const signInValidators = [
+// ====> Check signin credentials validation.
+const signinValidators = [
   // Email.
   check("email")
     .trim()
@@ -207,10 +207,10 @@ const deleteUserValidators = [
 ];
 
 export default {
-  signUpValidators,
+  signupValidators,
   requestForgotPasswordValidators,
   verifyForgotPasswordValidators,
-  signInValidators,
+  signinValidators,
   emailValidators,
   verifyEmailValidators,
   requestPasswordResetValidators,

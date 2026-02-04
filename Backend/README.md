@@ -109,8 +109,8 @@ It is an example of backend api server for user 'authentication/authorization' w
 ## Usage
 
 - ### Auth Routes
-  - **SignUp Route** - New user registration.
-    - POST `/api/v1/auth/signUp`
+  - **Signup Route** - New user registration.
+    - POST `/api/v1/auth/signup`
 
       ```bash
       {
@@ -140,8 +140,8 @@ It is an example of backend api server for user 'authentication/authorization' w
       }
       ```
 
-  - **SignIn Route** - User authentication.
-    - POST `/api/v1/auth/signIn`
+  - **Signin Route** - User authentication.
+    - POST `/api/v1/auth/signin`
 
       ```bash
       {
