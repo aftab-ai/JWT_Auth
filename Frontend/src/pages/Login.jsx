@@ -73,20 +73,34 @@ function Login() {
           </div>
 
           {/* Forgot-Password */}
-          <Link to="/forgot-password" className="underline font-bold text-sm">
+          <Link
+            to="/forgot-password"
+            className="underline font-bold text-sm hover:text-[#4C5958]"
+          >
             Forgot Password...
           </Link>
 
           {/* Login Button */}
           <div className="text-center">
             <input
-              className="rounded-full px-4 py-1 mt-4 cursor-pointer bg-[#10403B]
+              className="rounded-full px-4 py-1 mt-2 cursor-pointer bg-[#10403B]
                text-white hover:bg-[#4C5958]"
               type="submit"
               value={"Login"}
             />
           </div>
         </form>
+
+        {/* Signup Route */}
+        <p className="mt-4 text-sm text-[#4C5958]">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="underline text-[#10403B] font-semibold hover:text-[#4C5958]"
+          >
+            Sign Up
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 // Third-Party modules.
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 // Initial form data.
 const initalFormData = {
@@ -108,13 +109,24 @@ function Signup() {
           {/* Signup Button */}
           <div className="text-center">
             <input
-              className="rounded-full px-4 py-1 mt-4 cursor-pointer bg-[#10403B]
+              className="rounded-full px-4 py-1 mt-2 cursor-pointer bg-[#10403B]
                text-white hover:bg-[#4C5958]"
               type="submit"
               value={"Signup"}
             />
           </div>
         </form>
+
+        {/* Login Route */}
+        <p className="mt-4 text-sm text-[#4C5958]">
+          Already have an acccount?{" "}
+          <Link
+            to="/login"
+            className="underline text-[#10403B] font-semibold hover:text-[#4C5958]"
+          >
+            Log In
+          </Link>
+        </p>
       </div>
     </div>
   );
