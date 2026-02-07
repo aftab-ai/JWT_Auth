@@ -22,6 +22,7 @@ const signupSchemaValidators = z
     // Password
     password: z
       .string()
+      .trim()
       .min(1, "Password is required!")
       .regex(/[A-Z]/, "At least one uppercase letter required!")
       .regex(/[a-z]/, "At least one lowercase letter required!")

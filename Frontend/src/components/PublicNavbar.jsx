@@ -36,7 +36,7 @@ function PublicNavbar() {
             ${isActive && "underline ring-3 ring-[#4C5958]/40"}`
           }
         >
-          Login
+          Log in
         </NavLink>
       </div>
     </nav>

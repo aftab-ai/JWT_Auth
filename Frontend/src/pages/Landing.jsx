@@ -15,7 +15,7 @@ function Landing() {
         </p>
         <p className="font-medium text-[#455559] italic">
           <Link to="/login" className="underline text-[#10403B] font-semibold">
-            Login
+            Log in
           </Link>{" "}
           and see the details.
         </p>

@@ -228,7 +228,7 @@ function Signup() {
                 transition-colors bg-[#10403B] text-white hover:bg-[#4C5958]
                 focus:outline-none focus:ring-2 focus:ring-[#148B4B]/40 disabled:opacity-60"
             >
-              {isSubmitting ? "Creating account..." : "Create account"}
+              {isSubmitting ? "Registering..." : "Create account"}
             </button>
           </div>
         </form>
