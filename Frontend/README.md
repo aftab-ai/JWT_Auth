@@ -35,6 +35,8 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |----Login.jsx
   |  |  |----NotFound.jsx
   |  |  |----Signup.jsx
+  |  |----validators/
+  |  |  |----signupSchemaValidators.js
   |  |----index.css
   |  |----main.jsx
   |----.gitignore
@@ -74,3 +76,7 @@ It is an example cliant side programming structure for user 'authentication/auth
 - **React** - The library for web and native user interfaces.
 - **Tailwind CSS** - Rapidly build modern websites without ever leaving your HTML.
 - **React Router DOM** - A user‑obsessed, standards‑focused, multi‑strategy router you can deploy anywhere.
+- **React Hook Form** - React Hook Form reduces the amount of code you need to write while removing unnecessary re-renders.
+- **Zod** - Using Zod, you can define schemas you can use to validate data, from a simple string to a complex nested object.
+- **React Hook Form Resolvers(@hookform/resolvers)** - This function allows you to use any external validation library such as Yup, Zod, Joi, Vest, Ajv and many others.
+- **Lucide React** - Lucide icon library for React applications.
