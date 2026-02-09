@@ -9,19 +9,18 @@ import { Eye, EyeOff, Mail, KeyRound } from "lucide-react";
 import loginSchemaValidators from "../validators/loginSchemaValidators";
 
 function Login() {
-  // Form state controller.
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(loginSchemaValidators),
-    mode: "onSubmit",
-  });
-
   const [showPassword, setShowPassword] = useState(false); // Show/Hide Password.
-  const [focusedField, setFocusedField] = useState(""); // Track focused input.
+
+  // Form controller.
+  const {
+    register, // Function to register an input field with the form.
+    handleSubmit, // Function to handle form submission with validation.
+    reset, // Reset form.
+    formState: { errors, isSubmitting, touchedFields }, // Form state (errors, submission status, touched fields).
+  } = useForm({
+    resolver: zodResolver(loginSchemaValidators), // Form-Validation logic.
+    mode: "onChange", // Trigger validation when field have input(onChange).
+  });
 
   // Form Submit.
   const onSubmit = async (data) => {
@@ -31,10 +30,17 @@ function Login() {
   };
 
   // Determine icon color.
+  const iconColors = {
+    error: "#D8581C", // Red for error.
+    active: "#10403B", // Sky when clicked.
+    default: "#4C5958", // Default gray.
+  };
   const getIconColor = (field) => {
-    if (errors[field]) return "#D8581C"; // Red for error.
-    if (focusedField === field) return "#10403B"; // Sky when focused.
-    return "#4C5958"; // Default gray.
+    return errors[field]
+      ? iconColors.error
+      : touchedFields
+        ? iconColors.active
+        : iconColors.default;
   };
 
   return (
@@ -71,8 +77,6 @@ function Login() {
                   ${errors.email ? "border-[#D8581C]" : "border-[#148B48]"}`}
                 placeholder="Enter your registered email..."
                 disabled={isSubmitting}
-                onFocus={() => setFocusedField("email")}
-                onBlur={() => setFocusedField("")}
               />
             </div>
 
@@ -105,8 +109,6 @@ function Login() {
                   ${errors.password ? "border-[#D8581C]" : "border-[#148B48]"}`}
                 placeholder="Enter your password..."
                 disabled={isSubmitting}
-                onFocus={() => setFocusedField("password")}
-                onBlur={() => setFocusedField("")}
               />
 
               {/* Show/Hide password button. */}
@@ -120,12 +122,6 @@ function Login() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-
-            {/* Password validation hint. */}
-            <p className="mt-1 text-xs text-[#4C5958]">
-              Must be 8+ characters. Include uppercase, lowercase, number &
-              special. Space not allowed.
-            </p>
 
             {/* Validation error */}
             {errors.password && (
