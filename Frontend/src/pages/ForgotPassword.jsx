@@ -11,7 +11,7 @@ import verifyForgotPasswordSchemaValidators from "../validators/verifyForgotPass
 
 function ForgotPassword() {
   const [sendOTP, setSendOTP] = useState(false); // Determine steps.
-  const [showPassword, setShowPassword] = useState(false); // Show/Hide Password in input.
+  const [showNewPassword, setShowNewPassword] = useState(false); // Show/Hide New-Password in input.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show/Hide Confirm-Password.
   const navigate = useNavigate(); // Redirect.
 
@@ -30,7 +30,7 @@ function ForgotPassword() {
     handleSubmit, // Function to handle form submission with validation.
     formState: { errors, isSubmitting, touchedFields }, // Form state (errors, submission status, touched fields).
   } = useForm({
-    resolver, // Validation logic.
+    resolver, // Form-Validation logic.
     mode: "onChange", // Trigger validation when field have input(onChange).
     shouldUnregister: false, // Keep form values for inputs that are removed from the DOM(email).
   });
@@ -172,7 +172,7 @@ function ForgotPassword() {
 
                   <input
                     id="newPassword"
-                    type={showPassword ? "text" : "password"}
+                    type={showNewPassword ? "text" : "password"}
                     {...register("newPassword")}
                     className={`h-10 w-full px-10 text-sm border rounded-md outline-none
                       focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
@@ -184,14 +184,14 @@ function ForgotPassword() {
                   {/* Show/Hide password button. */}
                   <button
                     type="button"
-                    onClick={() => setShowPassword((v) => !v)}
+                    onClick={() => setShowNewPassword((v) => !v)}
                     className="absolute flex items-center justify-center right-2 top-1/2 -translate-y-1/2
                       cursor-pointer hover:text-[#4C5958]"
                     aria-label={
-                      showPassword ? "Hide password" : "Show password"
+                      showNewPassword ? "Hide password" : "Show password"
                     }
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
 

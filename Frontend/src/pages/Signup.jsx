@@ -1,6 +1,6 @@
 // Third-Party modules.
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, User, Mail, KeyRound } from "lucide-react";
@@ -9,33 +9,41 @@ import { Eye, EyeOff, User, Mail, KeyRound } from "lucide-react";
 import signupSchemaValidators from "../validators/signupSchemaValidators";
 
 function Signup() {
-  // Form state controller.
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(signupSchemaValidators),
-    mode: "onSubmit",
-  });
-
-  const [showPassword, setShowPassword] = useState(false); // Show/Hide Password.
+  const [showPassword, setShowPassword] = useState(false); // Show/Hide Password in input.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show/Hide Confirm-Password.
-  const [focusedField, setFocusedField] = useState(""); // Track focused input.
+  const navigate = useNavigate(); // Redirect.
+
+  // Form controller.
+  const {
+    register, // Function to register an input field with the form.
+    handleSubmit, // Function to handle form submission with validation.
+    reset, // Reset form.
+    formState: { errors, isSubmitting, touchedFields }, // Form state (errors, submission status, touched fields).
+  } = useForm({
+    resolver: zodResolver(signupSchemaValidators), // Form-Validation logic.
+    mode: "onChange", // Trigger validation when field have input(onChange).
+  });
 
   // Form Submit.
   const onSubmit = async (data) => {
     console.log(data);
 
-    reset(); // Reset form input.
+    reset();
+    navigate("/login"); // Redirect to login page.
   };
 
   // Determine icon color.
+  const iconColors = {
+    error: "#D8581C", // Red for error.
+    active: "#10403B", // Sky when clicked.
+    default: "#4C5958", // Default gray.
+  };
   const getIconColor = (field) => {
-    if (errors[field]) return "#D8581C"; // Red for error.
-    if (focusedField === field) return "#10403B"; // Sky when focused.
-    return "#4C5958"; // Default gray.
+    return errors[field]
+      ? iconColors.error
+      : touchedFields
+        ? iconColors.active
+        : iconColors.default;
   };
 
   return (
@@ -54,7 +62,7 @@ function Signup() {
           {/* Username */}
           <div className="relative flex flex-col">
             <label htmlFor="username" className="mb-1 font-semibold text-sm">
-              Username:
+              Username: <span className="text-[#4C5958]">*</span>
             </label>
 
             <div className="relative">
@@ -72,8 +80,6 @@ function Signup() {
                   ${errors.username ? "border-[#D8581C]" : "border-[#148B4B]"}`}
                 placeholder="Enter name..."
                 disabled={isSubmitting}
-                onFocus={() => setFocusedField("username")}
-                onBlur={() => setFocusedField("")}
               />
             </div>
 
@@ -88,7 +94,7 @@ function Signup() {
           {/* Email */}
           <div className="relative flex flex-col">
             <label htmlFor="email" className="mb-1 font-semibold text-sm">
-              Email:
+              Email: <span className="text-[#4C5958]">*</span>
             </label>
 
             <div className="relative">
@@ -99,15 +105,13 @@ function Signup() {
 
               <input
                 id="email"
-                type="text"
+                type="email"
                 {...register("email")}
                 className={`h-10 w-full pl-10 px-3 text-sm border rounded-md outline-none 
                   focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
                   ${errors.email ? "border-[#D8581C]" : "border-[#148B48]"}`}
                 placeholder="Enter email..."
                 disabled={isSubmitting}
-                onFocus={() => setFocusedField("email")}
-                onBlur={() => setFocusedField("")}
               />
             </div>
 
@@ -122,7 +126,7 @@ function Signup() {
           {/* Password */}
           <div className="relative flex flex-col">
             <label htmlFor="password" className="mb-1 font-semibold text-sm">
-              Password:
+              Password: <span className="text-[#4C5958]">*</span>
             </label>
 
             <div className="relative">
@@ -140,8 +144,6 @@ function Signup() {
                   ${errors.password ? "border-[#D8581C]" : "border-[#148B48]"}`}
                 placeholder="Enter password..."
                 disabled={isSubmitting}
-                onFocus={() => setFocusedField("password")}
-                onBlur={() => setFocusedField("")}
               />
 
               {/* Show/Hide password button. */}
@@ -162,7 +164,7 @@ function Signup() {
               special. Space not allowed.
             </p>
 
-            {/* Validation error */}
+            {/* Validation error. */}
             {errors.password && (
               <p className="mt-1 text-sm text-[#D8581C]">
                 {errors.password.message}
@@ -176,7 +178,7 @@ function Signup() {
               htmlFor="confirmPassword"
               className="mb-1 font-semibold text-sm"
             >
-              Confirm Password:
+              Confirm Password: <span className="text-[#4C5958]">*</span>
             </label>
 
             <div className="relative">
@@ -194,8 +196,6 @@ function Signup() {
                   ${errors.confirmPassword ? "border-[#D8581C]" : "border-[#148B48]"}`}
                 placeholder="Enter password again..."
                 disabled={isSubmitting}
-                onFocus={() => setFocusedField("confirmPassword")}
-                onBlur={() => setFocusedField("")}
               />
 
               {/* Show/Hide password button. */}
@@ -228,7 +228,7 @@ function Signup() {
                 transition-colors bg-[#10403B] text-white hover:bg-[#4C5958]
                 focus:outline-none focus:ring-2 focus:ring-[#148B4B]/40 disabled:opacity-60"
             >
-              {isSubmitting ? "Registering..." : "Create account"}
+              {isSubmitting ? "Creating..." : "Create account"}
             </button>
           </div>
         </form>
