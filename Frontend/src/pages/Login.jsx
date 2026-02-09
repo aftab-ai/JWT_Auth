@@ -38,7 +38,6 @@ function Login() {
   };
 
   return (
-    // Login Form.
     <div className="flex items-center justify-center min-h-screen w-full">
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
         {/* Heading */}
@@ -70,7 +69,7 @@ function Login() {
                 className={`h-10 w-full pl-10 px-3 text-sm border rounded-md outline-none 
                   focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
                   ${errors.email ? "border-[#D8581C]" : "border-[#148B48]"}`}
-                placeholder="Enter email..."
+                placeholder="Enter your registered email..."
                 disabled={isSubmitting}
                 onFocus={() => setFocusedField("email")}
                 onBlur={() => setFocusedField("")}
@@ -104,7 +103,7 @@ function Login() {
                 className={`h-10 w-full px-10 text-sm border rounded-md outline-none
                   focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
                   ${errors.password ? "border-[#D8581C]" : "border-[#148B48]"}`}
-                placeholder="Enter password..."
+                placeholder="Enter your password..."
                 disabled={isSubmitting}
                 onFocus={() => setFocusedField("password")}
                 onBlur={() => setFocusedField("")}
@@ -128,7 +127,7 @@ function Login() {
               special. Space not allowed.
             </p>
 
-            {/* Validation Error */}
+            {/* Validation error */}
             {errors.password && (
               <p className="mt-1 text-sm text-[#D8581C]">
                 {errors.password.message}
@@ -136,7 +135,7 @@ function Login() {
             )}
           </div>
 
-          {/* Forgot-Password */}
+          {/* Forgot-Password link*/}
           <span>
             <Link
               to="/forgot-password"
@@ -146,7 +145,7 @@ function Login() {
             </Link>
           </span>
 
-          {/* Login Button */}
+          {/* Login button */}
           <div className="text-center">
             <button
               disabled={isSubmitting}

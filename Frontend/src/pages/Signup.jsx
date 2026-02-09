@@ -162,7 +162,7 @@ function Signup() {
               special. Space not allowed.
             </p>
 
-            {/* Validation Error */}
+            {/* Validation error */}
             {errors.password && (
               <p className="mt-1 text-sm text-[#D8581C]">
                 {errors.password.message}
@@ -170,7 +170,7 @@ function Signup() {
             )}
           </div>
 
-          {/* Confirm Password */}
+          {/* Confirm-Password */}
           <div className="relative flex flex-col">
             <label
               htmlFor="confirmPassword"

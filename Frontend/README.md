@@ -36,8 +36,10 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |----NotFound.jsx
   |  |  |----Signup.jsx
   |  |----validators/
-  |  |  |----signupSchemaValidators.js
+  |  |  |----forgotPasswordSchemaValidators.js
   |  |  |----loginSchemaValidators.js
+  |  |  |----signupSchemaValidators.js
+  |  |  |----verifyForgotPasswordSchemaValidators.js
   |  |----index.css
   |  |----main.jsx
   |----.gitignore
