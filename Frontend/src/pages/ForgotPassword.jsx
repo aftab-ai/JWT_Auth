@@ -1,9 +1,9 @@
 // Third-Party modules.
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Mail, KeyRound, Code } from "lucide-react";
+import { Eye, EyeOff, Mail, KeyRound, Code, ArrowLeft } from "lucide-react";
 
 // Import local modules.
 import forgotPasswordSchemaValidators from "../validators/forgotPasswordSchemaValidators";
@@ -11,6 +11,7 @@ import verifyForgotPasswordSchemaValidators from "../validators/verifyForgotPass
 
 function ForgotPassword() {
   const [sendOTP, setSendOTP] = useState(false); // Determine steps.
+  const [registeredEmail, setRegisteredEmail] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false); // Show/Hide New-Password in input.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show/Hide Confirm-Password.
   const navigate = useNavigate(); // Redirect.
@@ -40,7 +41,9 @@ function ForgotPassword() {
     // Step: 1 -> Send OTP to registered email.
     if (!sendOTP) {
       // Send OTP form submit.
+
       console.log(data);
+      setRegisteredEmail(data.email);
       setSendOTP(true);
 
       return;
@@ -49,6 +52,12 @@ function ForgotPassword() {
     // Step: 2 -> Verify OTP and password reset.
     console.log(data);
     navigate("/login"); // Redirect to login page.
+  };
+
+  // User mask-email.
+  const maskEmail = (email) => {
+    const [name, domain] = email.split("@");
+    return `${name.slice(0, 2)}****@${domain}`;
   };
 
   // Determine icon color.
@@ -68,11 +77,39 @@ function ForgotPassword() {
   return (
     <div className="flex items-center justify-center min-h-screen w-full">
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
-        {/* Heading */}
-        <h2 className="mb-4 font-bold text-center text-2xl text-[#10403B]">
-          Recover Password
-        </h2>
+        {/* Headings */}
+        <p className="mb-1 font-bold text-center text-2xl text-[#10403B]">
+          {!sendOTP ? "Forgot password?" : "Password Reset"}
+        </p>
 
+        <div className="mt-1 mb-2 font-semibold text-center text-xs text-[#4C5958]">
+          {!sendOTP ? (
+            <p>
+              Enter your registered email address and we'll send you a
+              verification code.
+            </p>
+          ) : (
+            <>
+              <p>
+                We've sent a verification code to{" "}
+                <span className="font-bold text-[#10403B]">
+                  {maskEmail(registeredEmail)}
+                </span>
+              </p>
+              <p className="mt-1">
+                Wrong email?{" "}
+                <button
+                  onClick={() => setSendOTP(false)}
+                  className="underline cursor-pointer text-[#10403B] hover:text-[#4C5958]"
+                >
+                  Change email
+                </button>
+              </p>
+            </>
+          )}
+        </div>
+
+        {/* Forms */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col w-full space-y-3 font-semibold text-[#10403B]"
@@ -103,17 +140,17 @@ function ForgotPassword() {
                 />
               </div>
 
-              {/* Email validation hint. */}
-              <p className="mt-1 text-xs text-[#4C5958]">
-                Enter your registered email.
-              </p>
-
               {/* Validation error. */}
               {errors.email && (
                 <p className="mt-1 text-sm text-[#D8581C]">
                   {errors.email.message}
                 </p>
               )}
+
+              {/* Email validation hint. */}
+              <p className="mt-1 text-xs text-[#4C5958]">
+                Enter your registered email.
+              </p>
             </div>
           ) : (
             <>
@@ -156,7 +193,7 @@ function ForgotPassword() {
               </div>
 
               {/* New-Password */}
-              <div className="relative flex flex-col">
+              <div className="relative flex flex-col mt-8">
                 <label
                   htmlFor="newPassword"
                   className="mb-1 font-semibold text-sm"
@@ -273,14 +310,23 @@ function ForgotPassword() {
             >
               {!sendOTP
                 ? isSubmitting
-                  ? "Sending..."
-                  : "Send OTP"
+                  ? "Sending verification code..."
+                  : "Send verification code"
                 : isSubmitting
-                  ? "Verifying..."
-                  : "Change Password"}
+                  ? "Resetting password..."
+                  : "Reset password"}
             </button>
           </div>
         </form>
+
+        <span className="text-center">
+          <Link
+            to="/login"
+            className="inline-flex mt-6 font-medium text-xs text-[#10403B] hover:text-[#4C5958]"
+          >
+            <ArrowLeft className="mr-2 size-4" /> Back to log in
+          </Link>
+        </span>
       </div>
     </div>
   );
