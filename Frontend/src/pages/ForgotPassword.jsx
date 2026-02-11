@@ -1,5 +1,5 @@
 // Third-Party modules.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,20 +10,21 @@ import forgotPasswordSchemaValidators from "../validators/forgotPasswordSchemaVa
 import verifyForgotPasswordSchemaValidators from "../validators/verifyForgotPasswordSchemaValidators";
 
 function ForgotPassword() {
-  const [sendOTP, setSendOTP] = useState(false); // Determine steps.
-  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [sendCode, setSendCode] = useState(false); // Determine steps.
+  const [registeredEmail, setRegisteredEmail] = useState({}); // User email.
   const [showNewPassword, setShowNewPassword] = useState(false); // Show/Hide New-Password in input.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show/Hide Confirm-Password.
+  const [cooldown, setCooldown] = useState(0); // Resend code button cooldown.
   const navigate = useNavigate(); // Redirect.
 
-  // Recomputed form-validation file when otp send.
+  // Recompute form-validation file when code send.
   const resolver = useMemo(() => {
     return zodResolver(
-      !sendOTP
+      !sendCode
         ? forgotPasswordSchemaValidators
         : verifyForgotPasswordSchemaValidators,
     );
-  }, [sendOTP]);
+  }, [sendCode]);
 
   // Form controller.
   const {
@@ -36,28 +37,61 @@ function ForgotPassword() {
     shouldUnregister: false, // Keep form values for inputs that are removed from the DOM(email).
   });
 
-  // Form submit.
-  const onSubmit = async (data) => {
-    // Step: 1 -> Send OTP to registered email.
-    if (!sendOTP) {
-      // Send OTP form submit.
-
-      console.log(data);
-      setRegisteredEmail(data.email);
-      setSendOTP(true);
-
-      return;
-    }
-
-    // Step: 2 -> Verify OTP and password reset.
-    console.log(data);
-    navigate("/login"); // Redirect to login page.
-  };
-
   // User mask-email.
   const maskEmail = (email) => {
     const [name, domain] = email.split("@");
     return `${name.slice(0, 2)}****@${domain}`;
+  };
+
+  // API request for sending code.
+  const sendCodeRequest = async (email) => {
+    console.log(email);
+    setCooldown(30);
+  };
+
+  // Handle resend-code.
+  const handleResendCode = async () => {
+    if (cooldown > 0) return;
+
+    try {
+      await sendCodeRequest(registeredEmail);
+      setCooldown(30);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Resend-Code cooldown seconds.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  // API request for verify code and reset password.
+  const verifyAndResetPassword = async (data) => {
+    console.log(data);
+  };
+
+  // Form submit.
+  const onSubmit = async (data) => {
+    // Step: 1 -> Send-Code to registered email.
+    if (!sendCode) {
+      // Send-Code form submit.
+      await sendCodeRequest(data);
+
+      setRegisteredEmail(data);
+      setSendCode(true);
+      return;
+    }
+
+    // Step: 2 -> Verify-Code and password reset.
+    await verifyAndResetPassword(data);
+    navigate("/login"); // Redirect to login page.
   };
 
   // Determine icon color.
@@ -77,13 +111,14 @@ function ForgotPassword() {
   return (
     <div className="flex items-center justify-center min-h-screen w-full">
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
-        {/* Headings */}
+        {/* Heading */}
         <p className="mb-1 font-bold text-center text-2xl text-[#10403B]">
-          {!sendOTP ? "Forgot password?" : "Password Reset"}
+          {!sendCode ? "Forgot password?" : "Password Reset"}
         </p>
 
-        <div className="mt-1 mb-2 font-semibold text-center text-xs text-[#4C5958]">
-          {!sendOTP ? (
+        {/* Instruction heading */}
+        <div className="mt-2 mb-2 font-semibold text-center text-xs text-[#4C5958]">
+          {!sendCode ? (
             <p>
               Enter your registered email address and we'll send you a
               verification code.
@@ -93,13 +128,14 @@ function ForgotPassword() {
               <p>
                 We've sent a verification code to{" "}
                 <span className="font-bold text-[#10403B]">
-                  {maskEmail(registeredEmail)}
+                  {maskEmail(registeredEmail.email)}
                 </span>
               </p>
               <p className="mt-1">
                 Wrong email?{" "}
                 <button
-                  onClick={() => setSendOTP(false)}
+                  type="button"
+                  onClick={() => setSendCode(false)}
                   className="underline cursor-pointer text-[#10403B] hover:text-[#4C5958]"
                 >
                   Change email
@@ -109,12 +145,12 @@ function ForgotPassword() {
           )}
         </div>
 
-        {/* Forms */}
+        {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col w-full space-y-3 font-semibold text-[#10403B]"
         >
-          {!sendOTP ? (
+          {!sendCode ? (
             // Step: 1 -> Show Email field.
             // Email
             <div className="relative flex flex-col">
@@ -192,8 +228,26 @@ function ForgotPassword() {
                 )}
               </div>
 
+              {/* Resend-Code button*/}
+              <div className="mr-2 text-end text-xs">
+                <p className="text-[#4C5958]">Didn't receive the code?</p>
+                <button
+                  type="button"
+                  onClick={handleResendCode}
+                  disabled={cooldown > 0}
+                  className={` 
+                    ${
+                      cooldown > 0
+                        ? "cursor-not-allowed text-[#4C5958]"
+                        : "underline cursor-pointer text-[#10403B] hover:text-[#4C5958]"
+                    }`}
+                >
+                  {cooldown > 0 ? `Resend in (${cooldown})s` : "Resend code"}
+                </button>
+              </div>
+
               {/* New-Password */}
-              <div className="relative flex flex-col mt-8">
+              <div className="relative flex flex-col mt-4">
                 <label
                   htmlFor="newPassword"
                   className="mb-1 font-semibold text-sm"
@@ -308,7 +362,7 @@ function ForgotPassword() {
                 transition-colors bg-[#10403B] text-white hover:bg-[#4C5958]
                 focus:outline-none focus:ring-2 focus:ring-[#148B4B]/40 disabled:opacity-60"
             >
-              {!sendOTP
+              {!sendCode
                 ? isSubmitting
                   ? "Sending verification code..."
                   : "Send verification code"
