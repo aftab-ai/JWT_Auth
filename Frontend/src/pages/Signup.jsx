@@ -50,9 +50,13 @@ function Signup() {
     <div className="flex items-center justify-center min-h-screen w-full">
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
         {/* Heading */}
-        <h2 className="mb-4 font-bold text-center text-2xl text-[#10403B]">
-          Sign Up
-        </h2>
+        <h1 className="font-bold text-center text-2xl text-shadow-2xs text-[#10403B]">
+          Get Started
+        </h1>
+
+        <h3 className="mt-2 mb-2 font-semibold text-center text-xs text-[#4C5958]">
+          To join us! Create your account.
+        </h3>
 
         {/* Signup Form */}
         <form

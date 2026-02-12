@@ -4,20 +4,39 @@ import { Link } from "react-router-dom";
 // Landing Page.
 function Landing() {
   return (
-    <div className="h-screen flex items-center justify-center">
-      <div className="text-center flex items-center justify-center flex-wrap h-3/5 w-xl bg-[#D3D2C7] rounded-lg">
-        <h1 className="font-bold text-3xl  text-[#10403B]">
+    <div className="flex items-center justify-center min-h-screen w-full">
+      <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
+        <img
+          src="/jwt.svg"
+          alt="jwt_img"
+          className="p-2 shadow-xl rounded-2xl"
+        />
+
+        <h1 className="mt-8 font-bold text-center text-3xl text-shadow-2xs text-[#10403B]">
           JWT Auth Template
         </h1>
-        <p className="font-medium text-lg mx-12 text-[#16796F]">
-          An example of "JWT" based authentication / authorization as a best
-          practice.
-        </p>
-        <p className="font-medium text-[#455559] italic">
-          <Link to="/login" className="underline text-[#10403B] font-semibold">
-            Log in
+
+        <h3 className="mt-4 font-normal text-center text-base text-[#4C5958]">
+          This is an example of "JWT" based authentication/authorization as a
+          best practice.
+        </h3>
+
+        <p className="mt-8 font-medium text-center text-xs text-[#455559] italic">
+          For more details,{" "}
+          <Link
+            to="/login"
+            className="underline not-italic font-bold text-[#10403B]"
+          >
+            log in
           </Link>{" "}
-          and see the details.
+          or{" "}
+          <Link
+            to="/signup"
+            className="underline not-italic font-bold text-[#10403B]"
+          >
+            create an account
+          </Link>
+          .
         </p>
       </div>
     </div>

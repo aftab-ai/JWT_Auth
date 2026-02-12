@@ -112,26 +112,26 @@ function ForgotPassword() {
     <div className="flex items-center justify-center min-h-screen w-full">
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
         {/* Heading */}
-        <p className="mb-1 font-bold text-center text-2xl text-[#10403B]">
+        <h1 className="mb-1 font-bold text-center text-2xl text-shadow-2xs text-[#10403B]">
           {!sendCode ? "Forgot password?" : "Password Reset"}
-        </p>
+        </h1>
 
         {/* Instruction heading */}
         <div className="mt-2 mb-2 font-semibold text-center text-xs text-[#4C5958]">
           {!sendCode ? (
-            <p>
+            <h3>
               Enter your registered email address and we'll send you a
               verification code.
-            </p>
+            </h3>
           ) : (
             <>
-              <p>
+              <h3>
                 We've sent a verification code to{" "}
                 <span className="font-bold text-[#10403B]">
                   {maskEmail(registeredEmail.email)}
                 </span>
-              </p>
-              <p className="mt-1">
+              </h3>
+              <h3 className="mt-1">
                 Wrong email?{" "}
                 <button
                   type="button"
@@ -140,7 +140,7 @@ function ForgotPassword() {
                 >
                   Change email
                 </button>
-              </p>
+              </h3>
             </>
           )}
         </div>

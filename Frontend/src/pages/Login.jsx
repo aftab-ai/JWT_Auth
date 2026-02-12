@@ -47,9 +47,14 @@ function Login() {
     <div className="flex items-center justify-center min-h-screen w-full">
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
         {/* Heading */}
-        <h2 className="mb-4 font-bold text-center text-2xl text-[#10403B]">
-          Log in
-        </h2>
+        <h1 className="font-bold text-center text-2xl text-shadow-2xs text-[#10403B]">
+          Welcome Back
+        </h1>
+
+        {/* Quote */}
+        <h3 className="mt-2 mb-2 font-semibold text-center text-xs text-[#4C5958]">
+          Please sign in to continue
+        </h3>
 
         {/* Login Form */}
         <form
@@ -132,12 +137,12 @@ function Login() {
           </div>
 
           {/* Forgot-Password link*/}
-          <span>
+          <span className="mr-2 text-end">
             <Link
               to="/forgot-password"
-              className="underline font-bold text-sm hover:text-[#4C5958]"
+              className="underline font-semibold text-xs hover:text-[#4C5958]"
             >
-              Forgot Password...
+              Forgot Password?
             </Link>
           </span>
 
