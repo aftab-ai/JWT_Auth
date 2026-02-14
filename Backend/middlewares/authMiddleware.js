@@ -2,7 +2,7 @@
 import jwt from "jsonwebtoken";
 
 // Import Environment Variables.
-import config from "../config/keys.js";
+import config from "../config/index.js";
 
 // Import local file-modules.
 import models from "../models/index.js";
@@ -23,11 +23,11 @@ const authMiddleware = async (req, res, next) => {
       // Access-Token Validation.
       decoded = jwt.verify(
         accessToken, // User token.
-        config.jwtAccessSecret, // JWT Access Secret.
+        config.keys.jwtAccessSecret, // JWT Access Secret.
         {
-          issuer: config.jwtIssuer, // Token issuer.
-          audience: config.jwtAudience, // Token audience.
-        }
+          issuer: config.keys.jwtIssuer, // Token issuer.
+          audience: config.keys.jwtAudience, // Token audience.
+        },
       );
     } catch (error) {
       res.statusCode = 401;
@@ -60,9 +60,8 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Fetch user session.
-    const session = await models.Session.findById(sessionId).select(
-      "+hashCSRFToken"
-    );
+    const session =
+      await models.Session.findById(sessionId).select("+hashCSRFToken");
     // Check session.
     if (!session) {
       res.statusCode = 401;

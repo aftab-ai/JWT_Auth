@@ -2,7 +2,7 @@
 import nodemailer from "nodemailer";
 
 // Import Environment Variables.
-import config from "../../config/keys.js";
+import config from "../../config/index.js";
 
 // Send email with code to user for verification.
 const sendEmail = async ({ emailTo, subject, data, content }) => {
@@ -12,14 +12,14 @@ const sendEmail = async ({ emailTo, subject, data, content }) => {
       service: "gmail",
       // Sender.
       auth: {
-        user: config.senderEmail, // Sender Email.
-        pass: config.senderEmailPass, // Sender Email Password.
+        user: config.keys.senderEmail, // Sender Email.
+        pass: config.keys.senderEmailPass, // Sender Email Password.
       },
     });
 
     // Email content.
     await transporter.sendMail({
-      from: `"My App" <${config.senderEmail}>`, // Sender Data("My App").
+      from: `"My App" <${config.keys.senderEmail}>`, // Sender Data("My App").
       to: emailTo,
       subject,
       html: `

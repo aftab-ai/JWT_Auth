@@ -1,5 +1,5 @@
 // Import local file-modules.
-import config from "../config/keys.js";
+import config from "../config/index.js";
 
 // Custom Error-handler middleware.
 const errorHandler = (error, req, res, next) => {
@@ -8,7 +8,7 @@ const errorHandler = (error, req, res, next) => {
     res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
 
   // Node environment.
-  const isDev = config.nodeENV === "development";
+  const isDev = config.keys.nodeENV === "development";
 
   res.status(statusCode).json({
     statusCode,

@@ -2,7 +2,7 @@
 import jwt from "jsonwebtoken";
 
 // Import Environment Variables.
-import config from "../../config/keys.js";
+import config from "../../config/index.js";
 
 // Generate JWT Access Token.
 const createAccessToken = (user, sessionId) => {
@@ -13,12 +13,12 @@ const createAccessToken = (user, sessionId) => {
       role: user.role,
       sessionId,
     },
-    config.jwtAccessSecret, // JWT Access Secret.
+    config.keys.jwtAccessSecret, // JWT Access Secret.
     {
-      expiresIn: config.jwtExpire, // Token expiry time.
-      issuer: config.jwtIssuer, // Token issuer.
-      audience: config.jwtAudience, // Token audience.
-    }
+      expiresIn: config.keys.jwtExpire, // Token expiry time.
+      issuer: config.keys.jwtIssuer, // Token issuer.
+      audience: config.keys.jwtAudience, // Token audience.
+    },
   );
 
   return token;

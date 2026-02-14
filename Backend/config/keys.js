@@ -11,6 +11,7 @@ const {
   CSRF_TOKEN_SECRET,
   SENDER_EMAIL,
   SENDER_EMAIL_PASSWORD,
+  CORS_WHITELIST,
 } = process.env;
 
 export default {
@@ -25,4 +26,5 @@ export default {
   csrfTokenSecret: CSRF_TOKEN_SECRET,
   senderEmail: SENDER_EMAIL,
   senderEmailPass: SENDER_EMAIL_PASSWORD,
+  corsWhitelist: CORS_WHITELIST,
 };

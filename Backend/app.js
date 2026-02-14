@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
 // Import local file-modules.
+import config from "./config/index.js";
 import connectMongoDB from "./init/mongodb.js";
 import routes from "./routes/index.js";
 import middlewares from "./middlewares/index.js";
@@ -19,6 +20,9 @@ app.set("trust proxy", 1);
 
 // Automatically setting HTTP security headers.
 app.use(helmet());
+
+// CORS middleware.
+app.use(config.cors.corsMiddleware);
 
 // Initialize MongoDB database connection.
 connectMongoDB();

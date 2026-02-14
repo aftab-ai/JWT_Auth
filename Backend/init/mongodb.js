@@ -2,10 +2,10 @@
 import mongoose from "mongoose";
 
 // Import Environment Variables.
-import config from "../config/keys.js";
+import config from "../config/index.js";
 
 // MonogoDB Connection URL.
-const mongodbURL = config.mongodbURL;
+const mongodbURL = config.keys.mongodbURL;
 
 // Connect MongoDB Database Server.
 const connectMongoDB = async () => {

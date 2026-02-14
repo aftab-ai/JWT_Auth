@@ -1,8 +1,8 @@
 // Import Environment Variables.
-import config from "../../config/keys.js";
+import config from "../../config/index.js";
 
 // Node environment.
-const isProd = config.nodeENV === "production";
+const isProd = config.keys.nodeENV === "production";
 
 // Cookie centralize options.
 const cookieOptions = {

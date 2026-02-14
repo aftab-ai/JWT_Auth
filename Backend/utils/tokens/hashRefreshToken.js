@@ -2,12 +2,12 @@
 import crypto from "crypto";
 
 // Import Environment Variables.
-import config from "../../config/keys.js";
+import config from "../../config/index.js";
 
 // Refresh-Token Hash
 const hashRefreshToken = (token) => {
   return crypto
-    .createHmac("sha256", config.refreshTokenSecret) // Hash with refreshSecret.
+    .createHmac("sha256", config.keys.refreshTokenSecret) // Hash with refreshSecret.
     .update(token) // Feed data into the hash.
     .digest("hex"); // 64 chracters of hex string(refresh-token).
 };

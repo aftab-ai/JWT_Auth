@@ -10,6 +10,8 @@ It is an example of backend api server for user 'authentication/authorization' w
   Backend/
   |
   |----config/
+  |  |----cors.js
+  |  |----index.js
   |  |----keys.js
   |----controllers/
   |  |----authControllers.js
@@ -258,3 +260,4 @@ It is an example of backend api server for user 'authentication/authorization' w
 - **Express-Rate-Limit** - express-rate-limit is a basic rate-limiting middleware for Express. Use to limit repeated requests to public APIs and/or endpoints such as password reset. Plays nice with express-slow-down and ratelimit-header-parser.
 - **Nodemailer** - Nodemailer makes sending email from a Node.js application straightforward and secure, without pulling in a single runtime dependency.
 - **Helmet** - Help secure Express apps by setting HTTP response headers.
+- **CORS** - CORS is a Node.js middleware for Express/Connect that sets CORS response headers. These headers tell browsers which origins can read responses from your server.
