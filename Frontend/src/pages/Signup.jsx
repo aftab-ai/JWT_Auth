@@ -4,9 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, User, Mail, KeyRound } from "lucide-react";
+import { toast } from "react-toastify";
 
 // Import local modules.
 import signupSchemaValidators from "../validators/signupSchemaValidators";
+import axiosInstance from "../api/axiosInstance";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false); // Show/Hide Password in input.
@@ -26,10 +28,19 @@ function Signup() {
 
   // Form Submit.
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      // API req send for signup.
+      const response = await axiosInstance.post("/auth/signup", data);
 
-    reset();
-    navigate("/login"); // Redirect to login page.
+      // API success res with react-toastify.
+      toast.success(response.data.message);
+      reset();
+      navigate("/login"); // Redirect to login page.
+      toast.info("Please, log in to continue.");
+    } catch (error) {
+      // API error res with react-toastify.
+      toast.error(error.response?.data?.message);
+    }
   };
 
   // Determine icon color.
@@ -232,7 +243,7 @@ function Signup() {
                 transition-colors bg-[#10403B] text-white hover:bg-[#4C5958]
                 focus:outline-none focus:ring-2 focus:ring-[#148B4B]/40 disabled:opacity-60"
             >
-              {isSubmitting ? "Creating..." : "Create account"}
+              {isSubmitting ? "Creating account..." : "Create account"}
             </button>
           </div>
         </form>
