@@ -4,17 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, KeyRound, Code, ArrowLeft } from "lucide-react";
+import { toast } from "react-toastify";
 
 // Import local modules.
 import forgotPasswordSchemaValidators from "../validators/forgotPasswordSchemaValidators";
 import verifyForgotPasswordSchemaValidators from "../validators/verifyForgotPasswordSchemaValidators";
+import axiosInstance from "../api/axiosInstance";
 
 function ForgotPassword() {
   const [sendCode, setSendCode] = useState(false); // Determine steps.
-  const [registeredEmail, setRegisteredEmail] = useState({}); // User email.
+  const [registeredEmail, setRegisteredEmail] = useState(""); // User email.
   const [showNewPassword, setShowNewPassword] = useState(false); // Show/Hide New-Password in input.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show/Hide Confirm-Password.
   const [cooldown, setCooldown] = useState(0); // Resend code button cooldown.
+  const [isResending, setIsResending] = useState(false); // Resending state.
+  const [isExpired, setIsExpired] = useState(0); // Code expiration cooldown.
   const navigate = useNavigate(); // Redirect.
 
   // Recompute form-validation file when code send.
@@ -31,6 +35,7 @@ function ForgotPassword() {
     register, // Function to register an input field with the form.
     handleSubmit, // Function to handle form submission with validation.
     formState: { errors, isSubmitting, touchedFields }, // Form state (errors, submission status, touched fields).
+    reset, // Reset form.
   } = useForm({
     resolver, // Form-Validation logic.
     mode: "onChange", // Trigger validation when field have input(onChange).
@@ -39,25 +44,51 @@ function ForgotPassword() {
 
   // User mask-email.
   const maskEmail = (email) => {
+    if (!email || !email.includes("@")) return "";
+
     const [name, domain] = email.split("@");
     return `${name.slice(0, 2)}****@${domain}`;
   };
 
+  // Code expires time-formate.
+  const expiresTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
   // API request for sending code.
-  const sendCodeRequest = async (email) => {
-    console.log(email);
-    setCooldown(30);
+  const sendCodeRequest = async (data) => {
+    try {
+      const response = await axiosInstance.post(
+        "/auth/request-forgot-password",
+        data,
+      );
+      // API success res with react-toastify.
+      toast.success(response.data.message);
+
+      setSendCode(true); // Step: 2 Activate.
+      setCooldown(30);
+      setIsExpired(120);
+      setRegisteredEmail(data.email);
+    } catch (error) {
+      // API error res with react-toastify.
+      toast.error(error.response?.data?.message);
+      setSendCode(false);
+    }
   };
 
   // Handle resend-code.
   const handleResendCode = async () => {
-    if (cooldown > 0) return;
+    if (cooldown > 0 || isResending || isSubmitting) return;
 
     try {
-      await sendCodeRequest(registeredEmail);
-      setCooldown(30);
-    } catch (error) {
-      console.error(error);
+      setIsResending(true);
+
+      // Resend-code again.
+      await sendCodeRequest({ email: registeredEmail });
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -66,32 +97,72 @@ function ForgotPassword() {
     if (cooldown <= 0) return;
 
     const timer = setInterval(() => {
-      setCooldown((prev) => prev - 1);
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
   }, [cooldown]);
 
+  // Code expires time.
+  useEffect(() => {
+    if (isExpired <= 0) return;
+
+    const timer = setInterval(() => {
+      setIsExpired((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isExpired]);
+
   // API request for verify code and reset password.
   const verifyAndResetPassword = async (data) => {
-    console.log(data);
+    try {
+      const { code, newPassword } = data;
+      const response = await axiosInstance.post(
+        "/auth/verify-forgot-password",
+        { email: registeredEmail, code, newPassword },
+      );
+
+      // API success res with react-toastify.
+      toast.success(response.data.message);
+
+      reset();
+      navigate("/login"); // Redirect to login page.
+    } catch (error) {
+      // API error res with react-toastify.
+      toast.error(error.response?.data?.message);
+    }
   };
 
   // Form submit.
   const onSubmit = async (data) => {
+    // If code expires.
+    if (sendCode && isExpired <= 0) {
+      toast.error("Code expired. Please request a new one.");
+      return;
+    }
+
     // Step: 1 -> Send-Code to registered email.
     if (!sendCode) {
       // Send-Code form submit.
       await sendCodeRequest(data);
-
-      setRegisteredEmail(data);
-      setSendCode(true);
       return;
     }
 
     // Step: 2 -> Verify-Code and password reset.
     await verifyAndResetPassword(data);
-    navigate("/login"); // Redirect to login page.
   };
 
   // Determine icon color.
@@ -128,14 +199,18 @@ function ForgotPassword() {
               <h3>
                 We've sent a verification code to{" "}
                 <span className="font-bold text-[#10403B]">
-                  {maskEmail(registeredEmail.email)}
+                  {maskEmail(registeredEmail)}
                 </span>
               </h3>
               <h3 className="mt-1">
                 Wrong email?{" "}
                 <button
                   type="button"
-                  onClick={() => setSendCode(false)}
+                  onClick={() => {
+                    setSendCode(false);
+                    setIsExpired(0);
+                    setCooldown(0);
+                  }}
                   className="underline cursor-pointer text-[#10403B] hover:text-[#4C5958]"
                 >
                   Change email
@@ -211,13 +286,13 @@ function ForgotPassword() {
                       focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
                       ${errors.code ? "border-[#D8581C]" : "border-[#148B48]"}`}
                     placeholder="Enter code..."
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isExpired <= 0}
                   />
                 </div>
 
                 {/* Code validation hint. */}
                 <p className="mt-1 text-xs text-[#4C5958]">
-                  Enter 6 digit code(OTP) that sent to your email.
+                  Enter the 6-digit verification code sent to your email.
                 </p>
 
                 {/* Validation error. */}
@@ -228,21 +303,45 @@ function ForgotPassword() {
                 )}
               </div>
 
-              {/* Resend-Code button*/}
+              {/* Resend-Code button & code expires time.*/}
               <div className="mr-2 text-end text-xs">
                 <p className="text-[#4C5958]">Didn't receive the code?</p>
+                <p className="inline-block mt-1 mr-1 text-xs text-[#4C5958]">
+                  {isExpired > 0 ? (
+                    <>
+                      Code expires in{" "}
+                      <span className="text-[#D8581C]">
+                        ({expiresTime(isExpired)})
+                      </span>
+                      !
+                    </>
+                  ) : (
+                    "Code expired! Please request a new one."
+                  )}
+                </p>
                 <button
                   type="button"
                   onClick={handleResendCode}
-                  disabled={cooldown > 0}
+                  disabled={cooldown > 0 || isSubmitting || isResending}
                   className={` 
                     ${
-                      cooldown > 0
+                      cooldown > 0 || isSubmitting || isResending
                         ? "cursor-not-allowed text-[#4C5958]"
                         : "underline cursor-pointer text-[#10403B] hover:text-[#4C5958]"
                     }`}
                 >
-                  {cooldown > 0 ? `Resend in (${cooldown})s` : "Resend code"}
+                  {isResending ? (
+                    "Sending..."
+                  ) : cooldown > 0 ? (
+                    <>
+                      Resend in{" "}
+                      <span className="text-[#D8581C]">
+                        ({expiresTime(cooldown)})
+                      </span>
+                    </>
+                  ) : (
+                    "Resend code"
+                  )}
                 </button>
               </div>
 
@@ -269,7 +368,7 @@ function ForgotPassword() {
                       focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
                       ${errors.newPassword ? "border-[#D8581C]" : "border-[#148B48]"}`}
                     placeholder="Enter new password..."
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isExpired <= 0}
                   />
 
                   {/* Show/Hide password button. */}
@@ -323,7 +422,7 @@ function ForgotPassword() {
                       focus:ring-2 focus:ring-[#10403B]/40 focus:border-[#10403B]
                       ${errors.confirmPassword ? "border-[#D8581C]" : "border-[#148B48]"}`}
                     placeholder="Enter password again..."
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isExpired <= 0}
                   />
 
                   {/* Show/Hide password button. */}
@@ -357,10 +456,11 @@ function ForgotPassword() {
           {/* Submit Button */}
           <div className="text-center">
             <button
-              disabled={isSubmitting}
-              className="h-10 w-full mt-3 font-semibold text-sm cursor-pointer rounded-md
+              disabled={isSubmitting || (sendCode && isExpired <= 0)}
+              className={`h-10 w-full mt-3 font-semibold text-sm rounded-md
                 transition-colors bg-[#10403B] text-white hover:bg-[#4C5958]
-                focus:outline-none focus:ring-2 focus:ring-[#148B4B]/40 disabled:opacity-60"
+                focus:outline-none focus:ring-2 focus:ring-[#148B4B]/40 disabled:opacity-60
+                ${isSubmitting || (sendCode && isExpired <= 0) ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               {!sendCode
                 ? isSubmitting

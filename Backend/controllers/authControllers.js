@@ -46,7 +46,7 @@ const signup = async (req, res, next) => {
     res.status(201).json({
       statusCode: 201,
       status: true,
-      message: "User registered successfully.",
+      message: "User registered successfully. Please, log in to continue.",
     });
   } catch (error) {
     next(error);
@@ -159,7 +159,7 @@ const verifyForgotPassword = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User password-reset successfully. Please, Login again.",
+      message: "User Password-Reset successfully. Please, log in to continue.",
     });
   } catch (error) {
     next(error);

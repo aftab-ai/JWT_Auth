@@ -31,12 +31,11 @@ function Signup() {
     try {
       // API req send for signup.
       const response = await axiosInstance.post("/auth/signup", data);
-
       // API success res with react-toastify.
       toast.success(response.data.message);
+
       reset();
       navigate("/login"); // Redirect to login page.
-      toast.info("Please, log in to continue.");
     } catch (error) {
       // API error res with react-toastify.
       toast.error(error.response?.data?.message);

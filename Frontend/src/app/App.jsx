@@ -12,7 +12,7 @@ function App() {
       {/* Toast Message */}
       <ToastContainer
         position="top-center"
-        autoClose={3000}
+        autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick={false}
@@ -20,7 +20,8 @@ function App() {
         pauseOnHover
         pauseOnFocusLoss
         draggable
-        theme="light"
+        theme="colored"
+        toastClassName="!font-semibold text-shadow-lg"
       />
 
       {/* Router */}
