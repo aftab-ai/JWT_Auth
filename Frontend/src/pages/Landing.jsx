@@ -24,14 +24,14 @@ function Landing() {
         <p className="mt-8 font-medium text-center text-xs text-[#455559] italic">
           For more details,{" "}
           <Link
-            to="/login"
+            to="/app/login"
             className="underline not-italic font-bold text-[#10403B]"
           >
             log in
           </Link>{" "}
           or{" "}
           <Link
-            to="/signup"
+            to="/app/signup"
             className="underline not-italic font-bold text-[#10403B]"
           >
             create an account

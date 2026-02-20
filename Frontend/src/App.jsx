@@ -4,9 +4,15 @@ import { ToastContainer } from "react-toastify";
 import { RouterProvider } from "react-router-dom";
 
 // Import local modules.
-import router from "./router";
+import router from "./routes/router";
+import useAuth from "./hooks/useAuth";
+import Loader from "./components/Loader";
 
 function App() {
+  const { loading } = useAuth();
+
+  if (loading) return <Loader />;
+
   return (
     <>
       {/* Toast Message */}

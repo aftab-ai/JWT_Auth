@@ -29,16 +29,20 @@ function Signup() {
   // Form Submit.
   const onSubmit = async (data) => {
     try {
-      // API req send for signup.
-      const response = await axiosInstance.post("/auth/signup", data);
-      // API success res with react-toastify.
-      toast.success(response.data.message);
+      // API req send for sign up.
+      await axiosInstance.post("/auth/signup", data);
 
+      // API success res with react-toastify.
+      toast.success("Account created successfully.");
       reset();
-      navigate("/login"); // Redirect to login page.
+      navigate("/app/login"); // Redirect to login page.
+      toast.info("Please log in to continue.");
     } catch (error) {
       // API error res with react-toastify.
-      toast.error(error.response?.data?.message);
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
     }
   };
 
@@ -251,7 +255,7 @@ function Signup() {
         <p className="mt-5 font-semibold text-center text-xs text-[#4C5958]">
           Already have an account?{" "}
           <Link
-            to="/login"
+            to="/app/login"
             className="underline font-bold text-[#10403B] hover:text-[#4C5958]"
           >
             Log In

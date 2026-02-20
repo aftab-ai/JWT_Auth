@@ -14,10 +14,8 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |----shattered-dark.png
   |----src/
   |  |----api/
+  |  |  |----auth.service.js
   |  |  |----axiosInstance.js
-  |  |----app/
-  |  |  |----App.jsx
-  |  |  |----router.jsx
   |  |----assets/
   |  |  |----fonts/
   |  |  |  |----Inter-Bold.woff2
@@ -25,12 +23,14 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |  |----Inter-Regular.woff2
   |  |  |  |----Inter-SemiBold.woff2
   |  |----components/
-  |  |  |----layouts/
-  |  |  |  |----PrivateLayout.jsx
-  |  |  |  |----PublicLayout.jsx
   |  |  |----Loader.jsx
   |  |  |----PrivateNavbar.jsx
   |  |  |----PublicNavbar.jsx
+  |  |----context/
+  |  |  |----AuthProvider.jsx
+  |  |  |----context.js
+  |  |----hokks/
+  |  |  |----useAuth.js
   |  |----pages/
   |  |  |----ForgotPassword.jsx
   |  |  |----Home.jsx
@@ -38,11 +38,17 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |----Login.jsx
   |  |  |----NotFound.jsx
   |  |  |----Signup.jsx
+  |  |----routes/
+  |  |  |----layouts/
+  |  |  |  |----PrivateLayout.jsx
+  |  |  |  |----PublicLayout.jsx
+  |  |  |----router.jsx
   |  |----validators/
   |  |  |----forgotPasswordSchemaValidators.js
   |  |  |----loginSchemaValidators.js
   |  |  |----signupSchemaValidators.js
   |  |  |----verifyForgotPasswordSchemaValidators.js
+  |  |----App.jsx
   |  |----index.css
   |  |----main.jsx
   |----.gitignore

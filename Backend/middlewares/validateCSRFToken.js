@@ -33,7 +33,7 @@ const validateCSRFToken = (req, res, next) => {
     // Validate CSRF-Token with always the same compare time(no-leak timinig info).
     const isValid = crypto.timingSafeEqual(
       Buffer.from(hashedCSRFtoken, "hex"),
-      Buffer.from(session.hashCSRFToken, "hex")
+      Buffer.from(session.hashCSRFToken, "hex"),
     );
 
     if (!isValid) {

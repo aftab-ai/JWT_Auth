@@ -32,7 +32,7 @@ const corsOption = !isProd
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 
       // Specifies which HTTP headers can be sent by the client in cross-origin requests.
-      allowedHeaders: ["Content-Type", "Authorization"],
+      allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
 
       // Allows the browser to send cookies with requests.
       credentials: true,

@@ -4,11 +4,16 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Mail, KeyRound } from "lucide-react";
+import { toast } from "react-toastify";
 
 // Import local modules.
 import loginSchemaValidators from "../validators/loginSchemaValidators";
+import useAuth from "../hooks/useAuth";
 
 function Login() {
+  // Fetch login from context.
+  const { login } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false); // Show/Hide Password.
 
   // Form controller.
@@ -24,9 +29,19 @@ function Login() {
 
   // Form Submit.
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      // API req send for sign in.
+      await login(data);
 
-    reset(); // Reset form input.
+      // API success res with react-toastify.
+      toast.success("You are now logged in.");
+      reset(); // Reset form input.
+    } catch (error) {
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
+    }
   };
 
   // Determine icon color.
@@ -53,7 +68,7 @@ function Login() {
 
         {/* Quote */}
         <h3 className="mt-2 mb-2 font-semibold text-center text-xs text-[#4C5958]">
-          Please sign in to continue
+          Please log in to continue.
         </h3>
 
         {/* Login Form */}
@@ -139,7 +154,7 @@ function Login() {
           {/* Forgot-Password link*/}
           <span className="mr-2 text-end">
             <Link
-              to="/forgot-password"
+              to="/app/forgot-password"
               className="underline font-semibold text-xs hover:text-[#4C5958]"
             >
               Forgot Password?
@@ -163,7 +178,7 @@ function Login() {
         <p className="mt-5 font-semibold text-center text-xs text-[#4C5958]">
           Don't have an account?{" "}
           <Link
-            to="/signup"
+            to="/app/signup"
             className="underline font-bold text-[#10403B] hover:text-[#4C5958]"
           >
             Sign Up

@@ -2,14 +2,16 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 // Import local modules.
-import PrivateNavbar from "../PrivateNavbar";
+import PrivateNavbar from "../../components/PrivateNavbar";
+import useAuth from "../../hooks/useAuth";
 
 // Private Layout shows when user logged in.
 function PrivateLayout() {
-  const auth = false;
+  const { isAuthenticated } = useAuth(); // Checks user-authentication.
 
-  if (!auth) {
-    return <Navigate to="/" replace />;
+  // If user in not authenticated then redirect to "/landing" page.
+  if (!isAuthenticated) {
+    return <Navigate to="/app" replace />;
   }
 
   return (

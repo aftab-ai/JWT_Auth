@@ -2,14 +2,16 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 // Import local modules.
-import PublicNavbar from "../PublicNavbar";
+import PublicNavbar from "../../components/PublicNavbar";
+import useAuth from "../../hooks/useAuth";
 
 // Public Layout.
 function PublicLayout() {
-  const auth = false;
+  const { isAuthenticated } = useAuth(); // Checks user-authentication.
 
-  if (auth) {
-    return <Navigate to="/app" replace />;
+  // If user authentic then redirect to the home page.
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
   }
 
   return (

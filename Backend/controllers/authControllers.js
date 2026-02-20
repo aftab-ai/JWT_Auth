@@ -46,7 +46,7 @@ const signup = async (req, res, next) => {
     res.status(201).json({
       statusCode: 201,
       status: true,
-      message: "User registered successfully. Please, log in to continue.",
+      message: "User registered successfully. Please log in to continue.",
     });
   } catch (error) {
     next(error);
@@ -159,7 +159,7 @@ const verifyForgotPassword = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User Password-Reset successfully. Please, log in to continue.",
+      message: "User Password-Reset successfully. Please log in to continue.",
     });
   } catch (error) {
     next(error);
@@ -234,7 +234,7 @@ const signin = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User Logged In successfully.",
+      message: "User logged in successfully.",
       data: { csrfToken: csrfToken },
     });
   } catch (error) {
@@ -453,7 +453,7 @@ const verifyEmail = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User verified successfully. Please, Login again.",
+      message: "User verified successfully. Please log in again.",
       data: { csrfToken: null },
     });
   } catch (error) {
@@ -587,7 +587,7 @@ const verifyPasswordReset = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      message: "User password-reset successfully. Please, Login again.",
+      message: "User password-reset successfully. Please log in again.",
       data: { csrfToken: null },
     });
   } catch (error) {

@@ -3,8 +3,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
 // Import local modules.
-import PrivateLayout from "../components/layouts/PrivateLayout";
-import PublicLayout from "../components/layouts/PublicLayout";
+import PrivateLayout from "./layouts/PrivateLayout";
+import PublicLayout from "./layouts/PublicLayout";
 import NotFound from "../pages/NotFound";
 import Loader from "../components/Loader";
 
@@ -18,7 +18,6 @@ const Home = lazy(() => import("../pages/Home"));
 const router = createBrowserRouter([
   // Need authentication for access private routes.
   {
-    path: "app",
     element: (
       <Suspense fallback={<Loader />}>
         <PrivateLayout />
@@ -34,6 +33,7 @@ const router = createBrowserRouter([
 
   // Public routes.
   {
+    path: "app",
     element: (
       <Suspense fallback={<Loader />}>
         <PublicLayout />

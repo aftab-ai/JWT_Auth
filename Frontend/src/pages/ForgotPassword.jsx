@@ -60,12 +60,9 @@ function ForgotPassword() {
   // API request for sending code.
   const sendCodeRequest = async (data) => {
     try {
-      const response = await axiosInstance.post(
-        "/auth/request-forgot-password",
-        data,
-      );
+      await axiosInstance.post("/auth/request-forgot-password", data);
       // API success res with react-toastify.
-      toast.success(response.data.message);
+      toast.success("Verification code sent successfully.");
 
       setSendCode(true); // Step: 2 Activate.
       setCooldown(30);
@@ -73,7 +70,10 @@ function ForgotPassword() {
       setRegisteredEmail(data.email);
     } catch (error) {
       // API error res with react-toastify.
-      toast.error(error.response?.data?.message);
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
       setSendCode(false);
     }
   };
@@ -130,19 +130,24 @@ function ForgotPassword() {
   const verifyAndResetPassword = async (data) => {
     try {
       const { code, newPassword } = data;
-      const response = await axiosInstance.post(
-        "/auth/verify-forgot-password",
-        { email: registeredEmail, code, newPassword },
-      );
+      await axiosInstance.post("/auth/verify-forgot-password", {
+        email: registeredEmail,
+        code,
+        newPassword,
+      });
 
       // API success res with react-toastify.
-      toast.success(response.data.message);
+      toast.success("Your password has been reset successfully.");
 
       reset();
-      navigate("/login"); // Redirect to login page.
+      navigate("/app/login"); // Redirect to login page.
+      toast.info("Please log in to continue.");
     } catch (error) {
       // API error res with react-toastify.
-      toast.error(error.response?.data?.message);
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
     }
   };
 
@@ -150,7 +155,7 @@ function ForgotPassword() {
   const onSubmit = async (data) => {
     // If code expires.
     if (sendCode && isExpired <= 0) {
-      toast.error("Code expired. Please request a new one.");
+      toast.error("Code expired! Please request a new one.");
       return;
     }
 
@@ -475,7 +480,7 @@ function ForgotPassword() {
 
         <span className="text-center">
           <Link
-            to="/login"
+            to="/app/login"
             className="inline-flex mt-6 font-medium text-xs text-[#10403B] hover:text-[#4C5958]"
           >
             <ArrowLeft className="mr-2 size-4" /> Back to log in

@@ -17,7 +17,7 @@ function PublicNavbar() {
       <div className="flex items-center space-x-3 sm:space-x-5">
         {/* Signup */}
         <NavLink
-          to="/signup"
+          to="/app/signup"
           className={({ isActive }) =>
             `font-bold text-sm px-4 py-0.5 sm:py-1 border rounded-md border-[#10403B]
              transition-colors text-[#10403B] hover:bg-[#4C5958] hover:text-white
@@ -29,7 +29,7 @@ function PublicNavbar() {
 
         {/* Login */}
         <NavLink
-          to="/login"
+          to="/app/login"
           className={({ isActive }) =>
             `font-bold text-sm px-4 py-0.5 sm:py-1 border rounded-md border-[#10403B]
             transition-colors text-white bg-[#10403B] hover:bg-[#4C5958]
