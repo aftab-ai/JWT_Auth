@@ -3,6 +3,7 @@ import crypto from "crypto";
 
 // Import local file-modules.
 import hashCSRFToken from "../utils/tokens/hashCSRFToken.js";
+import { AppError } from "./errorHandler.js";
 
 const validateCSRFToken = (req, res, next) => {
   try {
@@ -10,21 +11,18 @@ const validateCSRFToken = (req, res, next) => {
     const session = req.session;
     // Check session.
     if (!session) {
-      res.statusCode = 401;
-      throw new Error("Session is not available!");
+      throw new AppError("Session not found!", "SESSION_NOT_FOUND", 401);
     }
 
     if (session.revokedAt) {
-      res.statusCode = 401;
-      throw new Error("Session has been revoked!");
+      throw new AppError("Session has been revoked!", "SESSION_REVOKED", 403);
     }
 
     // Fetch CSRF-Token.
     const csrfToken = req.headers["x-csrf-token"];
     // Check csrfToken.
     if (!csrfToken) {
-      res.statusCode = 403;
-      throw new Error("CSRF-Token is missing!");
+      throw new AppError("CSRF-Token is missing!", "CSRF_TOKEN_MISSING", 401);
     }
 
     // Hash CSRF-Token.
@@ -37,8 +35,7 @@ const validateCSRFToken = (req, res, next) => {
     );
 
     if (!isValid) {
-      res.statusCode = 403;
-      throw new Error("CSRF-Token is invalid!");
+      throw new AppError("CSRF-Token is invalid!", "CSRF_TOKEN_INVALID", 401);
     }
 
     next();

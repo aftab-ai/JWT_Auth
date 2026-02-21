@@ -1,6 +1,7 @@
 // Import local file-modules.
 import models from "../models/index.js";
 import hashRefreshToken from "../utils/tokens/hashRefreshToken.js";
+import { AppError } from "./errorHandler.js";
 
 const validateRefreshToken = async (req, res, next) => {
   try {
@@ -8,8 +9,11 @@ const validateRefreshToken = async (req, res, next) => {
     const refreshToken = req.cookies?.refreshToken;
     // Check Token.
     if (!refreshToken) {
-      res.statusCode = 401;
-      throw new Error("Refresh-Token is missing!");
+      throw new AppError(
+        "Refresh-Token is missing!",
+        "REFRESH_TOKEN_MISSING",
+        401,
+      );
     }
 
     // Hash the Refresh-Token.
@@ -22,29 +26,29 @@ const validateRefreshToken = async (req, res, next) => {
 
     // Check Session.
     if (!session) {
-      res.statusCode = 401;
-      throw new Error("Refresh-Token is invalid!");
+      throw new AppError("Session not found!", "SESSION_NOT_FOUND", 401);
     }
 
     // Check Session Revoked.
     if (session.revokedAt) {
-      res.statusCode = 403;
-      throw new Error("Session has been revoked!");
+      throw new AppError("Session has been revoked!", "SESSION_REVOKED", 403);
     }
 
     // Check Session Expiry.
     if (session.expiresAt < Date.now()) {
-      // Immediately revoke/delete session
+      // Immediately revoke/delete session.
       await models.Session.deleteOne({ _id: session._id });
-      res.statusCode = 401;
-      throw new Error("Refresh-Token has expired! Please login again.");
+      throw new AppError(
+        "Refresh-Token has expired! Please sign in again.",
+        "REFRESH_TOKEN_EXPIRED",
+        401,
+      );
     }
 
     // Fetch user
     const user = await models.User.findById(session.user);
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Attach to request for next middleware/controller.

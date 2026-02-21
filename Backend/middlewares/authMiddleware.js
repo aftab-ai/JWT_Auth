@@ -6,6 +6,7 @@ import config from "../config/index.js";
 
 // Import local file-modules.
 import models from "../models/index.js";
+import { AppError } from "./errorHandler.js";
 
 // User authentication middleware.
 const authMiddleware = async (req, res, next) => {
@@ -14,8 +15,11 @@ const authMiddleware = async (req, res, next) => {
     const accessToken = req.cookies?.accessToken;
     // Check Token.
     if (!accessToken) {
-      res.statusCode = 401;
-      throw new Error("Access-Token is missing!");
+      throw new AppError(
+        "Access-Token is missing!",
+        "ACCESS_TOKEN_MISSING",
+        401,
+      );
     }
 
     let decoded;
@@ -30,24 +34,36 @@ const authMiddleware = async (req, res, next) => {
         },
       );
     } catch (error) {
-      res.statusCode = 401;
-      throw new Error("Access-Token is expired or invalid!");
+      if (error.name === "TokenExpiredError") {
+        throw new AppError(
+          "Access-Token is expired!",
+          "ACCESS_TOKEN_EXPIRED",
+          401,
+        );
+      }
+      throw new AppError(
+        "Access-Token is invalid!",
+        "ACCESS_TOKEN_INVALID",
+        401,
+      );
     }
 
     // Check user-data.
     if (!decoded?.id || !decoded?.sessionId || !decoded?.role) {
-      res.statusCode = 401;
-      throw new Error("Access-Token is malformed!");
+      throw new AppError(
+        "Access-Token is malformed!",
+        "ACCESS_TOKEN_MALFORMED",
+        401,
+      );
     }
     // Fetch user-data.
-    const { id: userId, role, sessionId } = decoded;
+    const { id: userId, sessionId, role } = decoded;
 
     // Fetch user.
     const user = await models.User.findById(userId);
     // Check user.
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Password Changed Invalidation.
@@ -55,8 +71,11 @@ const authMiddleware = async (req, res, next) => {
       user.passwordChangedAt &&
       decoded.iat * 1000 < user.passwordChangedAt.getTime()
     ) {
-      res.status(401);
-      throw new Error("Password changed. Please sign in again!");
+      throw new AppError(
+        "Password changed. Please sign in again!",
+        "PASSWORD_CHANGED",
+        401,
+      );
     }
 
     // Fetch user session.
@@ -64,16 +83,13 @@ const authMiddleware = async (req, res, next) => {
       await models.Session.findById(sessionId).select("+hashCSRFToken");
     // Check session.
     if (!session) {
-      res.statusCode = 401;
-      throw new Error("Session not found!");
+      throw new AppError("Session not found!", "SESSION_NOT_FOUND", 401);
     }
     if (session.revokedAt) {
-      res.statusCode = 401;
-      throw new Error("Session has been revoked!");
+      throw new AppError("Session has been revoked!", "SESSION_REVOKED", 403);
     }
     if (session.expiresAt < Date.now()) {
-      res.statusCode = 401;
-      throw new Error("Session has expired!");
+      throw new AppError("Session has expired!", "SESSION_EXPIRED", 401);
     }
 
     // Attach user + session.

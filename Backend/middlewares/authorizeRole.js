@@ -1,16 +1,25 @@
+// Import local file-modules.
+import { AppError } from "./errorHandler.js";
+
 const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
     try {
       // Check userRole.
       if (!req.role) {
-        res.statusCode = 401;
-        throw new Error("Unauthorized! No role assigned.");
+        throw new AppError(
+          "Unauthorized! No role assigned.",
+          "USER_UNAUTHORIZED",
+          401,
+        );
       }
 
       // Check if user role is allowed
       if (!allowedRoles.includes(req.role)) {
-        res.statusCode = 403;
-        throw new Error("Forbidden: Insufficient permissions.");
+        throw new AppError(
+          "Forbidden: Insufficient permissions.",
+          "USER_FORBIDDEN",
+          403,
+        );
       }
 
       next();

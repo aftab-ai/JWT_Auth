@@ -18,6 +18,7 @@ import sendEmail from "../utils/sendEmail/sendEmail.js";
 import clearTokenCookie from "../utils/cookies/clearTokenCookie.js";
 import hashRandomCode from "../utils/randomCode/hashRandomCode.js";
 import compareHashCode from "../utils/randomCode/compareHashCode.js";
+import { AppError } from "../middlewares/errorHandler.js";
 
 // Public controllers.
 // ====> User-Registration(signup) controller.
@@ -28,8 +29,7 @@ const signup = async (req, res, next) => {
     // Check duplicate email.
     const isEmailExist = await models.User.findOne({ email });
     if (isEmailExist) {
-      res.statusCode = 409;
-      throw new Error("Email already exist!");
+      throw new AppError("Email already exist!", "DUPLICATE_EMAIL", 409);
     }
 
     // Hash user password.
@@ -46,7 +46,8 @@ const signup = async (req, res, next) => {
     res.status(201).json({
       statusCode: 201,
       status: true,
-      message: "User registered successfully. Please log in to continue.",
+      code: "USER_CREATED",
+      message: "User registered successfully. Please sign in to continue.",
     });
   } catch (error) {
     next(error);
@@ -63,8 +64,7 @@ const forgotPassword = async (req, res, next) => {
     const user = await models.User.findOne({ email });
     // Check user.
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Generate code.
@@ -91,6 +91,7 @@ const forgotPassword = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "VERIFICATION_CODE_SENT",
       message: "Forgot-Password-Code sent successfully.",
     });
   } catch (error) {
@@ -108,8 +109,7 @@ const verifyForgotPassword = async (req, res, next) => {
     const user = await models.User.findOne({ email }).select("+password");
     // Check user.
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Fetch forgotPassword and update.
@@ -120,8 +120,11 @@ const verifyForgotPassword = async (req, res, next) => {
     }).select("+hashCode");
     // Check passwordReset.
     if (!forgotPassword) {
-      res.statusCode = 400;
-      throw new Error("Reset-Code expires or invalid!");
+      throw new AppError(
+        "Reset-Code expires!",
+        "VERIFICATION_CODE_EXPIRES",
+        400,
+      );
     }
 
     // Attempts increase.
@@ -130,15 +133,13 @@ const verifyForgotPassword = async (req, res, next) => {
 
     // Check Attempts.
     if (forgotPassword.attempts > 3) {
-      res.statusCode = 429;
-      throw new Error("Too many attempts!");
+      throw new AppError("Too many attempts!", "TOO_MANY_ATTEMPTS", 429);
     }
 
     // Verify code.
     const verifyCode = await compareHashCode(code, forgotPassword.hashCode);
     if (!verifyCode) {
-      res.statusCode = 400;
-      throw new Error("Code is invalid!");
+      throw new AppError("Code is invalid!", "VERIFICAION_CODE_INVALID", 400);
     }
 
     // Hash new password.
@@ -159,6 +160,7 @@ const verifyForgotPassword = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "PASSWORD_RESET_SUCCESSFULL",
       message: "User Password-Reset successfully. Please log in to continue.",
     });
   } catch (error) {
@@ -174,15 +176,13 @@ const signin = async (req, res, next) => {
     // Find user in database.
     const user = await models.User.findOne({ email }).select("+password");
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new AppError("Invalid credentials!", "INVALID_CREDENTIALS", 401);
     }
 
     // Compare the password.
     const verifyPassword = await compareHashPassword(password, user.password);
     if (!verifyPassword) {
-      res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new AppError("Invalid credentials!", "INVALID_CREDENTIALS", 401);
     }
 
     // Refresh-Token.
@@ -234,6 +234,7 @@ const signin = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "USER_AUTHENTICATED",
       message: "User logged in successfully.",
       data: { csrfToken: csrfToken },
     });
@@ -248,8 +249,11 @@ const currentUser = async (req, res, next) => {
   try {
     // Check User-Authentication.
     if (!req.userId) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT-AUTHENTICATED",
+        401,
+      );
     }
     // Fetch user-id via middleware;
     const userId = req.userId;
@@ -257,13 +261,13 @@ const currentUser = async (req, res, next) => {
     // Find user.
     const user = await models.User.findById(userId);
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "CURRENT_USER",
       message: "Get current user successfully.",
       data: { userId: user._id, username: user.username, role: user.role },
     });
@@ -275,15 +279,11 @@ const currentUser = async (req, res, next) => {
 // ====> Token-Refresh controller.
 const tokenRefresh = async (req, res, next) => {
   try {
-    // Check User-Authentication.
-    if (!req.user && !req.session && !req.hashedRefreshToken) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch from validateRefreshToken middleware.
-    const user = req.user;
-    const session = req.session;
-    const hashedRefreshToken = req.hashedRefreshToken;
+    const { user, session, hashedRefreshToken } = req;
+    if (!user || !session || !hashedRefreshToken) {
+      throw new AppError("Session is not found!", "SESSION_NOT_FOUND", 401);
+    }
 
     // Create new Refresh-Token.
     const newRefreshToken = createRefreshToken();
@@ -314,8 +314,11 @@ const tokenRefresh = async (req, res, next) => {
     // If no document updated -> Race Condition or Stolen Token.
     if (result.modifiedCount === 0) {
       await models.Session.deleteOne({ _id: session._id });
-      res.statusCode = 409;
-      throw new Error("Refresh Conflict! - Session removed, Login again.");
+      throw new AppError(
+        "Refresh Conflict! - Session removed, Login again.",
+        "REFRESH_CONFLICT",
+        409,
+      );
     }
 
     // Fetch session id.
@@ -330,6 +333,7 @@ const tokenRefresh = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "TOKEN_REFRESHED",
       message: "Token refreshed successfully.",
       data: { csrfToken: newCSRFToken },
     });
@@ -341,27 +345,28 @@ const tokenRefresh = async (req, res, next) => {
 // ====> Send Email-Verification-Code controller.
 const emailVerificationCode = async (req, res, next) => {
   try {
-    // Check User-Authentication.
-    if (!req.userId) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch user-id via middleware;
     const userId = req.userId;
+    // Check User-Authentication.
+    if (!userId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
     // Fetch user-email.
     const { email } = req.body;
 
     // Find user.
     const user = await models.User.findOne({ email, _id: userId });
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Check email-verification.
     if (user.isEmailVerified) {
-      res.statusCode = 400;
-      throw new Error("Email already verified!");
+      throw new AppError("Email already verified!", "VERIFIED_USER", 400);
     }
 
     // Generate 6 digit verification code, save in DB.
@@ -385,6 +390,7 @@ const emailVerificationCode = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "USER_VERIFICATION_CODE_SENT",
       message: "User verification code sent successfully.",
     });
   } catch (error) {
@@ -395,13 +401,16 @@ const emailVerificationCode = async (req, res, next) => {
 // ====> Email-Verification(Verify user email via code) controller.
 const verifyEmail = async (req, res, next) => {
   try {
-    // Check User-Authentication.
-    if (!req.userId) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch user-id via middleware.
     const userId = req.userId;
+    // Check User-Authentication.
+    if (!userId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
     // Fetch user email and code.
     const { email, code } = req.body;
 
@@ -410,14 +419,12 @@ const verifyEmail = async (req, res, next) => {
       "+emailVerification.hashCode",
     );
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Check email-verification.
     if (user.isEmailVerified) {
-      res.statusCode = 400;
-      throw new Error("Email already verified!");
+      throw new AppError("Email already verified!", "VERIFIED_USER", 400);
     }
 
     // Check Code expiry.
@@ -426,8 +433,11 @@ const verifyEmail = async (req, res, next) => {
       !user.emailVerification.hashCode ||
       user.emailVerification.expiresAt < new Date()
     ) {
-      res.statusCode = 400;
-      throw new Error("Verification code is invalid or expired!");
+      throw new AppError(
+        "Verification code is expired!",
+        "VERIFICATION_CODE_EXPIRED",
+        400,
+      );
     }
 
     // Verify code.
@@ -436,8 +446,7 @@ const verifyEmail = async (req, res, next) => {
       user.emailVerification.hashCode,
     );
     if (!verifyCode) {
-      res.statusCode = 400;
-      throw new Error("Code is invalid!");
+      throw new AppError("Code is invalid!", "VERIFICATION_CODE_INVALID", 400);
     }
 
     user.isEmailVerified = true; // Email-Verified true.
@@ -453,6 +462,7 @@ const verifyEmail = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "USER_VERIFIED",
       message: "User verified successfully. Please log in again.",
       data: { csrfToken: null },
     });
@@ -464,13 +474,16 @@ const verifyEmail = async (req, res, next) => {
 // ====> Send Password-Reset-Code controller.
 const requestPasswordReset = async (req, res, next) => {
   try {
-    // Check User-Authentication.
-    if (!req.userId) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch userId.
     const userId = req.userId;
+    // Check User-Authentication.
+    if (!userId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
     // Fetch Passwords.
     const { oldPassword } = req.body;
 
@@ -478,8 +491,7 @@ const requestPasswordReset = async (req, res, next) => {
     const user = await models.User.findById(userId).select("+password");
     // Velidate user.
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Verify password.
@@ -488,8 +500,7 @@ const requestPasswordReset = async (req, res, next) => {
       user.password,
     );
     if (!verifyOldPassword) {
-      res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new AppError("Invalid credentials!", "INVALID_CREDENTIALS", 401);
     }
 
     // Generate 6 digit verification code, save in DB.
@@ -516,6 +527,7 @@ const requestPasswordReset = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "PASSWORD_RESET_CODE_SENT",
       message: "Password-Reset-Code sent successfully.",
     });
   } catch (error) {
@@ -526,13 +538,16 @@ const requestPasswordReset = async (req, res, next) => {
 // ====> Password-Reset(Reset password after code-verification) controller.
 const verifyPasswordReset = async (req, res, next) => {
   try {
-    // Check User-Authentication.
-    if (!req.userId) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch userId.
     const userId = req.userId;
+    // Check User-Authentication.
+    if (!userId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
     // Fetch code, newPassword.
     const { code, newPassword } = req.body;
 
@@ -544,8 +559,11 @@ const verifyPasswordReset = async (req, res, next) => {
     }).select("+hashCode");
     // Check passwordReset.
     if (!passwordReset) {
-      res.statusCode = 400;
-      throw new Error("Reset-Code expires or invalid!");
+      throw new AppError(
+        "Reset-Code expires!",
+        "PASSWORD_RESET_CODE_EXPIRES",
+        400,
+      );
     }
 
     // Attempts increase.
@@ -554,15 +572,13 @@ const verifyPasswordReset = async (req, res, next) => {
 
     // Check Attempts.
     if (passwordReset.attempts > 3) {
-      res.statusCode = 429;
-      throw new Error("Too many attempts!");
+      throw new AppError("Too many attempts!", "TOO_MANY_ATTEMPTS", 429);
     }
 
     // Verify code.
     const verifyCode = await compareHashCode(code, passwordReset.hashCode);
     if (!verifyCode) {
-      res.statusCode = 400;
-      throw new Error("Code is invalid!");
+      throw new AppError("Code is invalid!", "INVALID_CODE", 400);
     }
 
     // Hash new password.
@@ -587,6 +603,7 @@ const verifyPasswordReset = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "PASSWORD_RESET",
       message: "User password-reset successfully. Please log in again.",
       data: { csrfToken: null },
     });
@@ -598,15 +615,19 @@ const verifyPasswordReset = async (req, res, next) => {
 // ====> User-Logout(session-over) controller.
 const logout = async (req, res, next) => {
   try {
-    // Check User-Authentication.
-    if (!req.user._id && req.hashedRefreshToken) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch user id from middleware.
     const userId = req.user._id;
     // Fetch Hash-Refresh-Token from middleware.
     const hashedRefreshToken = req.hashedRefreshToken;
+
+    // Check User-Authentication.
+    if (!userId && !hashedRefreshToken) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
 
     // Remove user-session holding that Refresh-Token-Hash.
     await models.Session.deleteOne({
@@ -620,6 +641,7 @@ const logout = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "USER_LOGGED_OUT",
       message: "User logged out successfully.",
       data: { csrfToken: null },
     });
@@ -631,13 +653,16 @@ const logout = async (req, res, next) => {
 // ====> User-Logout-All(all-session-over) controller.
 const logoutAll = async (req, res, next) => {
   try {
-    // Check User Authentication.
-    if (!req.user._id) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch user id from middleware.
     const userId = req.user._id;
+    // Check User-Authentication.
+    if (!userId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
 
     // Remove all user-sessoins.
     await models.Session.deleteMany({ user: userId });
@@ -648,6 +673,7 @@ const logoutAll = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "SESSIONS_DELETED",
       message: "User logged out successfully from all the sessions.",
       data: { csrfToken: null },
     });
@@ -665,13 +691,16 @@ const deleteUser = async (req, res, next) => {
     // Transaction Start.
     session.startTransaction();
 
-    // Check User Authentication.
-    if (!req.userId) {
-      res.statusCode = 401;
-      throw new Error("User is not authenticated!");
-    }
     // Fetch userId.
     const userId = req.userId;
+    // Check User Authentication.
+    if (!userId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT_AUTHENTICATED",
+        401,
+      );
+    }
     // Fetch password.
     const { password } = req.body;
 
@@ -681,15 +710,13 @@ const deleteUser = async (req, res, next) => {
       .session(session);
     // Check user.
     if (!user) {
-      res.statusCode = 401;
-      throw new Error("User not found!");
+      throw new AppError("User not found!", "USER_NOT_FOUND", 401);
     }
 
     // Compare the password.
     const verifyPassword = await compareHashPassword(password, user.password);
     if (!verifyPassword) {
-      res.statusCode = 401;
-      throw new Error("Invalid credentials!");
+      throw new AppError("Invalid credentials!", "INVALID_CREDENTIALS", 401);
     }
 
     // Delete user.
@@ -707,6 +734,7 @@ const deleteUser = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
+      code: "USER_DELETED",
       message: "User-Account deleted successfully.",
       data: { csrfToken: null },
     });

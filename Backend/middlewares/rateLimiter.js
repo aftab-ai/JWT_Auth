@@ -1,6 +1,9 @@
 // Import Third-Party npm packages.
 import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 
+// Import local file-modules.
+import { AppError } from "./errorHandler.js";
+
 const rateLimiter = (windowMs, max) => {
   return rateLimit({
     windowMs: windowMs,
@@ -10,8 +13,11 @@ const rateLimiter = (windowMs, max) => {
     keyGenerator: (req) => ipKeyGenerator(req), // IP-based limiting IPv4 + IPv6 safe key generator.
 
     handler: (req, res, next) => {
-      res.statusCode = 429;
-      const error = new Error("Too many attempts. Try again later.");
+      const error = new AppError(
+        "Too many attempts. Try again later.",
+        "TOO_MANY_ATTEMPTS",
+        429,
+      );
       next(error);
     },
   });

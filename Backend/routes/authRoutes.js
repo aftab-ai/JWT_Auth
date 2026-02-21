@@ -60,7 +60,6 @@ router.post(
   "/token-refresh",
   middlewares.rateLimiter(1000 * 60 * 60, 20), // Minimize token-refresh attempt(20/1h).
   middlewares.validateRefreshToken, // Refresh-Token middleware.
-  // middlewares.validateCSRFToken, // CSRF-Token Validation.
   controllers.authControllers.tokenRefresh, // Token Refresh Controller.
 );
 

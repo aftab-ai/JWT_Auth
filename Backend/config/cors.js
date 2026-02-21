@@ -1,6 +1,9 @@
 // Import Third-Party npm packages.
 import cors from "cors";
 
+// Import local file-modules.
+import { AppError } from "../middlewares/errorHandler.js";
+
 // Import Environment Variables.
 import config from "./keys.js";
 
@@ -26,7 +29,9 @@ const corsOption = !isProd
         }
 
         console.warn(`Blocked by CORS: ${origin}`);
-        return callback(new Error("Not allowed by CORS!"));
+        return callback(
+          new AppError("Not allowed by CORS!", "CORS_ORIGIN_NOT_ALLOWED", 403),
+        );
       },
       // Specifies which HTTP methods are allowed for cross-origin requests.
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
