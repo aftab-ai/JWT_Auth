@@ -39,8 +39,8 @@ const validateRefreshToken = async (req, res, next) => {
       // Immediately revoke/delete session.
       await models.Session.deleteOne({ _id: session._id });
       throw new AppError(
-        "Refresh-Token has expired! Please sign in again.",
-        "REFRESH_TOKEN_EXPIRED",
+        "Session has expired! Please sign in again.",
+        "SESSION_EXPIRED",
         401,
       );
     }

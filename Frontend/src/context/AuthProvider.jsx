@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import authService from "../api/auth.service";
 import { setCSRFToken } from "../api/axiosInstance";
 import AuthContext from "./context";
+import authAutoLogoutHandler from "../api/auth.autoLogoutHandler";
 
 // Auth provider.
 function AuthProvider({ children }) {
@@ -55,17 +56,20 @@ function AuthProvider({ children }) {
   };
 
   // User logout.
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authService.logoutRequest(); // Logout api request.
-    } catch (error) {
-      toast.error(error.responce?.data?.message);
     } finally {
       setUser(null); // Set user as null.
       setCSRFToken(null); // Set csrf-token null.
       toast.success("You have successfully logged out.");
     }
-  };
+  }, []);
+
+  // Save logout fn for the logoutHandler.
+  useEffect(() => {
+    authAutoLogoutHandler.setLogoutFunction(logout);
+  }, [logout]);
 
   const value = {
     user,

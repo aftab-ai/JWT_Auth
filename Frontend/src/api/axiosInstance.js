@@ -1,11 +1,6 @@
 // Third-Party modules.
 import axios from "axios";
-
-// Axios-Instance
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL, // API base url.
-  withCredentials: true, // Allow cookies.
-});
+import authAutoLogoutHandler from "./auth.autoLogoutHandler";
 
 let csrfToken = null; // CSRF-Token saves in memory.
 let isRefreshing = false; // Refresh req is running or not.
@@ -15,6 +10,12 @@ let refreshPromise = null; // Hold the refresh res promise.
 export const setCSRFToken = (token) => {
   csrfToken = token;
 };
+
+// Axios-Instance
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL, // API base url.
+  withCredentials: true, // Allow cookies.
+});
 
 // Request interceptors.
 axiosInstance.interceptors.request.use((config) => {
@@ -34,6 +35,9 @@ axiosInstance.interceptors.response.use(
     // Only retry if 401, not retried yet and refresh route false.
     if (
       error.response?.status === 401 &&
+      ["ACCESS_TOKEN_EXPIRED", "ACCESS_TOKEN_MISSING"].includes(
+        error.response?.data?.code,
+      ) &&
       !originalRequest._retry &&
       !originalRequest.url.includes("/auth/token-refresh")
     ) {
@@ -58,13 +62,30 @@ axiosInstance.interceptors.response.use(
         }
 
         await refreshPromise;
-
         return axiosInstance(originalRequest); // Retry original req.
       } catch (refreshError) {
-        return Promise.reject(refreshError); // Refresh failed, user is logged out.
+        // Logout for expired session or invalid token.
+        if (
+          [401, 403, 409].includes(refreshError.response?.status) &&
+          [
+            // "ACCESS_TOKEN_MISSING",
+            "ACCESS_TOKEN_INVALID",
+            "ACCESS_TOKEN_MALFORMED",
+            "PASSWORD_CHANGED",
+            "SESSION_REVOKED",
+            "SESSION_NOT_FOUND",
+            "SESSION_EXPIRED",
+            "REFRESH_TOKEN_MISSING",
+            "REFRESH_CONFLICT",
+          ].includes(refreshError.response?.data?.code)
+        ) {
+          authAutoLogoutHandler.triggerLogout(); // Trigger user log out.
+        }
+        return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(error); // No refresh-token or other error.
+
+    return Promise.reject(error);
   },
 );
 

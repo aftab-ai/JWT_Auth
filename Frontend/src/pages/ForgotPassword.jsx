@@ -141,7 +141,9 @@ function ForgotPassword() {
 
       reset();
       navigate("/app/login"); // Redirect to login page.
-      toast.info("Please log in to continue.");
+      setTimeout(() => {
+        toast.info("Please log in to continue.");
+      }, 1000);
     } catch (error) {
       // API error res with react-toastify.
       const errMessage = error.response?.data?.message;

@@ -14,6 +14,7 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |----shattered-dark.png
   |----src/
   |  |----api/
+  |  |  |----auth.autoLogoutHandler.js
   |  |  |----auth.service.js
   |  |  |----axiosInstance.js
   |  |----assets/
