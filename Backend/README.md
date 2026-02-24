@@ -155,13 +155,27 @@ It is an example of backend api server for user 'authentication/authorization' w
   - **Current User** - Get current user info(userId, username, user-role).
     - GET `/api/v1/auth/current-user`
 
-  - **Token Refresh** - Refresh Tokens(Access-Token, CSRF-Token, Refresh-Token).
-    - POST `/api/v1/auth/token-refresh`
+      ```bash
+      {
+        "accessToken" cookie,
+      }
+      ```
+
+  - **CSRF Refresh** - Get new CSRF-Token.
+    - POST `/api/v1/auth/csrf-refresh`
+
+      ```bash
+      {
+        "accessToken" cookie,
+      }
+      ```
+
+  - **Auth Refresh** - Refresh Tokens(Access-Token, Refresh-Token).
+    - POST `/api/v1/auth/auth-refresh`
 
       ```bash
       {
         "refreshToken" cookie,
-        "x-csrf-token" header,
       }
       ```
 

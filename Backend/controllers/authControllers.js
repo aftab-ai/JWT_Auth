@@ -276,8 +276,60 @@ const currentUser = async (req, res, next) => {
   }
 };
 
+// ====> CSRF_Token controller.
+const csrfRefresh = async (req, res, next) => {
+  try {
+    // Fetch from authMiddleware.
+    const { userId, sessionId } = req;
+    if (!userId || !sessionId) {
+      throw new AppError(
+        "User is not authenticated!",
+        "USER_NOT-AUTHENTICATED",
+        401,
+      );
+    }
+
+    // Create new CSRF-Token.
+    const newCSRFToken = createCSRFToken();
+    const newHashCSRFToken = hashCSRFToken(newCSRFToken);
+
+    // Atomic Token-Rotation.
+    const result = await models.Session.updateOne(
+      {
+        user: userId,
+        _id: sessionId,
+      },
+      {
+        $set: {
+          hashCSRFToken: newHashCSRFToken,
+        },
+      },
+    );
+
+    // If no document updated -> Race Condition or Stolen Token.
+    if (result.modifiedCount === 0) {
+      await models.Session.deleteOne({ _id: sessionId });
+      throw new AppError(
+        "Refresh CSRF-Token Conflict! - Session removed, Login again.",
+        "REFRESH_CSRF_CONFLICT",
+        409,
+      );
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      status: true,
+      code: "CSRF_REFRESHED",
+      message: "CSRF-Token refreshed successfully.",
+      data: { csrfToken: newCSRFToken },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ====> Token-Refresh controller.
-const tokenRefresh = async (req, res, next) => {
+const authRefresh = async (req, res, next) => {
   try {
     // Fetch from validateRefreshToken middleware.
     const { user, session, hashedRefreshToken } = req;
@@ -292,10 +344,6 @@ const tokenRefresh = async (req, res, next) => {
     // New Session/Refresh-Token expires time.
     const newExpiresTime = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
 
-    // Create new CSRF-Token.
-    const newCSRFToken = createCSRFToken();
-    const newHashCSRFToken = hashCSRFToken(newCSRFToken);
-
     // Atomic Token-Rotation.
     const result = await models.Session.updateOne(
       {
@@ -306,7 +354,6 @@ const tokenRefresh = async (req, res, next) => {
         $set: {
           hashRefreshToken: newHashRefreshToken,
           expiresAt: newExpiresTime,
-          hashCSRFToken: newHashCSRFToken,
         },
       },
     );
@@ -333,9 +380,8 @@ const tokenRefresh = async (req, res, next) => {
     res.status(200).json({
       statusCode: 200,
       status: true,
-      code: "TOKEN_REFRESHED",
-      message: "Token refreshed successfully.",
-      data: { csrfToken: newCSRFToken },
+      code: "AUTH_REFRESHED",
+      message: "Auth-Token refreshed successfully.",
     });
   } catch (error) {
     next(error);
@@ -755,7 +801,8 @@ export default {
   verifyForgotPassword,
   signin,
   currentUser,
-  tokenRefresh,
+  csrfRefresh,
+  authRefresh,
   emailVerificationCode,
   verifyEmail,
   requestPasswordReset,

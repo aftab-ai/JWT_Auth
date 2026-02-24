@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
         error.response?.data?.code,
       ) &&
       !originalRequest._retry &&
-      !originalRequest.url.includes("/auth/token-refresh")
+      !originalRequest.url.includes("/auth/auth-refresh")
     ) {
       originalRequest._retry = true;
 
@@ -48,14 +48,7 @@ axiosInstance.interceptors.response.use(
           isRefreshing = true;
 
           refreshPromise = axiosInstance
-            .post("/auth/token-refresh")
-            .then((response) => {
-              // Set new CSRF token if returned.
-              if (response?.data?.data?.csrfToken) {
-                setCSRFToken(response.data.data.csrfToken);
-              }
-              return response;
-            })
+            .post("/auth/auth-refresh")
             .finally(() => {
               isRefreshing = false;
             });

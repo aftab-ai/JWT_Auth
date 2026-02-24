@@ -55,12 +55,20 @@ router.get(
   controllers.authControllers.currentUser,
 );
 
+// ====> POST, CSRF-Token Route.
+router.post(
+  "/csrf-refresh",
+  middlewares.rateLimiter(1000 * 60 * 60, 20),
+  middlewares.authMiddleware,
+  controllers.authControllers.csrfRefresh,
+);
+
 // ====> POST, Token-Refresh Route.
 router.post(
-  "/token-refresh",
+  "/auth-refresh",
   middlewares.rateLimiter(1000 * 60 * 60, 20), // Minimize token-refresh attempt(20/1h).
   middlewares.validateRefreshToken, // Refresh-Token middleware.
-  controllers.authControllers.tokenRefresh, // Token Refresh Controller.
+  controllers.authControllers.authRefresh, // Auth token Refresh Controller.
 );
 
 // ====> POST, Send Email-Verification-Code route.

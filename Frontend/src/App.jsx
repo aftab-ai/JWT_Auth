@@ -11,6 +11,8 @@ import Loader from "./components/Loader";
 
 function App() {
   const { loading } = useAuth();
+
+  // React-Toastify close button.
   const CloseButton = ({ closeToast }) => (
     <button
       onClick={closeToast}
@@ -35,9 +37,9 @@ function App() {
         pauseOnHover
         pauseOnFocusLoss
         draggable
-        // theme="colored"
-        // toastClassName="!w-fit max-w-sm font-semibold text-shadow-lg"
-        toastClassName={({ type }) =>
+        toastClassName={(
+          { type }, // Custom style.
+        ) =>
           `
             relative flex items-start gap-3
             w-fit max-w-xs sm:max-w-sm
