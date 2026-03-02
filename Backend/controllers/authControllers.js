@@ -247,6 +247,9 @@ const signin = async (req, res, next) => {
 // ====> Current-User controller.
 const currentUser = async (req, res, next) => {
   try {
+    res.set("Cache-Control", "no-store"); // Disable caching data.
+    res.set("ETag", ""); // Prevent ETag for 304 response.
+
     // Check User-Authentication.
     if (!req.userId) {
       throw new AppError(

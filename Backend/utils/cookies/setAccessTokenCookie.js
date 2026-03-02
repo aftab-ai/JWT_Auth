@@ -18,7 +18,7 @@ const setAccessTokenCookie = (res, token) => {
   // Access-Token cookie.
   res.cookie("accessToken", token, {
     ...cookieOptions,
-    maxAge: 1000 * 60 * 15,
+    maxAge: 1000 * 60 * 20,
   });
 };
 

@@ -1,6 +1,5 @@
 // Third-Party modules.
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 // Import local modules.
 import authService from "../api/auth.service";
@@ -30,7 +29,10 @@ function AuthProvider({ children }) {
     let isMounted = true;
     const initAuth = async () => {
       try {
-        await fetchCurrentUser();
+        await authService.mountUserRequest(); // Refresh route.
+        await fetchCurrentUser(); // Current-User route.
+      } catch {
+        setUser(null);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -62,7 +64,6 @@ function AuthProvider({ children }) {
     } finally {
       setUser(null); // Set user as null.
       setCSRFToken(null); // Set csrf-token null.
-      toast.success("You have successfully logged out.");
     }
   }, []);
 

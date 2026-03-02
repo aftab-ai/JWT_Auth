@@ -16,7 +16,7 @@ const authMiddleware = async (req, res, next) => {
     // Check Token.
     if (!accessToken) {
       throw new AppError(
-        "Access-Token is missing!",
+        "User not authenticated!",
         "ACCESS_TOKEN_MISSING",
         401,
       );

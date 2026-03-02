@@ -1,5 +1,6 @@
 // Third-Party modules.
 import { Link, NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // Import local modules.
 import useAuth from "../hooks/useAuth";
@@ -33,7 +34,10 @@ function PrivateNavbar() {
       <button
         className="font-bold text-sm px-4 py-0.5 sm:py-1 border rounded-md  border-[#10403B]
             cursor-pointer transition-colors text-white bg-[#10403B] hover:bg-[#4C5958]"
-        onClick={logout}
+        onClick={() => {
+          logout();
+          toast.success("You have successfully logged out.");
+        }}
       >
         Logout
       </button>

@@ -9,11 +9,7 @@ const validateRefreshToken = async (req, res, next) => {
     const refreshToken = req.cookies?.refreshToken;
     // Check Token.
     if (!refreshToken) {
-      throw new AppError(
-        "Refresh-Token is missing!",
-        "REFRESH_TOKEN_MISSING",
-        401,
-      );
+      throw new AppError("User not authenticated!", "NOT_AUTHENTICATED", 401);
     }
 
     // Hash the Refresh-Token.

@@ -8,9 +8,33 @@ const loginRequest = async (credentials) => {
 };
 
 // Fetch current user.
-const currentUserRequest = async () => {
-  const { data } = await axiosInstance.get("/auth/current-user");
-  return data;
+let currentUserPromise = null;
+const currentUserRequest = () => {
+  // If no req running then start one.
+  if (!currentUserPromise) {
+    currentUserPromise = axiosInstance
+      .get("/auth/current-user")
+      .then((res) => res.data)
+      .finally(() => {
+        currentUserPromise = null;
+      });
+  }
+  return currentUserPromise;
+};
+
+// Refresh token request.
+let mountUserOnStartup = null;
+const mountUserRequest = () => {
+  // If no req running then start one.
+  if (!mountUserOnStartup) {
+    mountUserOnStartup = axiosInstance
+      .post("/auth/auth-refresh")
+      .then((res) => res)
+      .finally(() => {
+        mountUserOnStartup = null;
+      });
+  }
+  return mountUserOnStartup;
 };
 
 // Logout request.
@@ -18,4 +42,9 @@ const logoutRequest = async () => {
   await axiosInstance.post("/auth/logout");
 };
 
-export default { loginRequest, currentUserRequest, logoutRequest };
+export default {
+  loginRequest,
+  currentUserRequest,
+  mountUserRequest,
+  logoutRequest,
+};
