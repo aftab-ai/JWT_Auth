@@ -21,14 +21,28 @@ function PrivateNavbar() {
 
       {/* Navbar Links. */}
       {/* Home */}
-      <NavLink
-        to="/"
-        className={
-          "font-bold text-[#182625] text-shadow-2xs hover:text-[#2F3D40]"
-        }
-      >
-        Home
-      </NavLink>
+      <div className="flex items-center gap-4">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `font-bold text-[#4C5958] text-shadow-2xs hover:text-[#2F3D40]
+            ${isActive && "underline text-[#182625]"}`
+          }
+        >
+          Home
+        </NavLink>
+
+        {/* Profile */}
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `font-bold text-[#4C5958] text-shadow-2xs hover:text-[#2F3D40]
+            ${isActive && "underline text-[#182625]"}`
+          }
+        >
+          Profile
+        </NavLink>
+      </div>
 
       {/* Logout. */}
       <button

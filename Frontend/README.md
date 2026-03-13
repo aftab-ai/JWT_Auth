@@ -24,21 +24,27 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |  |----Inter-Regular.woff2
   |  |  |  |----Inter-SemiBold.woff2
   |  |----components/
+  |  |  |----DeleteAccountModel.jsx
   |  |  |----Loader.jsx
   |  |  |----PrivateNavbar.jsx
   |  |  |----PublicNavbar.jsx
   |  |----context/
   |  |  |----AuthProvider.jsx
   |  |  |----context.js
-  |  |----hokks/
+  |  |----hooks/
   |  |  |----useAuth.js
   |  |----pages/
+  |  |  |----profile/
+  |  |  |  |----Profile.jsx
+  |  |  |  |----ProfileLayout.jsx
   |  |  |----ForgotPassword.jsx
   |  |  |----Home.jsx
   |  |  |----Landing.jsx
   |  |  |----Login.jsx
   |  |  |----NotFound.jsx
+  |  |  |----ResetPassword.jsx
   |  |  |----Signup.jsx
+  |  |  |----VerifyEmail.jsx
   |  |----routes/
   |  |  |----layouts/
   |  |  |  |----PrivateLayout.jsx
