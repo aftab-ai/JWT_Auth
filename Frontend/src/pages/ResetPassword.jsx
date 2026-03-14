@@ -169,9 +169,21 @@ function ResetPassword() {
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
         {/* Heading */}
         {!sendCode ? (
-          <h1 className="mb-1 font-bold text-center text-2xl text-shadow-2xs text-[#10403B]">
-            Password Reset
-          </h1>
+          <div>
+            <button
+              onClick={() => {
+                navigate("/profile");
+                reset();
+              }}
+              className="inline-flex px-3 py-1 cursor-pointer font-bold rounded text-xs text-white bg-[#10403B] hover:bg-[#4C5958]"
+            >
+              <ArrowLeft className="flex justify-center mr-2 size-4" />{" "}
+              <p>Back</p>
+            </button>
+            <h1 className="mb-1 font-bold text-center text-2xl text-shadow-2xs text-[#10403B]">
+              Password Reset
+            </h1>
+          </div>
         ) : (
           <div>
             <button

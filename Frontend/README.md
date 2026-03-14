@@ -51,6 +51,8 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |  |----PublicLayout.jsx
   |  |  |----router.jsx
   |  |----validators/
+  |  |  |----emailValidators.js
+  |  |  |----emailVerificationSchemaValidators.js
   |  |  |----forgotPasswordSchemaValidators.js
   |  |  |----loginSchemaValidators.js
   |  |  |----resetPasswordSchemaValidators.js
