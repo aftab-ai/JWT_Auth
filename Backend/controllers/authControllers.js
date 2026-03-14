@@ -272,7 +272,12 @@ const currentUser = async (req, res, next) => {
       status: true,
       code: "CURRENT_USER",
       message: "Get current user successfully.",
-      data: { userId: user._id, username: user.username, role: user.role },
+      data: {
+        userId: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     next(error);

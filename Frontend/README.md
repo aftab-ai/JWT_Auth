@@ -53,8 +53,10 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |----validators/
   |  |  |----forgotPasswordSchemaValidators.js
   |  |  |----loginSchemaValidators.js
+  |  |  |----resetPasswordSchemaValidators.js
   |  |  |----signupSchemaValidators.js
   |  |  |----verifyForgotPasswordSchemaValidators.js
+  |  |  |----verifyResetPasswordSchemaValidators.js
   |  |----App.jsx
   |  |----index.css
   |  |----main.jsx
