@@ -276,6 +276,7 @@ const currentUser = async (req, res, next) => {
         userId: user._id,
         username: user.username,
         email: user.email,
+        verifiedEmail: user.isEmailVerified,
         role: user.role,
       },
     });

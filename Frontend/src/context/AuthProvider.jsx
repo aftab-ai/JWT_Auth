@@ -10,18 +10,17 @@ import authAutoLogoutHandler from "../api/auth.autoLogoutHandler";
 // Auth provider.
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState(null);
-  const [userEmail, setUserEmail] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Don’t recreate function unless dependencies change.
   const fetchCurrentUser = useCallback(async () => {
     try {
-      const data = await authService.currentUserRequest(); // Fetch current user.
-      setUser(data.data.userId); // Set user with user id.
-      setUsername(data.data.username);
-      setUserEmail(data.data.email);
-      return data.data.userId;
+      const { data } = await authService.currentUserRequest(); // Fetch current user.
+      setUser(data); // Set user with user data.
+      // setUsername(data.data.username);
+      // setUserEmail(data.data.email);
+      // setVerifiedEmail(data.data.verifiedEmail);
+      return data;
     } catch {
       setUser(null); // Not authenticated.
       return null;
@@ -78,8 +77,6 @@ function AuthProvider({ children }) {
 
   const value = {
     user,
-    username,
-    userEmail,
     loading,
     isAuthenticated: !!user, // True if user exist, False if null.
     login,

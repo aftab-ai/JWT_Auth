@@ -12,7 +12,7 @@ import resetPasswordSchemaValidators from "../validators/resetPasswordSchemaVali
 import verifyResetPasswordSchemaValidators from "../validators/verifyResetPasswordSchemaValidators";
 
 function ResetPassword() {
-  const { userEmail } = useAuth();
+  const { user } = useAuth();
   const [sendCode, setSendCode] = useState(false); // Determine steps.
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false); // Show/Hide New-Password in input.
@@ -215,7 +215,7 @@ function ResetPassword() {
               <h3>
                 We've sent a verification code to{" "}
                 <span className="font-bold text-[#10403B]">
-                  {maskEmail(userEmail)}
+                  {maskEmail(user.email)}
                 </span>
               </h3>
             </>

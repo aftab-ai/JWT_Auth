@@ -7,7 +7,7 @@ import useAuth from "../../hooks/useAuth";
 import DeleteAccountModel from "../../components/DeleteAccountModel";
 
 function Profile() {
-  const { username } = useAuth();
+  const { user } = useAuth();
   const [showDeleteModel, setShowDeleteModel] = useState(false); // Pop-up for confirmation.
 
   return (
@@ -15,17 +15,17 @@ function Profile() {
       <div className="flex flex-col w-full max-w-md px-6 sm:px-8 py-7 sm:py-8 rounded-xl bg-[#D3D2C7]">
         {/* Username */}
         <div className="p-0.5 m-4 font-bold text-2xl text-center text-[#10403B]">
-          Hello {username}
+          Hello {user.username}
         </div>
 
         {/* Links */}
         <div className="flex items-center flex-col w-full space-y-3 font-semibold">
           {/* Verify Email */}
           <Link
-            to="/profile/verify-email"
-            className="text-[#4C5958] hover:text-[#10403B]"
+            to={`${user.verifiedEmail ? "#" : "/profile/verify-email"}`}
+            className={`text-[#4C5958] hover:text-[#10403B] ${user.verifiedEmail && "opacity-50 cursor-not-allowed"}`}
           >
-            Verify Email
+            {user.verifiedEmail ? "Email Verified" : "Verify Email"}
           </Link>
 
           {/* Reset Password */}

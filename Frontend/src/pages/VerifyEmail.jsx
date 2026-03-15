@@ -10,9 +10,10 @@ import { toast } from "react-toastify";
 import useAuth from "../hooks/useAuth";
 import emailValidators from "../validators/emailValidators";
 import emailVerificationSchemaValidators from "../validators/emailVerificationSchemaValidators";
+import axiosInstance from "../api/axiosInstance";
 
 function VerifyEmail() {
-  const { userEmail } = useAuth();
+  const { user, logout } = useAuth();
   const [sendCode, setSendCode] = useState(false); // Determine steps.
   const [cooldown, setCooldown] = useState(0); // Resend code button cooldown.
   const [isResending, setIsResending] = useState(false); // Resending state.
@@ -23,10 +24,10 @@ function VerifyEmail() {
   const resolver = useMemo(() => {
     return zodResolver(
       !sendCode
-        ? emailValidators(userEmail)
+        ? emailValidators(user.email)
         : emailVerificationSchemaValidators,
     );
-  }, [sendCode, userEmail]);
+  }, [sendCode, user.email]);
 
   // Form controller.
   const {
@@ -56,15 +57,20 @@ function VerifyEmail() {
   };
 
   // API request for sending code.
-  const sendCodeRequest = async () => {
+  const sendCodeRequest = async (data) => {
     try {
+      await axiosInstance.post("/auth/send-email-verification-code", data);
       toast.success("Verification code sent successfully.");
 
       setSendCode(true); // Step: 2 Activate.
       setCooldown(30);
       setIsExpired(120);
     } catch (error) {
-      console.log(error);
+      // API error res with react-toastify.
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
       setSendCode(false);
     }
   };
@@ -77,7 +83,7 @@ function VerifyEmail() {
       setIsResending(true);
 
       // Resend-code again.
-      await sendCodeRequest();
+      await sendCodeRequest({ email: user.email });
     } finally {
       setIsResending(false);
     }
@@ -118,18 +124,33 @@ function VerifyEmail() {
   }, [isExpired]);
 
   // API request for verify code and verify email.
-  const verifyEmail = async () => {
+  const verifyEmail = async (data) => {
     try {
+      const { code } = data;
+      await axiosInstance.post("/auth/verify-email", {
+        email: user.email,
+        code,
+      });
+
+      // API success res with react-toastify.
+      toast.success("Your email has been verified successfully.");
       reset();
-      navigate("/profile"); // Redirect to login page.
+      logout();
+      navigate("/app/login"); // Redirect to login page.
+      setTimeout(() => {
+        toast.info("Please log in to continue.");
+      }, 1000);
     } catch (error) {
       // API error res with react-toastify.
-      console.log(error);
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
     }
   };
 
   // Form submit.
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     // If code expires.
     if (sendCode && isExpired <= 0) {
       toast.error("Code expired! Please request a new one.");
@@ -139,12 +160,12 @@ function VerifyEmail() {
     // Step: 1 -> Send-Code to registered email.
     if (!sendCode) {
       // Send-Code form submit.
-      await sendCodeRequest();
+      await sendCodeRequest(data);
       return;
     }
 
     // Step: 2 -> Verify-Code and password reset.
-    await verifyEmail();
+    await verifyEmail(data);
   };
 
   // Determine icon color.
@@ -213,7 +234,7 @@ function VerifyEmail() {
               <h3>
                 We've sent a verification code to{" "}
                 <span className="font-bold text-[#10403B]">
-                  {maskEmail(userEmail)}
+                  {maskEmail(user.email)}
                 </span>
               </h3>
             </>
