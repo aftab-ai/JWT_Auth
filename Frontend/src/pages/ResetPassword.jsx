@@ -3,22 +3,21 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, KeyRound, Code, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Code, ArrowLeft, LogIn } from "lucide-react";
 import { toast } from "react-toastify";
 
 // Import local modules.
 import useAuth from "../hooks/useAuth";
 import resetPasswordSchemaValidators from "../validators/resetPasswordSchemaValidators";
 import verifyResetPasswordSchemaValidators from "../validators/verifyResetPasswordSchemaValidators";
+import axiosInstance from "../api/axiosInstance";
 
 function ResetPassword() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [sendCode, setSendCode] = useState(false); // Determine steps.
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false); // Show/Hide New-Password in input.
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Show/Hide Confirm-Password.
-  const [cooldown, setCooldown] = useState(0); // Resend code button cooldown.
-  const [isResending, setIsResending] = useState(false); // Resending state.
   const [isExpired, setIsExpired] = useState(0); // Code expiration cooldown.
   const navigate = useNavigate(); // Redirect.
 
@@ -43,50 +42,39 @@ function ResetPassword() {
     shouldUnregister: false, // Keep form values for inputs that are removed from the DOM(email).
   });
 
+  // User mask-email.
+  const maskEmail = (email) => {
+    if (!email || !email.includes("@")) return "";
+
+    const [name, domain] = email.split("@");
+    return `${name.slice(0, 2)}****@${domain}`;
+  };
+
+  // Code expires time-formate.
+  const expiresTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
   // API request for sending code.
-  const sendCodeRequest = async () => {
+  const sendCodeRequest = async (data) => {
     try {
+      await axiosInstance.post("/auth/request-password-reset", data);
+      // API success res with react-toastify.
       toast.success("Verification code sent successfully.");
 
       setSendCode(true); // Step: 2 Activate.
-      setCooldown(30);
       setIsExpired(120);
     } catch (error) {
-      console.log(error);
+      // API error res with react-toastify.
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
       setSendCode(false);
     }
   };
-
-  // Handle resend-code.
-  const handleResendCode = async () => {
-    if (cooldown > 0 || isResending || isSubmitting) return;
-
-    try {
-      setIsResending(true);
-
-      // Resend-code again.
-      await sendCodeRequest();
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  // Resend-Code cooldown seconds.
-  useEffect(() => {
-    if (cooldown <= 0) return;
-
-    const timer = setInterval(() => {
-      setCooldown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [cooldown]);
 
   // Code expires time.
   useEffect(() => {
@@ -105,36 +93,46 @@ function ResetPassword() {
     return () => clearInterval(timer);
   }, [isExpired]);
 
+  // Redirect to step 1 after code expiry.
+  useEffect(() => {
+    if (isExpired === 0 && sendCode) {
+      const timeout = setTimeout(() => {
+        setSendCode(false);
+        toast.error("Code expired! Please request a new one.");
+        reset();
+      }, 0);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isExpired, sendCode, reset]);
+
   // API request for verify code and reset password.
-  const verifyAndResetPassword = async () => {
+  const verifyAndResetPassword = async (data) => {
     try {
+      await axiosInstance.post("/auth/verify-password-reset", data);
+      // API success res with react-toastify.
+      toast.success("Your password has been reset successfully.");
+
       reset();
+      await logout();
       navigate("/app/login"); // Redirect to login page.
+      setTimeout(() => {
+        toast.info("Please log in to continue.");
+      }, 1000);
     } catch (error) {
       // API error res with react-toastify.
-      console.log(error);
+      const errMessage = error.response?.data?.message;
+      toast.error(
+        errMessage ? errMessage : "Something went wrong! Please try again.",
+      );
     }
   };
 
-  // User mask-email.
-  const maskEmail = (email) => {
-    if (!email || !email.includes("@")) return "";
-
-    const [name, domain] = email.split("@");
-    return `${name.slice(0, 2)}****@${domain}`;
-  };
-
-  // Code expires time-formate.
-  const expiresTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
-
   // Form submit.
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     // If code expires.
     if (sendCode && isExpired <= 0) {
+      setSendCode(false);
       toast.error("Code expired! Please request a new one.");
       return;
     }
@@ -142,12 +140,13 @@ function ResetPassword() {
     // Step: 1 -> Send-Code to registered email.
     if (!sendCode) {
       // Send-Code form submit.
-      await sendCodeRequest();
+
+      await sendCodeRequest(data);
       return;
     }
 
     // Step: 2 -> Verify-Code and password reset.
-    await verifyAndResetPassword();
+    await verifyAndResetPassword(data);
   };
 
   // Determine icon color.
@@ -189,7 +188,6 @@ function ResetPassword() {
             <button
               onClick={() => {
                 setSendCode(false);
-                setCooldown(0);
                 setIsExpired(0);
                 reset();
               }}
@@ -323,9 +321,8 @@ function ResetPassword() {
 
               {/* Resend-Code button & code expires time.*/}
               <div className="mr-2 text-end text-xs">
-                <p className="text-[#4C5958]">Didn't receive the code?</p>
                 <p className="inline-block mt-1 mr-1 text-xs text-[#4C5958]">
-                  {isExpired > 0 ? (
+                  {isExpired > 0 && (
                     <>
                       Code expires in{" "}
                       <span className="text-[#D8581C]">
@@ -333,34 +330,8 @@ function ResetPassword() {
                       </span>
                       !
                     </>
-                  ) : (
-                    "Code expired! Please request a new one."
                   )}
                 </p>
-                <button
-                  type="button"
-                  onClick={handleResendCode}
-                  disabled={cooldown > 0 || isSubmitting || isResending}
-                  className={` 
-                    ${
-                      cooldown > 0 || isSubmitting || isResending
-                        ? "cursor-not-allowed text-[#4C5958]"
-                        : "underline cursor-pointer text-[#10403B] hover:text-[#4C5958]"
-                    }`}
-                >
-                  {isResending ? (
-                    "Sending..."
-                  ) : cooldown > 0 ? (
-                    <>
-                      Resend in{" "}
-                      <span className="text-[#D8581C]">
-                        ({expiresTime(cooldown)})
-                      </span>
-                    </>
-                  ) : (
-                    "Resend code"
-                  )}
-                </button>
               </div>
 
               {/* New-Password */}
