@@ -57,6 +57,7 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |----loginSchemaValidators.js
   |  |  |----resetPasswordSchemaValidators.js
   |  |  |----signupSchemaValidators.js
+  |  |  |----userDeletionSchemaValidators.js
   |  |  |----verifyForgotPasswordSchemaValidators.js
   |  |  |----verifyResetPasswordSchemaValidators.js
   |  |----App.jsx
