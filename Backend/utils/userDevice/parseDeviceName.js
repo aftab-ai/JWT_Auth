@@ -5,9 +5,9 @@ const parseDeviceName = (userAgent) => {
   // Parse user device info.
   const parser = new UAParser(userAgent);
 
-  const device = parser.getDevice(); // Devise Name{model, type, vendor}
-  const os = parser.getOS(); // Devise OS{name, version}
-  const browser = parser.getBrowser(); // Devise Browser{name, version}
+  const device = parser.getDevice(); // Device Name{model, type, vendor}
+  const os = parser.getOS(); // Device OS{name, version}
+  const browser = parser.getBrowser(); // Device Browser{name, version}
 
   // Determine device type.
   const type = device.type

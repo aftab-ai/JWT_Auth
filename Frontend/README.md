@@ -18,6 +18,25 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |----auth.service.js
   |  |  |----axiosInstance.js
   |  |----assets/
+  |  |  |----docs/
+  |  |  |  |----backend/
+  |  |  |  |  |----features/
+  |  |  |  |  |  |----advancedSessionAndTokenLifecycle.js
+  |  |  |  |  |  |----authenticationAndTokenStrategy.js
+  |  |  |  |  |  |----authorizationAndValidation.js
+  |  |  |  |  |  |----backendArchitecture.js
+  |  |  |  |  |  |----deviceAndSessionIntelligence.js
+  |  |  |  |  |  |----securityAndAttackPrevention.js
+  |  |  |  |  |----technologies/
+  |  |  |  |  |  |----backendTechnologies.js
+  |  |  |  |----frontend/
+  |  |  |  |  |----features/
+  |  |  |  |  |  |----apiCommunication.js
+  |  |  |  |  |  |----authenticationFlow.js
+  |  |  |  |  |  |----formHandlingAndValidation.js
+  |  |  |  |  |----technologies/
+  |  |  |  |  |  |----frontendTechnologies.js
+  |  |  |  |  |----keyHighlights.js
   |  |  |----fonts/
   |  |  |  |----Inter-Bold.woff2
   |  |  |  |----Inter-Medium.woff2
@@ -98,6 +117,7 @@ It is an example cliant side programming structure for user 'authentication/auth
 
 - **Vite** - Vite is a blazing fast frontend build tool powering the next generation of web applications.
 - **React** - The library for web and native user interfaces.
+- **React-DOM** - React DOM is a package that provides the necessary methods to connect and interact with the browser's Document Object Model (DOM) using the core React library.
 - **Tailwind-CSS** - Rapidly build modern websites without ever leaving your HTML.
 - **React-Router-DOM** - A user‑obsessed, standards‑focused, multi‑strategy router you can deploy anywhere.
 - **React-Hook-Form** - React Hook Form reduces the amount of code you need to write while removing unnecessary re-renders.
