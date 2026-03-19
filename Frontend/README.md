@@ -44,6 +44,7 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |  |----Inter-SemiBold.woff2
   |  |----components/
   |  |  |----DeleteAccountModel.jsx
+  |  |  |----ListComponent.jsx
   |  |  |----Loader.jsx
   |  |  |----PrivateNavbar.jsx
   |  |  |----PublicNavbar.jsx

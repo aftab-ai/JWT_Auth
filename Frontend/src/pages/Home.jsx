@@ -1,4 +1,5 @@
 // Import local modules.
+import ListComponent from "../components/ListComponent";
 import authenticationAndTokenStrategy from "../assets/docs/backend/features/authenticationAndTokenStrategy";
 import advancedSessionAndTokenLifecycle from "../assets/docs/backend/features/advancedSessionAndTokenLifecycly";
 import securityAndAttackPrevention from "../assets/docs/backend/features/securityAndAttackPrevention";
@@ -41,127 +42,37 @@ function Home() {
               {/* Authentication & Token Strategy */}
               <li>
                 Authentication & Token Strategy:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {authenticationAndTokenStrategy.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={authenticationAndTokenStrategy} />
               </li>
 
               {/* Advanced Session & Token Lifecycle */}
               <li>
                 Advanced Session & Token Lifecycle:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {advancedSessionAndTokenLifecycle.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={advancedSessionAndTokenLifecycle} />
               </li>
 
               {/* Security & Attack Prevention */}
               <li>
                 Security & Attack Prevention:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {securityAndAttackPrevention.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={securityAndAttackPrevention} />
               </li>
 
               {/* Authorization & Validation */}
               <li>
                 Authorization & Validation:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {authorizationAndValidation.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={authorizationAndValidation} />
               </li>
 
               {/* Device & Session Intelligence */}
               <li>
                 Device & Session Intelligence:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {deviceAndSessionIntelligence.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={deviceAndSessionIntelligence} />
               </li>
 
               {/* Backend Architecture */}
               <li>
                 Backend Architecture:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {backendArchitecture.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={backendArchitecture} />
               </li>
             </ol>
             {/* Frontend */}
@@ -171,64 +82,19 @@ function Home() {
               {/* Authentication Flow */}
               <li>
                 Authentication Flow:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {authenticationFlow.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={authenticationFlow} />
               </li>
 
               {/* Form Handling & Validation */}
               <li>
                 Form Handling & Validation:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {formHandlingAndValidation.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={formHandlingAndValidation} />
               </li>
 
               {/* API Communication */}
               <li>
                 API Communication:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {apiCommunication.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={apiCommunication} />
               </li>
             </ol>
           </li>
@@ -252,43 +118,13 @@ function Home() {
               {/* Backend Technologies */}
               <li>
                 Backend Technologies:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {backendTechnologies.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={backendTechnologies} />
               </li>
 
               {/* Frontend Technologies */}
               <li>
                 Frontend Technologies:
-                <ul className="list-disc list-outside ml-4 mt-2 space-y-2 text-sm text-justify text-[#3D503A]">
-                  {frontendTechnologies.map((item) => (
-                    <li key={item.id}>
-                      <span className="text-[#10403B]">{item.key}</span>:{" "}
-                      {Array.isArray(item.value) ? (
-                        <ul className="list-[circle] list-outside ml-6 mt-1 space-y-1 font-medium">
-                          {item.value.map((val, index) => (
-                            <li key={index}>{val}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <span className="font-medium">{item.value}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <ListComponent listItem={frontendTechnologies} />
               </li>
             </ol>
           </li>
