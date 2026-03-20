@@ -32,6 +32,16 @@ function PrivateNavbar() {
           Home
         </NavLink>
 
+        <NavLink
+          to="/docs"
+          className={({ isActive }) =>
+            `font-bold text-[#4C5958] text-shadow-2xs hover:text-[#2F3D40]
+            ${isActive && "underline text-[#182625]"}`
+          }
+        >
+          Docs
+        </NavLink>
+
         {/* Profile */}
         <NavLink
           to="/profile"

@@ -3,14 +3,14 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, KeyRound, Code, ArrowLeft, LogIn } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Code, ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
 
 // Import local modules.
-import useAuth from "../hooks/useAuth";
-import resetPasswordSchemaValidators from "../validators/resetPasswordSchemaValidators";
-import verifyResetPasswordSchemaValidators from "../validators/verifyResetPasswordSchemaValidators";
-import axiosInstance from "../api/axiosInstance";
+import useAuth from "../../hooks/useAuth";
+import resetPasswordSchemaValidators from "../../validators/resetPasswordSchemaValidators";
+import verifyResetPasswordSchemaValidators from "../../validators/verifyResetPasswordSchemaValidators";
+import axiosInstance from "../../api/axiosInstance";
 
 function ResetPassword() {
   const { user, logout } = useAuth();

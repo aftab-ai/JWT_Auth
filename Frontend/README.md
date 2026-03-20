@@ -43,6 +43,18 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |  |----Inter-Regular.woff2
   |  |  |  |----Inter-SemiBold.woff2
   |  |----components/
+  |  |  |----docsComponents/
+  |  |  |  |----AuthRefreshRoute.jsx
+  |  |  |  |----CSRFRefreshRoute.jsx
+  |  |  |  |----CurrentUserRoute.jsx
+  |  |  |  |----EmailVerificationRoute.jsx
+  |  |  |  |----ForgotPasswordRoute.jsx
+  |  |  |  |----LoginRoute.jsx
+  |  |  |  |----LogoutAllRoute.jsx
+  |  |  |  |----LogoutRoute.jsx
+  |  |  |  |----PasswordResetRoute.jsx
+  |  |  |  |----SignupRoute.jsx
+  |  |  |  |----UserDeletionRoute.jsx
   |  |  |----DeleteAccountModel.jsx
   |  |  |----ListComponent.jsx
   |  |  |----Loader.jsx
@@ -57,14 +69,15 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |  |----profile/
   |  |  |  |----Profile.jsx
   |  |  |  |----ProfileLayout.jsx
+  |  |  |  |----ResetPassword.jsx
+  |  |  |  |----VerifyEmail.jsx
+  |  |  |----Docs.jsx
   |  |  |----ForgotPassword.jsx
   |  |  |----Home.jsx
   |  |  |----Landing.jsx
   |  |  |----Login.jsx
   |  |  |----NotFound.jsx
-  |  |  |----ResetPassword.jsx
   |  |  |----Signup.jsx
-  |  |  |----VerifyEmail.jsx
   |  |----routes/
   |  |  |----layouts/
   |  |  |  |----PrivateLayout.jsx

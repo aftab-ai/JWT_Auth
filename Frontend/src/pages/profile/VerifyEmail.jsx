@@ -7,10 +7,10 @@ import { Mail, Code, ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
 
 // Import local modules.
-import useAuth from "../hooks/useAuth";
-import emailValidators from "../validators/emailValidators";
-import emailVerificationSchemaValidators from "../validators/emailVerificationSchemaValidators";
-import axiosInstance from "../api/axiosInstance";
+import useAuth from "../../hooks/useAuth";
+import emailValidators from "../../validators/emailValidators";
+import emailVerificationSchemaValidators from "../../validators/emailVerificationSchemaValidators";
+import axiosInstance from "../../api/axiosInstance";
 
 function VerifyEmail() {
   const { user, logout } = useAuth();
