@@ -5,7 +5,7 @@ function SignupRoute() {
       <h1 className="font-bold text-2xl text-[#10403B]">Signup Route</h1>
 
       {/* List */}
-      <div className="mt-2 p-2 border border-[#B7BDA9] rounded">
+      <div className="mt-2 p-2 text-sm border border-[#B7BDA9] rounded">
         <ul className="list-disc list-outside ml-8">
           <li>
             Registers a new user. If the email is already taken, an error is
@@ -24,7 +24,7 @@ function SignupRoute() {
       <div className="mt-4">
         <h2 className="font-medium text-lg text-[#4C5958]">Request Body:</h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <pre className="mt-1 px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
+          <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
               {`{
   "username": "The username of the new user.",
@@ -40,10 +40,11 @@ function SignupRoute() {
       <div className="mt-4">
         <h2 className="font-medium text-lg text-[#4C5958]">Example Request:</h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <code className="block leading-relaxed mt-2 py-1 rounded text-sm">
-            <span className="text-[#127369]">POST</span> "/api/v1/auth/signup"
+          <code className="block leading-relaxed py-1 rounded text-sm">
+            Endpoint:
+            <span className="text-[#127369]"> POST</span> "/api/v1/auth/signup"
           </code>
-          <pre className="mt-1 px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
+          <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
               {`{
   "username": "user1",
@@ -61,7 +62,7 @@ function SignupRoute() {
           Example Response:
         </h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <pre className="mt-1 px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
+          <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
               {`{
   "statusCode": "201",
