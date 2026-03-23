@@ -27,7 +27,7 @@ function Docs() {
               <option value="/docs/forgot-password-route">
                 Forgot Password
               </option>
-              <option value="/docs/login-route">User Login</option>
+              <option value="/docs/login-route">User Sign in</option>
             </optgroup>
 
             {/* Private Routes */}
@@ -77,7 +77,7 @@ function Docs() {
                 `hover:text-[#10403B] ${isActive && "underline text-[#10403B]"}`
               }
             >
-              User Login
+              User Sign in
             </NavLink>
           </div>
 

@@ -14,6 +14,7 @@ function ForgotPasswordRoute() {
             address to send a verification code.
           </li>
           <li>The verification code must be a six-digit number.</li>
+          <li>The verification code remains valid for 2 minutes.</li>
           <li>
             The Forgot Password process consists of two endpoints. The first
             endpoint accepts the user’s registered email address and, upon
@@ -28,6 +29,10 @@ function ForgotPasswordRoute() {
             number, and one special character, with no spaces.
           </li>
           <li>The user's new password will be stored as a hash string.</li>
+          <li>
+            Upon successful password reset, all user sessions will be
+            invalidated.
+          </li>
         </ul>
       </div>
 
@@ -35,7 +40,7 @@ function ForgotPasswordRoute() {
       <div className="mt-4">
         <h2 className="font-medium text-lg text-[#4C5958]">Request Body:</h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <code className="block leading-relaxed py-1 rounded text-sm">
+          <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint: I
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
@@ -46,7 +51,7 @@ function ForgotPasswordRoute() {
             </code>
           </pre>
 
-          <code className="block leading-relaxed mt-4 py-1 rounded text-sm">
+          <code className="block leading-relaxed mt-4 py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint: II
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
@@ -65,7 +70,7 @@ function ForgotPasswordRoute() {
       <div className="mt-4">
         <h2 className="font-medium text-lg text-[#4C5958]">Example Request:</h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <code className="block leading-relaxed py-1 rounded text-sm">
+          <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint: I -<span className="text-[#127369]"> POST</span>{" "}
             "/api/v1/auth/request-forgot-password"
           </code>
@@ -77,7 +82,7 @@ function ForgotPasswordRoute() {
             </code>
           </pre>
 
-          <code className="block leading-relaxed mt-4 py-1 rounded text-sm">
+          <code className="block leading-relaxed mt-4 py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint: II -<span className="text-[#127369]"> POST</span>{" "}
             "/api/v1/auth/verify-forgot-password"
           </code>
@@ -99,7 +104,7 @@ function ForgotPasswordRoute() {
           Example Response:
         </h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <code className="block leading-relaxed py-1 rounded text-sm">
+          <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint: I
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
@@ -113,7 +118,7 @@ function ForgotPasswordRoute() {
             </code>
           </pre>
 
-          <code className="block leading-relaxed mt-4 py-1 rounded text-sm">
+          <code className="block leading-relaxed mt-4 py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint: II
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">

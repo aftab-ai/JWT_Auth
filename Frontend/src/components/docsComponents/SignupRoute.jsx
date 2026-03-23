@@ -40,7 +40,7 @@ function SignupRoute() {
       <div className="mt-4">
         <h2 className="font-medium text-lg text-[#4C5958]">Example Request:</h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
-          <code className="block leading-relaxed py-1 rounded text-sm">
+          <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint:
             <span className="text-[#127369]"> POST</span> "/api/v1/auth/signup"
           </code>
