@@ -32,6 +32,10 @@ function LoginRoute() {
             A cryptographically generated CSRF-Token is included in the JSON
             response.
           </li>
+          <li>
+            The Refresh-Token and CSRF-Token are hashed and stored in the
+            session.
+          </li>
           <li>The user session remains valid for 7 days.</li>
         </ul>
       </div>
