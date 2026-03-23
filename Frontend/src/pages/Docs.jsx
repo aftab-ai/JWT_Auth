@@ -6,16 +6,16 @@ function Docs() {
   const location = useLocation();
 
   return (
-    <div className="flex flex-col items-center min-h-screen w-full">
+    <div className="flex flex-col items-center h-auto sm:min-h-screen p-4">
       {/* Title */}
-      <h1 className="w-full max-w-3xl m-8 p-4 font-bold text-3xl text-center text-[#10403B] rounded-xl bg-[#B3C1A8]">
+      <h1 className="w-full sm:max-w-4xl m-4 p-4 font-bold text-3xl text-center text-[#10403B] rounded-xl bg-[#B3C1A8]">
         Routes Uses
       </h1>
 
       {/* Layout */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-3xl">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:max-w-4xl">
         {/* Mobile Select */}
-        <div className="block sm:hidden w-full p-2 rounded bg-[#BFBFBF]">
+        <div className="block sm:hidden w-full p-2 rounded bg-[#8AA6A3]">
           <select
             onChange={(e) => navigate(e.target.value)}
             value={location.pathname}
@@ -51,7 +51,7 @@ function Docs() {
         </div>
 
         {/* Desktop Layout */}
-        <div className="hidden sm:flex sm:flex-col sm:gap-4 sm:w-1/4 p-4 rounded-xl bg-[#BFBFBF]">
+        <div className="hidden sm:flex sm:flex-col sm:gap-4 sm:w-1/4 sm:h-fit p-4 rounded-xl bg-[#8AA6A3]">
           {/* Public Routes */}
           <div className="flex flex-col gap-2 font-bold text-[#4C5958]">
             <p className="border-b text-center text-black">Public Routes</p>
