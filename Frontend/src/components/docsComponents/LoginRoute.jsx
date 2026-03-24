@@ -88,7 +88,7 @@ function LoginRoute() {
   "code": "USER_AUTHENTICATED",
   "message": "User logged in successfully.",
   "data": { 
-    "csrfToken": "a3af48fc11dd25c80789833272c3c3488cc907ebbb7e7f35045db052457bb719"
+    "csrfToken": "CSRF_Token"
   }
 }`}
             </code>
@@ -101,8 +101,8 @@ function LoginRoute() {
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
               {`{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OTFjZDE4MWI4ZmI4YzUyYTBmYWFiYSIsInJvbGUiOiJ1c2VyIiwic2Vzc2lvbklkIjoiNjliYmEwMGE2MTU3N2Q5NDc5YzRjMDUzIiwiaWF0IjoxNzc0MjU1MjQ2LCJleHAiOjE3NzQyNTYxNDYsImF1ZCI6Imh0dHA6Ly9hcGkvdjEvYXV0aC9zaWduSW4iLCJpc3MiOiJodHRwOi8vYXBpL3YxL2F1dGgifQ.rdsAn-SMWvfoQRt_AZIiMUSQ5i4YrGixZFGDgqERFYa",
-  "refreshToken": "258ba4abb6163510c231112aa9f4ba4258aaeb14389fd59f44381599841965ec1ef37b99fbc7ccfabe4c50af52ae83edf650f5bdc8bb292096a3d321901e811c"
+  "accessToken": "JWT_Token",
+  "refreshToken": "Refresh_Token"
 }`}
             </code>
           </pre>
