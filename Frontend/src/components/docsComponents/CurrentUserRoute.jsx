@@ -45,7 +45,7 @@ function CurrentUserRoute() {
   "statusCode": "200",
   "status": "true",
   "code": "CURRENT_USER",
-  "message": "Get current user successfully."
+  "message": "Get current user successfully.",
   "data": {
     "userId": "6990328925cd071dc88a8838",
     "username": "User 1",

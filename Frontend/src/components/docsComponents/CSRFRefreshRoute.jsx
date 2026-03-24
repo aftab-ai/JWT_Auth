@@ -14,7 +14,7 @@ function CSRFRefreshRoute() {
             against Cross-Site Request Forgery (CSRF) attacks.
           </li>
           <li>The CSRF token should be stored in memory on the client side.</li>
-          <li>CSRF token rotation requires a valid access token cookie.</li>
+          <li>CSRF token rotation requires a valid Access-Token cookie.</li>
           <li>
             If no changes are detected, the request returns an error and the
             session is terminated.
@@ -51,7 +51,7 @@ function CSRFRefreshRoute() {
   "statusCode": "200",
   "status": "true",
   "code": "CSRF_REFRESHED",
-  "message": "CSRF-Token refreshed successfully."
+  "message": "CSRF-Token refreshed successfully.",
   "data": {
     "csrfToken": "CSRF_Token"
   }
