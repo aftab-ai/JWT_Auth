@@ -16,6 +16,9 @@ function EmailVerificationRoute() {
           <li>The verification code must be a six-digit number.</li>
           <li>The verification code remains valid for 2 minutes.</li>
           <li>
+            User verification requires both an Access-Token and a CSRF-Token.
+          </li>
+          <li>
             Upon successful verification, all user sessions will be invalidated.
           </li>
         </ul>
@@ -65,7 +68,7 @@ function EmailVerificationRoute() {
 }
 
 Cookie: accessToken=JWT_Token
-Cookie: csrfToken=CSRF_Token
+x-csrf-token: CSRF_Token
 `}
             </code>
           </pre>
@@ -82,7 +85,7 @@ Cookie: csrfToken=CSRF_Token
 }
 
 Cookie: accessToken=JWT_Token
-Cookie: csrfToken=CSRF_Token
+x-csrf-token: CSRF_Token
 `}
             </code>
           </pre>
@@ -133,8 +136,8 @@ Cookie: csrfToken=CSRF_Token
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
               {`{
-  "accessToken": "JWT_Token",
-  "refreshToken": "Refresh_Token"
+  "accessToken": Clear,
+  "refreshToken": Clear
 }`}
             </code>
           </pre>
