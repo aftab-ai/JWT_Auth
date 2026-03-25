@@ -44,7 +44,7 @@ function UserDeletionRoute() {
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
           <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint:
-            <span className="text-[#D8581C]"> DELETE</span>{" "}
+            <span className="font-semibold text-[#D8581C]"> DELETE</span>{" "}
             "/api/v1/auth/delete-user"
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
@@ -53,8 +53,8 @@ function UserDeletionRoute() {
   "password": "User1@test"
 }
 
-Cookie: refreshToken=Refresh_Token
-x-csrf-token: CSRF_Token`}
+Cookie - refreshToken: Refresh_Token
+Headers - x-csrf-token: CSRF_Token`}
             </code>
           </pre>
         </div>
@@ -86,10 +86,9 @@ x-csrf-token: CSRF_Token`}
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
-              {`{
-  "accessToken": Clear
-  "refreshToken": Clear
-}`}
+              {`accessToken: Clear
+refreshToken: Clear
+`}
             </code>
           </pre>
         </div>

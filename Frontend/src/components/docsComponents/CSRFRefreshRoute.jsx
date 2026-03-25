@@ -28,12 +28,12 @@ function CSRFRefreshRoute() {
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
           <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint:
-            <span className="text-[#127369]"> POST</span>{" "}
+            <span className="font-semibold text-[#127369]"> POST</span>{" "}
             "/api/v1/auth/csrf-refresh"
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
-              {`Cookie: accessToken=JWT_Token`}
+              {`Cookie - accessToken: JWT_Token`}
             </code>
           </pre>
         </div>

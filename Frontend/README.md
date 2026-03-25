@@ -107,6 +107,29 @@ It is an example cliant side programming structure for user 'authentication/auth
 
 ---
 
+## Features
+
+- ### Authentication Flow:
+  - **Protected & Public Routes** - Route-level access control using custom layouts.
+  - **Auth Context System** - Centralized authentication state using React Context API.
+  - **Automatic Token Refresh** - Axios interceptors handle expired access tokens seamlessly.
+  - **CSRF Token Handling** -
+    - Stored in memory (not persistent storage).
+    - Automatically fetched when missing via protected endpoint.
+
+- ### Form Handling & Validation:
+  - **React Hook Form Integration** - Efficient form state management.
+  - **Zod Schema Validation** - Strong client-side validation with reusable schemas.
+  - **Full-stack Validation Sync** - Matching frontend & backend validation rules.
+
+- ### API Communication:
+  - **Axios Interceptors** -
+    - Handles token refresh automatically.
+    - Injects CSRF token into requests.
+  - **Credential-based Requests** - Secure cookie-based communication with backend.
+
+---
+
 ## Installation
 
 - Clone the repository

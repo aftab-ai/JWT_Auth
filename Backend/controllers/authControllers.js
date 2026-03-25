@@ -639,8 +639,19 @@ const verifyPasswordReset = async (req, res, next) => {
     // Hash new password.
     const newhashedPassword = await hashPassword(newPassword);
 
-    // Fetch user and update.
+    // Fetch user.
     const user = await models.User.findById(userId).select("+password");
+
+    // Compare with the old password.
+    if (newhashedPassword === user.password) {
+      throw new AppError(
+        "Password cannot be same as the previous one!",
+        "PASSWORD_SAME_AS_OLD",
+        400,
+      );
+    }
+
+    // Update the user.
     user.password = newhashedPassword;
     user.passwordChangedAt = new Date();
     await user.save();

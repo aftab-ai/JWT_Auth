@@ -22,12 +22,12 @@ function CurrentUserRoute() {
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
           <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
             Endpoint:
-            <span className="text-[#127369]"> GET</span>{" "}
+            <span className="font-semibold text-[#127369]"> GET</span>{" "}
             "/api/v1/auth/current-user"
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
-              {`Cookie: accessToken=JWT_Token`}
+              {`Cookie - accessToken: JWT_Token`}
             </code>
           </pre>
         </div>
@@ -50,9 +50,9 @@ function CurrentUserRoute() {
     "userId": "6990328925cd071dc88a8838",
     "username": "User 1",
     "email": "user1@gmail.com",
-    "verifiedEmail": "yes",
+    "verifiedEmail": "true",
     "role": "user"
-  },
+  }
 }`}
             </code>
           </pre>

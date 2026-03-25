@@ -58,7 +58,8 @@ function EmailVerificationRoute() {
         <h2 className="font-medium text-lg text-[#4C5958]">Example Request:</h2>
         <div className="mt-1 p-1 border border-[#B7BDA9] rounded">
           <code className="block leading-relaxed py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
-            Endpoint: I -<span className="text-[#127369]"> POST</span>{" "}
+            Endpoint: I -
+            <span className="font-semibold text-[#127369]"> POST</span>{" "}
             "/api/v1/auth/send-email-verification-code"
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
@@ -67,14 +68,15 @@ function EmailVerificationRoute() {
   "email": "user1@gmail.com"
 }
 
-Cookie: accessToken=JWT_Token
-x-csrf-token: CSRF_Token
+Cookie - accessToken: JWT_Token
+Headers - x-csrf-token: CSRF_Token
 `}
             </code>
           </pre>
 
           <code className="block leading-relaxed mt-4 py-1 pl-2 rounded text-sm bg-[#B3C1A8]">
-            Endpoint: II -<span className="text-[#127369]"> POST</span>{" "}
+            Endpoint: II -
+            <span className="font-semibold text-[#127369]"> POST</span>{" "}
             "/api/v1/auth/verify-email"
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
@@ -84,8 +86,8 @@ x-csrf-token: CSRF_Token
   "code": "123456"
 }
 
-Cookie: accessToken=JWT_Token
-x-csrf-token: CSRF_Token
+Cookie - accessToken: JWT_Token
+Headers - x-csrf-token: CSRF_Token
 `}
             </code>
           </pre>
@@ -135,10 +137,9 @@ x-csrf-token: CSRF_Token
           </code>
           <pre className="max-w-full px-2 py-1 font-mono rounded text-xs sm:text-sm bg-[#BFBFBF] overflow-x-auto whitespace-pre scrollbar-thin">
             <code className="block leading-relaxed">
-              {`{
-  "accessToken": Clear,
-  "refreshToken": Clear
-}`}
+              {`accessToken: Clear
+refreshToken: Clear
+`}
             </code>
           </pre>
         </div>

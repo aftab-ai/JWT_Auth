@@ -75,12 +75,57 @@ It is an example of backend api server for user 'authentication/authorization' w
 
 ## Features
 
-- Multi-User (Authentication/Authorization)
-- Credentials Validation
-- JWT Access-Token sent via httpOnly cookie
-- Refresh-Token sent via httpOnly cookie
-- Hash Refresh-Token saved with user session
-- CSRF-Token send via json respond
+- ### Authentication & Token Strategy:
+  - **Authentication & Token Strategy** - Secure login using access and refresh tokens.
+  - **AdvancedJ Session & Token Lifecycle** - Stores tokens in cookies inaccessible to JavaScript.
+  - **Security & Attack Prevention** - Prevents cross-site request forgery via cookie isolation.
+  - **Authorization & Validation** - 15-minute expiry to reduce exposure risk.
+  - **Device & Session Intelligence** - 7-day lifespan with cryptographically generated 64-byte hex values.
+  - **Backend Architecture** - Access token secrets securely managed via environment variables.
+
+- ### Advanced Session & Token Lifecycle:
+  - **Atomic Token Rotation** - Refreshing tokens rotates both access & refresh tokens securely.
+  - **Refresh Conflict Detection** - Invalid or reused refresh tokens immediately invalidate the session (forced logout).
+  - **Session Expiry Synchronization** - Session lifetime dynamically extends with token refresh.
+  - **Session Limiting** - Maximum of 10 active sessions per user with automatic oldest-session eviction.
+  - **Global Logout** - Allows users to terminate all active sessions across devices.
+  - **TTL Indexing in Database** - Automatically removes expired sessions using database indexing.
+
+- ### Security & Attack Prevention:
+  - **CSRF Protection System** -
+    - Cryptographically generated 32-byte CSRF tokens.
+    - Stored hashed in database.
+    - Sent via API and validated per session.
+  - **Password Security** - Bcrypt hashing with salt rounds (12).
+  - **Secure Password Reset Flow** -
+    - Crypto-generated reset codes.
+    - Hashed storage with 2-minute expiration.
+  - **Email Verification System** - Token-based verification using short-lived secure codes.
+  - **Rate Limiting** - IP-based protection against brute-force and abuse.
+  - **CORS Whitelisting (Production-grade)** -
+    - Dynamic origin validation.
+    - Strict allowed headers and methods.
+    - Credentials-enabled secure requests.
+  - **Secure HTTP Headers** - Implemented via middleware to mitigate common vulnerabilities.
+  - **Centralized Error Handling** - Custom error handler for consistent API responses.
+
+- ### Authorization & Validation:
+  - **Role-Based Access Control (RBAC)** - Restricts endpoints based on user roles.
+  - **Request Validation** - Backend validation using express-validator.
+  - **Consistent Input Validation** - Ensures data integrity across client and server.
+
+- ### Device & Session Intelligence:
+  - **Device Tracking per Session** -
+    - Device model, type, vendor.
+    - OS name and version.
+    - Browser name and version.
+  - **Session Awareness** - Enables advanced features like session monitoring and anomaly detection.
+
+- ### Backend Architecture:
+  - **RESTful API Design** - Structured and scalable route handling.
+  - **Middleware-based Architecture** - Modular handling of auth, errors, validation, and security.
+  - **Logging System** - Request logging for debugging and monitoring.
+  - **Scalable Configuration** - Environment-based configs for dev and production.
 
 ---
 
@@ -156,27 +201,21 @@ It is an example of backend api server for user 'authentication/authorization' w
     - GET `/api/v1/auth/current-user`
 
       ```bash
-      {
-        "accessToken" cookie,
-      }
+      Cookie - accessToken: JWT_Token
       ```
 
   - **CSRF Refresh** - Get new CSRF-Token.
     - POST `/api/v1/auth/csrf-refresh`
 
       ```bash
-      {
-        "accessToken" cookie,
-      }
+      Cookie - accessToken: JWT_Token
       ```
 
   - **Auth Refresh** - Refresh Tokens(Access-Token, Refresh-Token).
     - POST `/api/v1/auth/auth-refresh`
 
       ```bash
-      {
-        "refreshToken" cookie,
-      }
+      Cookie - refreshToken: Refresh_Token
       ```
 
   - **Send Email Verification Code** - Send OTP via email.
@@ -184,10 +223,11 @@ It is an example of backend api server for user 'authentication/authorization' w
 
       ```bash
       {
-        "email": "user1@gmail.com",
-        "accessToken" cookie,
-        "x-csrf-token" header,
+        "email": "user1@gmail.com"
       }
+
+      Cookie - accessToken: JWT_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
   - **User Verification Route** - Verify user with verification-code.
@@ -196,10 +236,11 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```bash
       {
         "email": "user1@gmail.com",
-        "code": "123456",
-        "accessToken" cookie,
-        "x-csrf-token" header,
+        "code": "123456"
       }
+
+      Cookie - accessToken: JWT_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
   - **Request Password-Reset Route** - Send OTP via email to reset the password.
@@ -207,10 +248,11 @@ It is an example of backend api server for user 'authentication/authorization' w
 
       ```bash
       {
-        "oldPassword": "Aabc@123",
-        "accessToken" cookie,
-        "x-csrf-token" header,
+        "oldPassword": "Aabc@123"
       }
+
+      Cookie - accessToken: JWT_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
   - **Verify User Password-Reset Route** - Verify user OTP and reset password with new.
@@ -219,41 +261,39 @@ It is an example of backend api server for user 'authentication/authorization' w
       ```bash
       {
         "code": "123456",
-        "newPassword": "AAbc@135",
-        "accessToken" cookie,
-        "x-csrf-token" header,
+        "newPassword": "AAbc@135"
       }
+
+      Cookie - accessToken: JWT_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
   - **Logout Route** - User session over.
     - POST `/api/v1/auth/logout`
 
       ```bash
-      {
-        "refreshToken" cookie,
-        "x-csrf-token" header,
-      }
+      Cookie - refreshToken: Refresh_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
   - **Logout-All Route** - User logout from all session devices.
     - POST `/api/v1/auth/logout-all`
 
       ```bash
-      {
-        "refreshToken" cookie,
-        "x-csrf-token" header,
-      }
+      Cookie - refreshToken: Refresh_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
   - **User-Deletion Route** - User account deletion route.
     - DELETE `/api/v1/auth/delete-user`
 
       ```bash
-        {
-          "password": "Aabc@123",
-          "accessToken" cookie,
-          "x-csrf-token" header,
-        }
+      {
+        "password": "Aabc@123"
+      }
+
+      Cookie - accessToken: JWT_Token
+      Headers - x-csrf-token: CSRF_Token
       ```
 
 ---

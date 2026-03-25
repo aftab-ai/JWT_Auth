@@ -47,12 +47,12 @@ This project build with **node.js** as a backend server and **react.js** as a fr
 
 ---
 
-## project Goals / Features
+## Project Goals / Features
 
-- User authentication/authorization with jwt
-- Generates encripted refresh token
-- User multi-device authentication
-- Responsive UI with React
+- Built a security-first full-stack authentication system with JWT, CSRF protection, and token rotation.
+- Implemented advanced session management with device tracking and session limits.
+- Designed production-grade API security with CORS, rate limiting, and secure cookies.
+- Developed seamless frontend auth flow with automatic token refresh and protected routing.
 
 ---
 
