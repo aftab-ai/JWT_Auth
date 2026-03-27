@@ -96,6 +96,8 @@ It is an example cliant side programming structure for user 'authentication/auth
   |  |----App.jsx
   |  |----index.css
   |  |----main.jsx
+  |----.env
+  |----.env.production
   |----.gitignore
   |----eslint.config.js
   |----index.html
